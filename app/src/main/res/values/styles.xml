@@ -1,0 +1,60 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+
+    <!--Theme for the splash screen-->
+    <!--Note you set these themes in the AndroidManifest.xml file-->
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/whiteboardOrange</item>
+    </style>
+
+    <!--Theme for the splash screen-->
+    <!--Note you set these themes in the AndroidManifest.xml file-->
+    <style name="IntroScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/whiteboardOrange</item>
+    </style>
+
+    <!--Theme for the Main screens-->
+    <!--Note you set these themes in the AndroidManifest.xml file-->
+    <style name="WhiteboardMainTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="windowActionBar">true</item>-->
+        <!--<item name="windowNoTitle">false</item>-->
+        <item name="colorPrimaryDark">@color/whiteboardBrightBlue</item>
+    </style>
+
+
+    <!--===========================================-->
+    <!--Custom Action Bar Style-->
+    <style name="WhiteboardToolbarStyle">
+        <item name="android:background">@color/whiteboardBrightBlue</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+
+
+    <!--===========================================-->
+    <!--Android Studio Generated Code Below-->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+    </style>
+
+
+</resources>

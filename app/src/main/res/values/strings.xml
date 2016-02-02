@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Whiteboard</string>
+    <string name="title_activity_intro">IntroActivity</string>
+    <string name="title_activity_host_white_board">HostWhiteBoardActivity</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="version_number">0.0.0</string>
+    <string name="release_date">January 28, 2016</string>
+    <string name="authors">By: UMD CS 4995</string>
+</resources>
