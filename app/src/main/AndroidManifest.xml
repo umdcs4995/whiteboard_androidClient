@@ -2,15 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.umdcs4995.whiteboard">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity"
-            android:theme="@style/SplashScreenTheme"
-            android:noHistory="true">
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true"
+            android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +28,12 @@
         <activity
             android:name=".HostWhiteBoardActivity"
             android:label="@string/title_activity_host_white_board"
-            android:theme="@style/WhiteboardMainTheme"></activity>
+            android:theme="@style/WhiteboardMainTheme" />
+        <activity
+            android:name=".MasterWhiteboardAddActivity"
+            android:noHistory="true"
+            android:label="@string/title_activity_master_whiteboard_add"
+            android:theme="@style/WhiteboardAddTheme"></activity>
     </application>
 
 </manifest>

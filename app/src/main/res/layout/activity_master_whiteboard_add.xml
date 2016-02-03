@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.umdcs4995.whiteboard.MasterWhiteboardAddActivity">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Draw Here"
+            android:id="@+id/textView3"
+            android:textSize="28dp"
+            android:layout_marginTop="104dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Not Yet Implemented)"
+            android:id="@+id/textView2"
+            android:textSize="28dp"
+            android:layout_below="@+id/textView3"
+            android:layout_centerHorizontal="true" />
+
+        <FrameLayout
+            android:id="@+id/camera_window"
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/whiteboardBrightBlue"
+        android:src="@android:drawable/ic_menu_save" />
+
+</android.support.design.widget.CoordinatorLayout>

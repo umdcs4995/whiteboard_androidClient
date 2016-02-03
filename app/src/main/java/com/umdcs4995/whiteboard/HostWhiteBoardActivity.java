@@ -1,15 +1,19 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import uiFragments.AboutDialogFragment;
 import uiFragments.NotYetImplementedToast;
@@ -36,9 +40,15 @@ public class HostWhiteBoardActivity extends AppCompatActivity {
             //Set the listener for when the button is pressed
             @Override
             public void onClick(View view) {
-                new NotYetImplementedToast(getApplicationContext(), "FAB Pressed.");
+                //Toast the user here, saying button was pressed.
+                Toast toast = Toast.makeText(getApplicationContext(), "You've Been Called On.",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+                startActivity(makeAddIntent());
             }
         });
+
+
     }
 
     /**
@@ -69,5 +79,9 @@ public class HostWhiteBoardActivity extends AppCompatActivity {
             default:
                 return false;
         }
+    }
+
+    private Intent makeAddIntent() {
+        return new Intent(this, MasterWhiteboardAddActivity.class);
     }
 }

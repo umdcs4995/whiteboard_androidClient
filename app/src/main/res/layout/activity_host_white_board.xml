@@ -30,12 +30,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(Not Yet Implemented)"
+            android:text="Private Notes:"
             android:id="@+id/textView2"
-            android:textSize="28dp"
-            android:layout_marginTop="104dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:textSize="28sp"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentTop="true" />
+
+        <EditText
+            android:id="@+id/launch_codes"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView2"
+            android:layout_marginLeft="10dp"
+            android:maxLines="20"
+            android:minLines="20"
+            android:hint="Private Notes Here"
+            android:gravity="bottom"
+            android:imeActionLabel="Done" />
 
     </RelativeLayout>
 
