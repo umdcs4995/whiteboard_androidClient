@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import java.io.IOException;
 
@@ -98,9 +101,34 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
 
         // set preview size and make any resize, rotate or
         // reformatting changes here
+        Camera.Parameters parameters = camera.getParameters();
+        Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+        if(display.getRotation() == Surface.ROTATION_0)
+        {
+            parameters.setPreviewSize(h, w);
+            camera.setDisplayOrientation(90);
+        }
+
+        if(display.getRotation() == Surface.ROTATION_90)
+        {
+            parameters.setPreviewSize(w, h);
+        }
+
+        if(display.getRotation() == Surface.ROTATION_180)
+        {
+            parameters.setPreviewSize(h, w);
+        }
+
+        if(display.getRotation() == Surface.ROTATION_270)
+        {
+            parameters.setPreviewSize(w, h);
+            camera.setDisplayOrientation(180);
+        }
 
         // start preview with new settings
         try {
+            //Rotate the camera appropriately.
             camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
 
@@ -109,4 +137,9 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    //Method here rotates the camera based on the rotation of the screen.
+    public void setCameraOritentation(int degrees) {
+        if(camera != null) camera.setDisplayOrientation(degrees);
+        else return;
+    }
 }
