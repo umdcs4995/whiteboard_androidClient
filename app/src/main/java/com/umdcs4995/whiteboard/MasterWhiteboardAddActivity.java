@@ -99,15 +99,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity {
      * This method sets up the camera window.
      */
     private void goGoCamera() {
-//        int degrees = 0;
-//        int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
-//
-//        switch (rotation) {
-//            case Surface.ROTATION_0: degrees = 0; break;
-//            case Surface.ROTATION_90: degrees = 90; break;
-//            case Surface.ROTATION_180: degrees = 180; break;
-//            case Surface.ROTATION_270: degrees = 270; break;
-//        }
 
         CameraWb cameraWb = new CameraWb(getApplicationContext());
 //        cameraWb.setCameraOritentation(degrees);
