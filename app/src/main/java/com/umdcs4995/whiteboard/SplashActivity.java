@@ -1,9 +1,13 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 /**
  * Activity handling the opening splash screen.
@@ -18,6 +22,22 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        TextView tv = (TextView) findViewById(R.id.txtWelcome);
+
+
+        //Code to read from shared preferences!
+        //Read from a key value pair.
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        //Extract the resource
+        String username = sp.getString("pref_name","");
+
+        if (username.length() > 0) {
+            tv.setText("Welcome, " + username);
+        } else {
+            tv.setText("Welcome!");
+        }
+
 
         /**
          * Post delayed event is fired after DELAYTIME has expired.  This method is called as soon

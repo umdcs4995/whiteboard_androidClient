@@ -12,4 +12,5 @@
     <string name="title_activity_master_whiteboard_add">MasterWhiteboardAddActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

@@ -3,7 +3,10 @@
     package="com.umdcs4995.whiteboard">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -31,9 +34,13 @@
             android:theme="@style/WhiteboardMainTheme" />
         <activity
             android:name=".MasterWhiteboardAddActivity"
-            android:noHistory="true"
             android:label="@string/title_activity_master_whiteboard_add"
-            android:theme="@style/WhiteboardAddTheme"></activity>
+            android:noHistory="true"
+            android:theme="@style/WhiteboardAddTheme" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/WhiteboardMainTheme"></activity>
     </application>
 
 </manifest>

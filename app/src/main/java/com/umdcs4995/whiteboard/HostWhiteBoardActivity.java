@@ -69,8 +69,8 @@ public class HostWhiteBoardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menuitem_settings:
-                NotYetImplementedToast toast = new NotYetImplementedToast(
-                        this.getApplicationContext(), "Settings menu item pressed.");
+                Intent in = new Intent(this, SettingsActivity.class);
+                startActivity(in);
                 return true;
             case R.id.menuitem_about:
                 AboutDialogFragment about = new AboutDialogFragment();

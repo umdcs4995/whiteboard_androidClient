@@ -61,6 +61,15 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     /**
+     * Executed on the click of the Settings button.  It launches a settings activity.
+     */
+    public void onSettingsClick(View view) {
+        Intent in = new Intent(this, HostWhiteBoardActivity.class);
+        startActivity(in);
+    }
+
+
+    /**
      * Executed on the click of the About button.  It launches an "About Game" dialog.
      */
     public void onAboutClick(View view) {
