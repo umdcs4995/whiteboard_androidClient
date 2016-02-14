@@ -57,7 +57,8 @@ public class IntroActivity extends AppCompatActivity {
      * @param view
      */
     public void onClickButtonLoad(View view) {
-        new NotYetImplementedToast(this.getApplicationContext());
+        Intent in = new Intent(this, MasterWhiteboardAddActivity.class);
+        startActivity(in);
     }
 
     /**
