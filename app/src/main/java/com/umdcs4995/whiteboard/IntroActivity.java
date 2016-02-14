@@ -68,6 +68,13 @@ public class IntroActivity extends AppCompatActivity {
         startActivity(in);
     }
 
+    /**
+     * Executed on the click of the Settings button.  It launches a settings activity.
+     */
+    public void onContactButtonClick(View view) {
+        Intent in = new Intent(this, ContactListActivity.class);
+        startActivity(in);
+    }
 
     /**
      * Executed on the click of the About button.  It launches an "About Game" dialog.
