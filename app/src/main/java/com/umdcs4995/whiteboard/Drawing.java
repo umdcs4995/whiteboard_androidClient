@@ -25,7 +25,7 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drawing);
+        setContentView(R.layout.activity_master_whiteboard_add);
         drawView = (DrawingView)findViewById(R.id.drawing);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
 
