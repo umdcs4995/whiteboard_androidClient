@@ -44,7 +44,7 @@
         <activity
             android:name=".ContactListActivity"
             android:label="@string/title_activity_contact_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/WhiteboardMainTheme"></activity>
     </application>
 
 </manifest>
