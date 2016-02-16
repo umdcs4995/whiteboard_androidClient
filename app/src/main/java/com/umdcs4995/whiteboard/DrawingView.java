@@ -26,16 +26,21 @@ public class DrawingView extends View{
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
+    //brush size and previous size
+    private float brushSize, lastBrushSize;
 
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
         setupDrawing();
     }
 
-    private float brushSize, lastBrushSize;
 
+
+    /**
+     * initialize the drawing board and default brush size
+     */
     public void setupDrawing(){
-        brushSize = getResources().getInteger(R.integer.medium_size);
+        brushSize = 5;
         lastBrushSize = brushSize;
 
         drawPath = new Path();
@@ -49,7 +54,10 @@ public class DrawingView extends View{
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-
+    /**
+     * creates the draw path when drawing
+     * @param canvas drawing surface
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         //draw view
@@ -57,6 +65,11 @@ public class DrawingView extends View{
         canvas.drawPath(drawPath, drawPaint);
     }
 
+    /**
+     * Detects touch and initiates the onDraw() method
+     * @param event the motion
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //detect user touch
@@ -86,8 +99,13 @@ public class DrawingView extends View{
         return true;
     }
 
-
-
+    /**
+     *
+     * @param w width
+     * @param h height
+     * @param oldw previous width
+     * @param oldh prevoius height
+     */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
@@ -97,12 +115,14 @@ public class DrawingView extends View{
 
     }
 
+
     public void setColor(String newColor){
         //set color
         invalidate();
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
     }
+
 
     public void setBrushSize(float newSize){
         //update size
@@ -129,6 +149,9 @@ public class DrawingView extends View{
         }
     }
 
+    /**
+     * creates a new draw canvas
+     */
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
