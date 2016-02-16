@@ -22,6 +22,7 @@ import java.util.UUID;
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
+ * Also contains a drawing canvas.
  */
 public class MasterWhiteboardAddActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,6 +31,11 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
     private float smallBrush, mediumBrush, largeBrush;
 
+    /**
+     * Creates the floating action button, the drawing board, and initializes
+     * the draw, erase, save, and new buttons. Also chooses the sizes for the paint brushes.
+     * @param savedInstanceState used for the super onCreate()
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_whiteboard_add);
@@ -97,6 +103,11 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
     }
 
+    /**
+     * Sets a the brush color when a paint color is selected to the input view's
+     * corresponding color if it isn't the currently selected color.
+     * @param view the view that is clicked to determine which color to change to.
+     */
     public void paintClicked(View view) {
         drawView.setErase(false);
         drawView.setBrushSize(drawView.getLastBrushSize());
@@ -150,6 +161,14 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         cameraWindow.addView(cameraWb);
     }
 
+    /**
+     * Responds to clicks of the following buttons on the whiteboard:
+     *  - draw_btn
+     *  - erase_btn
+     *  - new_btn
+     *  - save_btn
+     * @param view the view that the click is from
+     */
     @Override
     public void onClick(View view) {
         //respond to clicks
