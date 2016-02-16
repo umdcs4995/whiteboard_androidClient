@@ -5,7 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -14,14 +14,22 @@ import android.widget.Toast;
 
 import java.util.UUID;
 
+/**
+ * Sets up the buttons for a drawing canvas, including click events.
+ */
 
-public class Drawing extends ActionBarActivity implements OnClickListener {
+public class Drawing extends AppCompatActivity implements OnClickListener {
 
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
 
     private float smallBrush, mediumBrush, largeBrush;
 
+    /**
+     * Links the buttons from the activity_master_whiteboard_add when this method
+     * is created.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +59,11 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
         drawView.setBrushSize(mediumBrush);
     }
 
+    /**
+     * Sets a the brush to the input view's corresponding color if it isn't the currently
+     * selected color.
+     * @param view
+     */
     public void paintClicked(View view) {
         drawView.setErase(false);
         drawView.setBrushSize(drawView.getLastBrushSize());
@@ -65,11 +78,20 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
 
     }
 
+    /**
+     * Responds to a user clicking on the following buttons:
+     *  - draw_btn
+     *  - erase_btn
+     *  - new_btn
+     *  - save_btn
+     * @param view
+     */
     @Override
     public void onClick(View view){
-        //respond to clicks
+        // respond to clicks
         if (view.getId()==R.id.draw_btn){
-            //draw button clicked
+            // draw button clicked
+            // setup a dialog with the different brush sizes
             final Dialog brushDialog = new Dialog(this);
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
@@ -107,11 +129,13 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
                 }
             });
 
+            // display the dialog with the different brush sizes
             brushDialog.show();
         }
 
         else if(view.getId()==R.id.erase_btn){
-            //switch to erase - choose size
+            // erase button clicked
+            // switch to erase & create dialog to choose eraser size
             final Dialog brushDialog = new Dialog(this);
             brushDialog.setTitle("Eraser size:");
             brushDialog.setContentView(R.layout.brush_chooser);
@@ -144,11 +168,13 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
                 }
             });
 
+            // show that dialog
             brushDialog.show();
         }
 
         else if(view.getId()==R.id.new_btn){
-            //new button
+            // new button pressed
+            // create and display confirmation dialog
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("New drawing");
             newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
@@ -167,13 +193,14 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
         }
 
         else if(view.getId()==R.id.save_btn){
-            //save drawing
+            // save drawing button clicked
+            // create dialog to confirm that the user wants to save the drawing
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle("Save drawing");
             saveDialog.setMessage("Save drawing to device Gallery?");
             saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
-                    //save drawing
+                    // save drawing to the gallery with a default name
                     drawView.setDrawingCacheEnabled(true);
                     String imgSaved = MediaStore.Images.Media.insertImage(
                             getContentResolver(), drawView.getDrawingCache(),
@@ -196,6 +223,7 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
                     dialog.cancel();
                 }
             });
+            // display that dialog
             saveDialog.show();
         }
     }
