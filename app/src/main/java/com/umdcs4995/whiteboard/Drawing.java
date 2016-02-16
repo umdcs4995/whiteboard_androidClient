@@ -26,9 +26,15 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
     private float smallBrush, mediumBrush, largeBrush;
 
     /**
+<<<<<<< HEAD
+     * Creates the drawing board and initializes the draw, erase, save, and new buttons
+     * also chooses the sizes for the paint brushes
+     * @param savedInstanceState used for the super onCreate()
+=======
      * Links the buttons from the activity_master_whiteboard_add when this method
      * is created.
      * @param savedInstanceState
+>>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +58,22 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
-        smallBrush = getResources().getInteger(R.integer.small_size);
-        mediumBrush = getResources().getInteger(R.integer.medium_size);
-        largeBrush = getResources().getInteger(R.integer.large_size);
+        smallBrush = 5;
+        mediumBrush = 10;
+        largeBrush = 15;
 
-        drawView.setBrushSize(mediumBrush);
+        drawView.setBrushSize(smallBrush);
     }
 
     /**
+<<<<<<< HEAD
+     * sets the current paint when a paint is selected
+     * @param view the view that is clicked to determine which color to change to.
+=======
      * Sets a the brush to the input view's corresponding color if it isn't the currently
      * selected color.
      * @param view
+>>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
      */
     public void paintClicked(View view) {
         drawView.setErase(false);
@@ -79,12 +90,17 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
     }
 
     /**
+<<<<<<< HEAD
+     * responds to clicks on the white board
+     * @param view the view that the click is from
+=======
      * Responds to a user clicking on the following buttons:
      *  - draw_btn
      *  - erase_btn
      *  - new_btn
      *  - save_btn
      * @param view
+>>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
      */
     @Override
     public void onClick(View view){
