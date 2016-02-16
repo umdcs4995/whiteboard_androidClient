@@ -15,6 +15,9 @@ import android.widget.Toast;
 import java.util.UUID;
 
 /**
+ * CURRENTLY NOT USED: MasterWhiteboardAddActivity has the same functionality.
+ * TODO: Get rid of this class when it is no longer needed as a reference.
+ *
  * Sets up the buttons for a drawing canvas, including click events.
  */
 
@@ -26,15 +29,9 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
     private float smallBrush, mediumBrush, largeBrush;
 
     /**
-<<<<<<< HEAD
      * Creates the drawing board and initializes the draw, erase, save, and new buttons
      * also chooses the sizes for the paint brushes
      * @param savedInstanceState used for the super onCreate()
-=======
-     * Links the buttons from the activity_master_whiteboard_add when this method
-     * is created.
-     * @param savedInstanceState
->>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +63,9 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
     }
 
     /**
-<<<<<<< HEAD
-     * sets the current paint when a paint is selected
+     * Sets a the brush color when a paint color is selected to the input view's
+     * corresponding color if it isn't the currently selected color.
      * @param view the view that is clicked to determine which color to change to.
-=======
-     * Sets a the brush to the input view's corresponding color if it isn't the currently
-     * selected color.
-     * @param view
->>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
      */
     public void paintClicked(View view) {
         drawView.setErase(false);
@@ -90,17 +82,12 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
     }
 
     /**
-<<<<<<< HEAD
-     * responds to clicks on the white board
-     * @param view the view that the click is from
-=======
-     * Responds to a user clicking on the following buttons:
+     * Responds to clicks of the following buttons on the whiteboard:
      *  - draw_btn
      *  - erase_btn
      *  - new_btn
      *  - save_btn
-     * @param view
->>>>>>> bad9e88a8733976f27050da3d7ead4e7082fab93
+     * @param view the view that the click is from
      */
     @Override
     public void onClick(View view){
@@ -214,19 +201,18 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle("Save drawing");
             saveDialog.setMessage("Save drawing to device Gallery?");
-            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
+            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
                     // save drawing to the gallery with a default name
                     drawView.setDrawingCacheEnabled(true);
                     String imgSaved = MediaStore.Images.Media.insertImage(
                             getContentResolver(), drawView.getDrawingCache(),
-                            UUID.randomUUID().toString()+".png", "drawing");
-                    if(imgSaved!=null){
+                            UUID.randomUUID().toString() + ".png", "drawing");
+                    if (imgSaved != null) {
                         Toast savedToast = Toast.makeText(getApplicationContext(),
                                 "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
                         savedToast.show();
-                    }
-                    else{
+                    } else {
                         Toast unsavedToast = Toast.makeText(getApplicationContext(),
                                 "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
                         unsavedToast.show();

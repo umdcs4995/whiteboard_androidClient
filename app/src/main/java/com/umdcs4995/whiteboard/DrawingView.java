@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by Drax on 2/4/16.
+ * Creates a drawing on a canvas using user input.
  */
 public class DrawingView extends View{
     //drawing path
@@ -35,9 +35,14 @@ public class DrawingView extends View{
     }
 
 
+<<<<<<< HEAD
 
     /**
      * initialize the drawing board and default brush size
+=======
+    /**
+     * Initializes the drawing canvas.
+>>>>>>> ab1d47aebb6c39c1357e377cb8d1167d63b6decd
      */
     public void setupDrawing(){
         brushSize = 5;
@@ -54,9 +59,16 @@ public class DrawingView extends View{
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+<<<<<<< HEAD
     /**
      * creates the draw path when drawing
      * @param canvas drawing surface
+=======
+
+    /**
+     * Draws the drawing onto the given canvas.
+     * @param canvas
+>>>>>>> ab1d47aebb6c39c1357e377cb8d1167d63b6decd
      */
     @Override
     protected void onDraw(Canvas canvas) {
@@ -66,8 +78,15 @@ public class DrawingView extends View{
     }
 
     /**
+<<<<<<< HEAD
      * Detects touch and initiates the onDraw() method
      * @param event the motion
+=======
+     * Responds to touch events given by the user in order to draw lines (paths)
+     * onto the canvas. A path is created by touching a point on the canvas (ACTION_DOWN),
+     * moving around (ACTION_MOVE), then lifting the finger (ACTION_UP).
+     * @param event
+>>>>>>> ab1d47aebb6c39c1357e377cb8d1167d63b6decd
      * @return
      */
     @Override
@@ -99,12 +118,22 @@ public class DrawingView extends View{
         return true;
     }
 
+<<<<<<< HEAD
     /**
      *
      * @param w width
      * @param h height
      * @param oldw previous width
      * @param oldh prevoius height
+=======
+
+    /**
+     * This is used to deal with a user rotating the screen.
+     * @param w
+     * @param h
+     * @param oldw
+     * @param oldh
+>>>>>>> ab1d47aebb6c39c1357e377cb8d1167d63b6decd
      */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -150,7 +179,11 @@ public class DrawingView extends View{
     }
 
     /**
+<<<<<<< HEAD
      * creates a new draw canvas
+=======
+     * Resets the canvas to be blank.
+>>>>>>> ab1d47aebb6c39c1357e377cb8d1167d63b6decd
      */
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
