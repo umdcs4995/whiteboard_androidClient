@@ -9,8 +9,15 @@ import android.view.View;
 
 import xmpp_client.XMPP;
 
+/**
+ * Activity for handling the XMPP connection to the Openfire server.
+ */
+
 public class ConnectionActivity extends AppCompatActivity {
 
+    /**
+     * The class housing all XMPP functionality.
+     */
     private XMPP xm;
 
     @Override
@@ -29,6 +36,9 @@ public class ConnectionActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * @param "45.55.183.45" a String representation of the server address.
+         */
         xm = new XMPP("45.55.183.45", "hcc", "adminpassword");
         xm.connect();
     }
