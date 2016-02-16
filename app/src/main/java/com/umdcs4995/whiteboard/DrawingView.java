@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by Drax on 2/4/16.
+ * Creates a drawing on a canvas using user input.
  */
 public class DrawingView extends View{
     //drawing path
@@ -34,6 +34,9 @@ public class DrawingView extends View{
 
     private float brushSize, lastBrushSize;
 
+    /**
+     * Initializes the drawing canvas.
+     */
     public void setupDrawing(){
         brushSize = getResources().getInteger(R.integer.medium_size);
         lastBrushSize = brushSize;
@@ -50,6 +53,10 @@ public class DrawingView extends View{
     }
 
 
+    /**
+     * Draws the drawing onto the given canvas.
+     * @param canvas
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         //draw view
@@ -57,6 +64,13 @@ public class DrawingView extends View{
         canvas.drawPath(drawPath, drawPaint);
     }
 
+    /**
+     * Responds to touch events given by the user in order to draw lines (paths)
+     * onto the canvas. A path is created by touching a point on the canvas (ACTION_DOWN),
+     * moving around (ACTION_MOVE), then lifting the finger (ACTION_UP).
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //detect user touch
@@ -87,7 +101,13 @@ public class DrawingView extends View{
     }
 
 
-
+    /**
+     * This is used to deal with a user rotating the screen.
+     * @param w
+     * @param h
+     * @param oldw
+     * @param oldh
+     */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
@@ -96,6 +116,7 @@ public class DrawingView extends View{
         drawCanvas = new Canvas(canvasBitmap);
 
     }
+
 
     public void setColor(String newColor){
         //set color
@@ -129,6 +150,9 @@ public class DrawingView extends View{
         }
     }
 
+    /**
+     * Resets the canvas to be blank.
+     */
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
