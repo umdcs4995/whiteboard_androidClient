@@ -22,6 +22,11 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
 
     private float smallBrush, mediumBrush, largeBrush;
 
+    /**
+     * Creates the drawing board and initializes the draw, erase, save, and new buttons
+     * also chooses the sizes for the paint brushes
+     * @param savedInstanceState used for the super onCreate()
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,13 +49,17 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
-        smallBrush = getResources().getInteger(R.integer.small_size);
-        mediumBrush = getResources().getInteger(R.integer.medium_size);
-        largeBrush = getResources().getInteger(R.integer.large_size);
+        smallBrush = 5;
+        mediumBrush = 10;
+        largeBrush = 15;
 
-        drawView.setBrushSize(mediumBrush);
+        drawView.setBrushSize(smallBrush);
     }
 
+    /**
+     * sets the current paint when a paint is selected
+     * @param view the view that is clicked to determine which color to change to.
+     */
     public void paintClicked(View view) {
         drawView.setErase(false);
         drawView.setBrushSize(drawView.getLastBrushSize());
@@ -65,6 +74,10 @@ public class Drawing extends ActionBarActivity implements OnClickListener {
 
     }
 
+    /**
+     * responds to clicks on the white board
+     * @param view the view that the click is from
+     */
     @Override
     public void onClick(View view){
         //respond to clicks
