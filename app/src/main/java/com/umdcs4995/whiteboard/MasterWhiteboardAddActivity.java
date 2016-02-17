@@ -64,8 +64,11 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
         drawView.setBrushSize(mediumBrush);
 
-        //Create the toolbar instance here.  The toolbar is the thing at the top with the name
-        //and overflow menu.  Sets the title.
+        /**
+         * TODO: Create the toolbar instance here.
+         * The toolbar is at the top with the name and overflow menu.
+         */
+
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        if(getSupportActionBar() != null) { //Set the title.
@@ -73,7 +76,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 //        }
 
 
-        //Floating Action button stuff listed below.
+        //Floating Action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addFab);
         fab.setOnClickListener(new View.OnClickListener() {
             //Set the listener for when the button is pressed
@@ -83,8 +86,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                 finish();
             }
         });
-
-        //Camera stuff below.
 
 
         //Check for camera permission
@@ -97,7 +98,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                     new String[]{Manifest.permission.CAMERA},
                     AppConstants.PERMISSION_CAMERA);
         } else {
-            //Request already granted, so just do the camera stuff.
+            //Request already granted, continue
             goGoCamera();
         }
 
@@ -127,7 +128,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      * This method is called when the user clicks "Grant" or "Deny" for any permission.
      * For this activity, that should only be a camera request.  None-the-less, to extend this
      * code, set a constant in the AppConstants class and then add another if statement for
-     * the new request code.  This is only neccessary in Android 6.0+
+     * the new request code.  This is only necessary in Android 6.0+
      * @param requestCode
      * @param permissions
      * @param grantResults
