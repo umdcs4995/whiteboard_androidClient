@@ -46,8 +46,7 @@ id='pub1'>
 
 This is an IQ stanza, meaning a call that involves a server resource. All this does is publishes an event that to a node on the server that says Client2 has queued up. This event will be delivered to all the clients (in this case Client1 will get it). Client1's app will receive this message:
 
-```
-```
+```xml
 <stream:stream
   to= “whiteboard.com”
   xmlns="jabber:client"
@@ -65,7 +64,7 @@ This is an IQ stanza, meaning a call that involves a server resource. All this d
     </event>
     </message>
     </stream:stream>
-```xml
+```
 
 From here, the parser from the SmackAPI will parse this information and the listeners connected to that parser that will activate a signal on Client 1’s app saying Client has queued.
 
