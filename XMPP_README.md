@@ -27,21 +27,21 @@ Imagine a setup of two clients and a server. The clients will be running our “
 
 ```xml
 <stream:stream
-to= “whiteboard.com”
-xmlns="jabber:client"
-xmlns:stream="http://etherx.jabber.org/streams">
-<iq type='set'
-from='client2@whiteboard.com'
-to='pubsub.whiteboard'
-id='pub1'>
-  <pubsub xmlns='http://jabber.org/protocol/pubsub'>
-    <publish node='drawingSession1054'>
-      <queue> Client2 </queue>
+  to= “whiteboard.com”
+  xmlns="jabber:client"
+  xmlns:stream="http://etherx.jabber.org/streams">
+  <iq type='set'
+    from='client2@whiteboard.com'
+    to='pubsub.whiteboard'
+    id='pub1'>
+    <pubsub xmlns='http://jabber.org/protocol/pubsub'>
+      <publish node='drawingSession1054'>
+        <queue> Client2 </queue>
         <timestamp > time </timestamp>
-    </publish>
-  </pubsub>
-    </iq>
-    </stream:stream>
+      </publish>
+    </pubsub>
+  </iq>
+</stream:stream>
 ```
 
 This is an IQ stanza, meaning a call that involves a server resource. All this does is publishes an event that to a node on the server that says Client2 has queued up. This event will be delivered to all the clients (in this case Client1 will get it). Client1's app will receive this message:
@@ -62,12 +62,13 @@ This is an IQ stanza, meaning a call that involves a server resource. All this d
         </item>
       </items>
     </event>
-    </message>
-    </stream:stream>
+  </message>
+</stream:stream>
 ```
 
 From here, the parser from the SmackAPI will parse this information and the listeners connected to that parser that will activate a signal on Client 1’s app saying Client has queued.
 
+###Actions/Signals that Require Custom Content
 Keep this section as an open forum for various things that will need to be handled using custom packet fields. *Please feel free to edit this and add your suggestions.*
 * Signaling queues.
 * The arrival or departure of a member.
