@@ -129,7 +129,10 @@ public class DrawingView extends View{
         drawPaint.setColor(paintColor);
     }
 
-
+    /**
+     * Changes the size of the "brush" being used.
+     * @param newSize
+     */
     public void setBrushSize(float newSize){
         //update size
         float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
@@ -138,13 +141,27 @@ public class DrawingView extends View{
         drawPaint.setStrokeWidth(brushSize);
     }
 
+    /**
+     * Sets the "brush" size to the last known brush size (when changing colors).
+     * @param lastSize
+     */
     public void setLastBrushSize(float lastSize){
         lastBrushSize=lastSize;
     }
+
+    /**
+     * Gets the last known "brush" size (for changing colors).
+     * @return
+     */
     public float getLastBrushSize(){
         return lastBrushSize;
     }
 
+    /**
+     * Checks if the user is using the eraser.
+     * If so it "paints" in white, otherwise it used the previous color.
+     * @param isErase
+     */
     public void setErase(boolean isErase){
         //set erase true or false
         if(isErase) {
@@ -156,7 +173,7 @@ public class DrawingView extends View{
     }
 
     /**
-     * creates a new draw canvas
+     * Creates a new draw canvas.
      * Resets the canvas to be blank.
      */
     public void startNew(){
