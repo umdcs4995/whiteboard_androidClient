@@ -1,5 +1,5 @@
-XMPP Protocol
-=============
+###XMPP Protocol
+
 
 The XMPP protocol is a communcation protocol built around messaging between two enitites using XML forms. An XMPP transmission starts with a *stream*. A stream encapsulstaes everything inside the transmissions, like stanzas. *Stanzas*, or *Packets* in the SmackAPI, are the content of the transmissions. There are three core types: *message*, *iq*, and *presence*. Message handles string meessages, content, payloads, etc. IQ handles all set or get calls to the server. Presence handles meta information about a members presence in the meeting. These do not limit the scope of XMPP because of the provider architecture in Smack giving us the ability to create custom packets and namespace. But the danger of that is that any client that can't understand that custom packet/namespace will treat it as whitespace thus isolating that client from the real "messages". This extended cotent can either take on the form of a packet or can appear as a child of one of the core packets (message,iq,presence). In typical fashion, on the protocol side, you'll just need varying namespace names in the xml form. An example of this could be:
 
