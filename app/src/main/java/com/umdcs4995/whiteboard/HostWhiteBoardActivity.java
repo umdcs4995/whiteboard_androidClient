@@ -18,9 +18,17 @@ import android.widget.Toast;
 import uiFragments.AboutDialogFragment;
 import uiFragments.NotYetImplementedToast;
 
+/*
+ ** Creates the private notes whiteboard view.
+ */
 public class HostWhiteBoardActivity extends AppCompatActivity {
 
     @Override
+    /*
+     * Creates the view for a private notes screen. When the user clicks the write button, they are
+     * alerted that they were 'called upon' and sent to the whiteboard to draw.
+     * TODO: make it so they arent instantly teleported to the whiteboard when called on
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_white_board);
@@ -63,7 +71,7 @@ public class HostWhiteBoardActivity extends AppCompatActivity {
     }
 
     /**
-     * This method handles menu item presses.  It implements a case-switch system against the ID
+     * Handles menu item presses.  Implements a case-switch system against the ID
      * for the MenuItem pressed.
      */
     public boolean onOptionsItemSelected(MenuItem item) {
