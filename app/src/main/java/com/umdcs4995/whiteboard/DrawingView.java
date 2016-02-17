@@ -33,7 +33,7 @@ public class DrawingView extends View{
         super(con, att);
         setupDrawing();
     }
-    
+
     /**
      * Initializes the drawing canvas.
      */
