@@ -15,6 +15,10 @@ import xmpp_client.XMPP;
  */
 public class IntroActivity extends AppCompatActivity {
 
+    /**
+     * Executes when the page is created.
+     * @param savedInstanceState: The state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +37,13 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     /**
-     * This method executes when the New White Board Acticity button is pressed.  It is linked to
+     * Executes when the New White Board Acticity button is pressed.  It is linked to
      * the button in the XML file.  Notice how android:onClick="onClickButtonNew" is a parameter
      * for the button in the XML.  Android allows linking buttons in that way, which avoids the
      * extra code final Button b = ..., b.setOnClickListener(...
      *
      * Starts a new HostWhiteBoardActivity.
+     * @param view
      */
     public void onClickButtonNew(View view) {
         Intent in = new Intent(this, HostWhiteBoardActivity.class);
@@ -46,7 +51,7 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     /**
-     * Method executed when the Join Whiteboard button is clicked.
+     * Executed when the Join Whiteboard button is clicked.
      * @param view
      */
     public void onClickButtonJoin(View view) {
@@ -54,7 +59,7 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     /**
-     * Method executed when the Load Whiteboard button is clicked.
+     * Executed when the Load Whiteboard button is clicked.
      * @param view
      */
     public void onClickButtonLoad(View view) {
