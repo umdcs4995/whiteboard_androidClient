@@ -7,7 +7,6 @@ import android.view.View;
 
 import uiFragments.AboutDialogFragment;
 import uiFragments.NotYetImplementedToast;
-import xmpp_client.XMPP;
 
 /**
  * Activity for handling the introduction screen for the app.  It contains the buttons for launching
@@ -97,6 +96,11 @@ public class IntroActivity extends AppCompatActivity {
      */
     public void onClickButtonXMPP(View view) {
         Intent in = new Intent(this, ConnectionActivity.class);
+        startActivity(in);
+    }
+
+    public void onClickButtonLogin(View view) {
+        Intent in = new Intent(this, LoginActivity.class);
         startActivity(in);
     }
 }
