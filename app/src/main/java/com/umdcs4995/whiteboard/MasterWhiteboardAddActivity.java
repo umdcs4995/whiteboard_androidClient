@@ -145,11 +145,18 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
 
     /**
+     * Downloads contents from provided url and displays it as the background for the current view
+     *
      * Created by Tristan on 2/20/2016.
      */
     class DownloadFromURLTask  extends AsyncTask<URL, Integer, Drawable>{
 
         @Override
+        /**
+         * All asynctasks need at least one of their methods overriden. This function is where the main
+         * meat of the method you want to execute will go. The result is then fed to onPostExecute
+         * So you can do whatever operations you need to on the returned object.
+         */
         protected Drawable doInBackground(URL... params) {
             try {
                 InputStream curInputStream = (InputStream) params[0].getContent();
@@ -164,6 +171,10 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                 return null;
             }
         }
+        /**
+         * Executes after doInBackground. Draws image to the screen as the background of the view.
+         *
+         */
         @Override
         protected void onPostExecute(Drawable result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
