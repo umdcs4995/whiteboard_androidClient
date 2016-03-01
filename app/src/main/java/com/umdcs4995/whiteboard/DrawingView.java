@@ -180,4 +180,10 @@ public class DrawingView extends View{
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
     }
+    /**
+     * Returns the canvas being used by this view
+     */
+    public Canvas getDrawCanvas() {
+        return drawCanvas;
+    }
 }

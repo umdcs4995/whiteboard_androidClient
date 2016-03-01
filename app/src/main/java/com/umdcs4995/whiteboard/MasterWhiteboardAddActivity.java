@@ -5,18 +5,26 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 
 /**
@@ -28,6 +36,15 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
+
+    //TM:
+    // Test button that will load an image from a url
+    private Button loadImageBtn;
+    private static final String TAG = MasterWhiteboardAddActivity.class.getSimpleName();
+    //Test link to a connect the dots. good measure for it "working" would be to be
+    //able to accurately draw over the dots.
+    private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
+    //end TM
 
     private float smallBrush, mediumBrush, largeBrush;
 
@@ -100,8 +117,78 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             //Request already granted, so just do the camera stuff.
             goGoCamera();
         }
+        //TM
+        //This part (so far) is just Android 101 setting up a button
+        loadImageBtn = (Button) findViewById(R.id.loadImageBtn);
+        loadImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //click button code here
+                //goal is to get a drawable object and then draw it to canvas put in just the right
+                //layer
+                Log.i(TAG, "did click the button");
+
+                URL tempURL = null;
+                try {
+                    tempURL = new URL(testURL);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                new DownloadFromURLTask().execute(tempURL);
+
+            }
+        });
+
+        //endTM
 
     }
+
+
+    /**
+     * Downloads contents from provided url and displays it as the background for the current view
+     *
+     * Created by Tristan on 2/20/2016.
+     */
+    class DownloadFromURLTask  extends AsyncTask<URL, Integer, Drawable>{
+
+        @Override
+        /**
+         * All asynctasks need at least one of their methods overriden. This function is where the main
+         * meat of the method you want to execute will go. The result is then fed to onPostExecute
+         * So you can do whatever operations you need to on the returned object.
+         */
+        protected Drawable doInBackground(URL... params) {
+            try {
+                InputStream curInputStream = (InputStream) params[0].getContent();
+                //According to stack overflow, the src name portion is just a relic and really doesn't
+                //do anything but don't forget to include it!
+                Drawable targetDraw;
+                targetDraw= Drawable.createFromStream(curInputStream, "src name");
+                return targetDraw;
+
+            } catch(Exception e) {
+                Log.i("Downloadfromurl", e.getMessage());
+                return null;
+            }
+        }
+        /**
+         * Executes after doInBackground. Draws image to the screen as the background of the view.
+         *
+         */
+        @Override
+        protected void onPostExecute(Drawable result) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                drawView.setBackground(result);
+            }
+
+        }
+    }
+
+
+
+
+
+
 
     /**
      * Sets a the brush color when a paint color is selected to the input view's
@@ -149,9 +236,8 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
     }
 
-
     /**
-     * This method sets up the camera window.
+     * Sets up the camera window.
      */
     private void goGoCamera() {
 
@@ -171,6 +257,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public void onClick(View view) {
+        Log.i(MasterWhiteboardAddActivity.class.getSimpleName(), "OMG just let me log something");
         //respond to clicks
         if (view.getId() == R.id.draw_btn) {
             //draw button clicked

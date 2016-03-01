@@ -32,7 +32,9 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/frameLayout2"
-            android:layout_toStartOf="@+id/frameLayout2" />
+            android:layout_toStartOf="@+id/frameLayout2" >
+
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -236,6 +238,17 @@
 
             </LinearLayout>
         </FrameLayout>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LoadImage"
+            android:id="@+id/loadImageBtn"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_alignBottom="@+id/drawing"
+            android:layout_alignRight="@+id/frameLayout2"
+            android:layout_alignEnd="@+id/frameLayout2" />
 
 
     </RelativeLayout>

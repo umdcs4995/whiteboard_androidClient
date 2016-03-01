@@ -3,15 +3,20 @@ package com.umdcs4995.whiteboard;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.UUID;
 
 /**
@@ -60,7 +65,11 @@ public class Drawing extends AppCompatActivity implements OnClickListener {
         largeBrush = 15;
 
         drawView.setBrushSize(smallBrush);
+
+
+
     }
+
 
     /**
      * Sets a the brush color when a paint color is selected to the input view's
