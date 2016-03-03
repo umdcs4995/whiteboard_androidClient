@@ -36,13 +36,27 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
         this.context = context;
         this.cameraAvailable = checkCameraAvailability(context);
         if(cameraAvailable) {
-            if(Camera.getNumberOfCameras() > 1) camera = Camera.open(1);
-            else camera = Camera.open();
+            try {
+                if (Camera.getNumberOfCameras() > 1) {
+                    camera = Camera.open(1);
+                } else {
+                    camera = Camera.open();
+                }
+            }catch (Exception e){
+                if(camera == null){
+                    // do nothing
+                }
+                else{
+                    // Stop the camera and release it to the system
+                    camera.stopPreview();
+                    camera.release();
+                }
+
+            }
         } else {
             camera = null;
         }
 
-        //========= I Dont Know What This Does Exactly, but it works ======
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         surfaceHolder = getHolder();
@@ -71,6 +85,7 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (Exception e) {
+            //the camera is not available (in use or does not exist)
             camera.stopPreview();
             camera.release();
             new ErrorToast(context, "Exception in CameraWB::surfaceCreated(..)");
@@ -146,7 +161,7 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
 
     //Method here rotates the camera based on the rotation of the screen.
     public void setCameraOritentation(int degrees) {
-        if(camera != null) camera.setDisplayOrientation(degrees);
-        else return;
+        if(camera != null) {camera.setDisplayOrientation(degrees);}
+        else {return;}
     }
 }
