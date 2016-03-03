@@ -137,6 +137,7 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
             camera.startPreview();
 
         } catch (Exception e){
+            //if an exception is thrown then stop the camera and release the camera back to the system
             camera.stopPreview();
             camera.release();
             new ErrorToast(context, "Exception in CameraWb::surfaceChanged(..)");

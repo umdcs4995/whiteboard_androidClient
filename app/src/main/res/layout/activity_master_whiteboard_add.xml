@@ -17,6 +17,10 @@
         android:background="#FFFFFF"
         android:backgroundTint="@color/whiteboardOrange">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <com.umdcs4995.whiteboard.DrawingView
             android:id="@+id/drawing"
             android:layout_width="wrap_content"
@@ -43,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:id="@+id/optionButtons">
+            android:id="@+id/frameLayout">
 
 
             <LinearLayout
@@ -51,10 +55,10 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:id="@+id/linearLayout"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:touchscreenBlocksFocus="false">
+                android:touchscreenBlocksFocus="false"
+                android:id="@+id/optionButtons">
 
                 <ImageButton
                     android:id="@+id/new_btn"
@@ -94,35 +98,37 @@
 
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:id="@+id/paintOptions"
-                android:layout_marginTop="2dp">
-                <!-- Color Row -->
-
-            </LinearLayout>
-        </FrameLayout>
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LoadImage"
-            android:id="@+id/loadImageBtn"
-            android:layout_gravity="center_horizontal|bottom"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:id="@+id/paintOptions"
+            android:layout_marginTop="2dp">
+
+
+        </LinearLayout>
+        </FrameLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:backgroundTint="@color/whiteboardOrange"
+            android:src="@android:drawable/ic_menu_save"
             android:layout_alignBottom="@+id/drawing"
-            android:layout_centerHorizontal="true" />
+            android:layout_alignRight="@+id/drawing"
+            android:layout_alignEnd="@+id/drawing" />
 
         <LinearLayout
             android:id="@+id/paint_colors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@+id/optionButtons"
+            android:layout_below="@+id/frameLayout"
             android:layout_alignRight="@+id/drawing"
             android:layout_alignEnd="@+id/drawing">
+            <!-- Color Row -->
             <ImageButton
                 android:layout_width="@dimen/large_brush"
                 android:layout_height="@dimen/large_brush"
@@ -244,16 +250,17 @@
                 android:tag="#FF000000" />
         </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addFab"
+        <Button
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            app:backgroundTint="@color/whiteboardOrange"
-            android:src="@android:drawable/ic_menu_save"
-            android:layout_alignBottom="@+id/drawing"
-            android:layout_alignRight="@+id/drawing"
-            android:layout_alignEnd="@+id/drawing" />
+            android:text="LoadImage"
+            android:id="@+id/loadImageBtn"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
 
 
     </RelativeLayout>

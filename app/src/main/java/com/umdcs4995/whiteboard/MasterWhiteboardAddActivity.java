@@ -13,8 +13,11 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -32,7 +35,8 @@ import java.util.UUID;
  * status bar and navigation/system bar) with user interaction.
  * Also contains a drawing canvas.
  */
-public class MasterWhiteboardAddActivity extends AppCompatActivity implements View.OnClickListener {
+public class MasterWhiteboardAddActivity extends AppCompatActivity implements View.OnClickListener, GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
 
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
@@ -46,7 +50,14 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
     //end TM
 
+    //brush sizes
     private float smallBrush, mediumBrush, largeBrush;
+
+    //option menus for the buttons and paints
+    private LinearLayout optionButtons, paintOptions;
+
+    //gesture detector for swip menues
+    private GestureDetectorCompat mDetector;
 
     /**
      * Creates the floating action button, the drawing board, and initializes
@@ -57,6 +68,19 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_whiteboard_add);
 
+        // Instantiate the gesture detector with the
+        // application context and an implementation of
+        // GestureDetector.OnGestureListener
+        mDetector = new GestureDetectorCompat(this,this);
+        // Set the gesture detector as the double tap
+        // listener.
+        mDetector.setOnDoubleTapListener(this);
+
+        //Frames to hold the buttons
+        optionButtons = (LinearLayout) findViewById(R.id.optionButtons);
+        paintOptions = (LinearLayout) findViewById(R.id.paint_colors);
+
+        //Drawing view and Buttons
         drawView = (DrawingView)findViewById(R.id.drawing);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
 
@@ -75,19 +99,15 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
+        //set the size of the brushes
+            //small = 5dp
+            //medium = 10dp
+            //large = 15dp
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
 
-        drawView.setBrushSize(mediumBrush);
-
-        //Create the toolbar instance here.  The toolbar is the thing at the top with the name
-        //and overflow menu.  Sets the title.
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        if(getSupportActionBar() != null) { //Set the title.
-//            getSupportActionBar().setTitle("Whiteboard");
-//        }
+        drawView.setBrushSize(smallBrush);
 
 
         //Floating Action button stuff listed below.
@@ -143,6 +163,19 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
     }
 
+    /**
+     * calls on the gesture motion detection to be used when the application is touched
+     * @param event the touch event happening
+     * @return if the touch was handled
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        this.mDetector.onTouchEvent(event);
+        // Be sure to call the superclass implementation
+        return super.onTouchEvent(event);
+    }
+
+
 
     /**
      * Downloads contents from provided url and displays it as the background for the current view
@@ -183,11 +216,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
         }
     }
-
-
-
-
-
 
 
     /**
@@ -257,7 +285,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public void onClick(View view) {
-        Log.i(MasterWhiteboardAddActivity.class.getSimpleName(), "OMG just let me log something");
         //respond to clicks
         if (view.getId() == R.id.draw_btn) {
             //draw button clicked
@@ -384,4 +411,142 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         }
 
     }
+    /**
+     * Notified when a single-tap occurs.
+     * <p/>
+     * Unlike {@link OnGestureListener#onSingleTapUp(MotionEvent)}, this
+     * will only be called after the detector is confident that the user's
+     * first tap is not followed by a second tap leading to a double-tap
+     * gesture.
+     *
+     * @param e The down motion event of the single-tap.
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+
+    /**
+     * Notified when a double-tap occurs.
+     *
+     * @param e The down motion event of the first tap of the double-tap.
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        return false;
+    }
+
+    /**
+     * Notified when an event within a double-tap gesture occurs, including
+     * the down, move, and up events.
+     *
+     * @param e The motion event that occurred during the double-tap gesture.
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+    /**
+     * Notified when a tap occurs with the down {@link MotionEvent}
+     * that triggered it. This will be triggered immediately for
+     * every down event. All other events should be preceded by this.
+     *
+     * @param e The down motion event.
+     */
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    /**
+     * The user has performed a down {@link MotionEvent} and not performed
+     * a move or up yet. This event is commonly used to provide visual
+     * feedback to the user to let them know that their action has been
+     * recognized i.e. highlight an element.
+     *
+     * @param e The down motion event
+     */
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    /**
+     * Notified when a tap occurs with the up {@link MotionEvent}
+     * that triggered it.
+     *
+     * @param e The up motion event that completed the first tap
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    /**
+     * Notified when a scroll occurs with the initial on down {@link MotionEvent} and the
+     * current move {@link MotionEvent}. The distance in x and y is also supplied for
+     * convenience.
+     *
+     * @param e1        The first down motion event that started the scrolling.
+     * @param e2        The move motion event that triggered the current onScroll.
+     * @param distanceX The distance along the X axis that has been scrolled since the last
+     *                  call to onScroll. This is NOT the distance between {@code e1}
+     *                  and {@code e2}.
+     * @param distanceY The distance along the Y axis that has been scrolled since the last
+     *                  call to onScroll. This is NOT the distance between {@code e1}
+     *                  and {@code e2}.
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    /**
+     * Notified when a long press occurs with the initial on down {@link MotionEvent}
+     * that trigged it.
+     *
+     * @param e The initial on down motion event that started the longpress.
+     */
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    /**
+     * Notified of a fling event when it occurs with the initial on down {@link MotionEvent}
+     * and the matching up {@link MotionEvent}. The calculated velocity is supplied along
+     * the x and y axis in pixels per second.
+     *
+     * @param e1        The first down motion event that started the fling.
+     * @param e2        The move motion event that triggered the current onFling.
+     * @param velocityX The velocity of this fling measured in pixels per second
+     *                  along the x axis.
+     * @param velocityY The velocity of this fling measured in pixels per second
+     *                  along the y axis.
+     * @return true if the event is consumed, else false
+     */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if(velocityX > 0){
+            //TODO add swipe from Left for contact menu
+
+        }else if(velocityX < 0){
+            if (optionButtons.getVisibility() == View.GONE) {
+                optionButtons.setVisibility(View.VISIBLE);
+                paintOptions.setVisibility(View.VISIBLE);
+            } else {
+                optionButtons.setVisibility(View.GONE);
+                paintOptions.setVisibility(View.GONE);
+            }
+            return true;
+        }
+        return false;
+    }
+
 }
