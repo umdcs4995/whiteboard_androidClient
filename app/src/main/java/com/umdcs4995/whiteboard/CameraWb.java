@@ -71,6 +71,8 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (Exception e) {
+            camera.stopPreview();
+            camera.release();
             new ErrorToast(context, "Exception in CameraWB::surfaceCreated(..)");
         }
     }
@@ -78,6 +80,8 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         // Called when the activity is destroyed.
+        camera.stopPreview();
+        camera.release();
     }
 
 
@@ -133,6 +137,8 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
             camera.startPreview();
 
         } catch (Exception e){
+            camera.stopPreview();
+            camera.release();
             new ErrorToast(context, "Exception in CameraWb::surfaceChanged(..)");
         }
     }
