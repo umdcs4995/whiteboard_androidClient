@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Whiteboard"
-        android:textSize="62sp"
+        android:textSize="50sp"
         android:textStyle="bold"
         android:layout_marginTop="35dp"
         android:layout_centerVertical="false"
@@ -42,7 +42,7 @@
         android:id="@+id/txtWelcome"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="FIXME"
+        android:text="4995 Labratoies"
         android:textSize="28sp"
         android:textColor="#FFFFFF" />
 </RelativeLayout>
