@@ -41,14 +41,13 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn;
 
-    //TM:
+
     // Test button that will load an image from a url
-    private Button loadImageBtn;
     private static final String TAG = MasterWhiteboardAddActivity.class.getSimpleName();
     //Test link to a connect the dots. good measure for it "working" would be to be
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
-    //end TM
+
 
     //brush sizes
     private float smallBrush, mediumBrush, largeBrush;
@@ -71,7 +70,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
-        mDetector = new GestureDetectorCompat(this,this);
+        mDetector = new GestureDetectorCompat(getApplicationContext(),this);
         // Set the gesture detector as the double tap
         // listener.
         mDetector.setOnDoubleTapListener(this);
@@ -460,6 +459,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public boolean onDown(MotionEvent e) {
+        Log.d("Master on Down", "On down motion");
         return false;
     }
 
@@ -534,6 +534,8 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        Log.d("Master Fling", "Fling motion");
+
         if(velocityX > 0){
             //TODO add swipe from Left for contact menu
 
@@ -545,7 +547,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                 optionButtons.setVisibility(View.GONE);
                 paintOptions.setVisibility(View.GONE);
             }
-            return true;
         }
         return false;
     }
