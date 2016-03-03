@@ -39,7 +39,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         GestureDetector.OnDoubleTapListener {
 
     private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn;
 
     //TM:
     // Test button that will load an image from a url
@@ -90,6 +90,9 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
         drawBtn.setOnClickListener(this);
 
+        fileBtn = (ImageButton)findViewById(R.id.addFile);
+        fileBtn.setOnClickListener(this);
+
         eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
 
@@ -137,29 +140,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             //Request already granted, so just do the camera stuff.
             goGoCamera();
         }
-        //TM
-        //This part (so far) is just Android 101 setting up a button
-        loadImageBtn = (Button) findViewById(R.id.loadImageBtn);
-        loadImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //click button code here
-                //goal is to get a drawable object and then draw it to canvas put in just the right
-                //layer
-                Log.i(TAG, "did click the button");
-
-                URL tempURL = null;
-                try {
-                    tempURL = new URL(testURL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                new DownloadFromURLTask().execute(tempURL);
-
-            }
-        });
-
-        //endTM
 
     }
 
@@ -409,8 +389,29 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             });
             saveDialog.show();
         }
+        else if (view.getId() == R.id.addFile){
+            fileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //click button code here
+                    //goal is to get a drawable object and then draw it to canvas put in just the right
+                    //layer
+                    Log.i(TAG, "did click the button");
+
+                    URL tempURL = null;
+                    try {
+                        tempURL = new URL(testURL);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    new DownloadFromURLTask().execute(tempURL);
+
+                }
+        });
+        }
 
     }
+
     /**
      * Notified when a single-tap occurs.
      * <p/>

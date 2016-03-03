@@ -66,7 +66,12 @@
                     android:layout_height="fill_parent"
                     android:contentDescription="@string/start_new"
                     android:src="@drawable/new_page" />
-
+                <ImageButton
+                    android:id="@+id/addFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/picture"
+                    android:src="@drawable/addfile" />
                 <ImageButton
                     android:id="@+id/draw_btn"
                     android:layout_width="wrap_content"
@@ -111,6 +116,7 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addFab"
+            android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -250,15 +256,6 @@
                 android:tag="#FF000000" />
         </LinearLayout>
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LoadImage"
-            android:id="@+id/loadImageBtn"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 
