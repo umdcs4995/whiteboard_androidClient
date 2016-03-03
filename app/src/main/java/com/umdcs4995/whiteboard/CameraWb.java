@@ -83,23 +83,31 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             camera.setPreviewDisplay(holder);
-            camera.startPreview();
-        } catch (Exception e) {
+            camera.startPreview();          // may throw IOException
+        } catch (IOException e) {
             //the camera is not available (in use or does not exist)
-            camera.stopPreview();
-            camera.release();
             new ErrorToast(context, "Exception in CameraWB::surfaceCreated(..)");
         }
     }
 
-
+    /**
+     * called when the surface is destroyed
+     * @param holder the surface holder that contains the camera view
+     */
     public void surfaceDestroyed(SurfaceHolder holder) {
         // Called when the activity is destroyed.
+
         camera.stopPreview();
         camera.release();
     }
 
-
+    /**
+     * called when the the surface is changed or rotated
+     * @param holder
+     * @param format
+     * @param w
+     * @param h
+     */
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if(!cameraAvailable || camera == null) return; //Camera isn't working / on this device, so bail.
 
