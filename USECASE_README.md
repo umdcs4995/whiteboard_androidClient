@@ -54,4 +54,14 @@ Here is a quick run-through on how the Whiteboard application will work from sta
                 1.  Drawing info stored client-side
                 2.  Pushing to public view
                     a.  board.pushToPublic()
-                    b. 
+                        *  disconnect current public whiteboard from socket
+                        *  attach new whiteboard to socket
+                        *  emit message "User is now public"
+            ii. Public view
+                1.  Register motionevent message
+                    a.  clientSocket.on('motionevent', function(msg)
+                            mainSocket.emit('motionevent', msg);
+                            console.log('motionevent', msg);
+                        });
+                    b.  Store motionevent client-side for replay
+                2.  Add strokes to whiteboard in onTouchEvent()
