@@ -362,7 +362,6 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
      */
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.d("Host on Down", "on down motion");
         return false;
     }
 

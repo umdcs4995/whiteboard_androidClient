@@ -62,6 +62,9 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     //background view
     private RelativeLayout background;
 
+    //Camera Window
+    private FrameLayout cameraWindow;
+
     /**
      * Creates the floating action button, the drawing board, and initializes
      * the draw, erase, save, and new buttons. Also chooses the sizes for the paint brushes.
@@ -201,7 +204,8 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                 goGoCamera();
 
             } else {
-                //Lets do nothing, the camera permission was denied.
+                //The camera permission was denied so hide the field that holds the camera.
+                cameraWindow.setVisibility(View.GONE);
             }
         }
 
@@ -214,8 +218,13 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
         CameraWb cameraWb = new CameraWb(getApplicationContext());
 //        cameraWb.setCameraOritentation(degrees);
-        FrameLayout cameraWindow = (FrameLayout) findViewById(R.id.camera_window);
+        cameraWindow = (FrameLayout) findViewById(R.id.camera_window);
         cameraWindow.addView(cameraWb);
+
+        //If the camera is <b>NULL</b> then hid the field that holds the camera
+        if(cameraWb == null){
+            cameraWindow.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -423,7 +432,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.d("Master on Down", "On down motion");
         return false;
     }
 
@@ -498,8 +506,6 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        Log.d("Master Fling", "Fling motion");
-
         if(velocityX > 0){
             //TODO add swipe from Left for contact menu
 
