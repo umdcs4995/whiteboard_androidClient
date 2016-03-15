@@ -42,7 +42,13 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
                 } else {
                     camera = Camera.open();
                 }
-            }catch (Exception e){
+            }catch(RuntimeException e) {
+                Log.d("CameraError", "Runtime exception has occurred", e);
+                camera = null;
+            }
+            catch (Exception e){
+                Log.d("Error","Unexpected error has occurred while trying create the camera");
+                Log.getStackTraceString(e);
                 if(camera == null){
                     // do nothing
                 }

@@ -27,11 +27,11 @@
             android:id="@+id/drawing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_centerHorizontal="true"
-            android:background="#FFFFFFFF" />
+            android:background="#FFFFFFFF"
+            android:layout_alignParentBottom="true" />
 
         <FrameLayout
             android:id="@+id/camera_window"

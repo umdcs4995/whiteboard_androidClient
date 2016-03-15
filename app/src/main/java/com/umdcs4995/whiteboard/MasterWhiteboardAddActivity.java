@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -53,7 +52,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     private float smallBrush, mediumBrush, largeBrush;
 
     //option menus for the buttons and paints
-    private LinearLayout optionButtons, paintOptions;
+    private LinearLayout masterOptionButtons, masterPaintOptions;
 
     //gesture detector for swip menues
     private GestureDetectorCompat mDetector;
@@ -76,8 +75,8 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         mDetector.setOnDoubleTapListener(this);
 
         //Frames to hold the buttons
-        optionButtons = (LinearLayout) findViewById(R.id.optionButtons);
-        paintOptions = (LinearLayout) findViewById(R.id.paint_colors);
+        masterOptionButtons = (LinearLayout) findViewById(R.id.optionButtons);
+        masterPaintOptions = (LinearLayout) findViewById(R.id.paint_colors);
 
         //Drawing view and Buttons
         drawView = (DrawingView)findViewById(R.id.drawing);
@@ -540,12 +539,12 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             //TODO add swipe from Left for contact menu
 
         }else if(velocityX < 0){
-            if (optionButtons.getVisibility() == View.GONE) {
-                optionButtons.setVisibility(View.VISIBLE);
-                paintOptions.setVisibility(View.VISIBLE);
+            if (masterOptionButtons.getVisibility() == View.GONE) {
+                masterOptionButtons.setVisibility(View.VISIBLE);
+                masterPaintOptions.setVisibility(View.VISIBLE);
             } else {
-                optionButtons.setVisibility(View.GONE);
-                paintOptions.setVisibility(View.GONE);
+                masterOptionButtons.setVisibility(View.GONE);
+                masterPaintOptions.setVisibility(View.GONE);
             }
         }
         return false;
