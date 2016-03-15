@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -34,7 +35,8 @@ import java.util.UUID;
  * status bar and navigation/system bar) with user interaction.
  * Also contains a drawing canvas.
  */
-public class MasterWhiteboardAddActivity extends AppCompatActivity implements View.OnClickListener, GestureDetector.OnGestureListener,
+public class MasterWhiteboardAddActivity extends AppCompatActivity implements View.OnClickListener,
+        GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
     private DrawingView drawView;
@@ -55,7 +57,10 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     private LinearLayout masterOptionButtons, masterPaintOptions;
 
     //gesture detector for swip menues
-    private GestureDetectorCompat mDetector;
+    private GestureDetectorCompat masterDetector;
+
+    //background view
+    private RelativeLayout background;
 
     /**
      * Creates the floating action button, the drawing board, and initializes
@@ -69,10 +74,12 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
-        mDetector = new GestureDetectorCompat(getApplicationContext(),this);
+        masterDetector = new GestureDetectorCompat(getApplicationContext(),this);
         // Set the gesture detector as the double tap
         // listener.
-        mDetector.setOnDoubleTapListener(this);
+        masterDetector.setOnDoubleTapListener(this);
+
+        background = (RelativeLayout)findViewById(R.id.background);
 
         //Frames to hold the buttons
         masterOptionButtons = (LinearLayout) findViewById(R.id.optionButtons);
@@ -148,51 +155,9 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
      */
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        this.mDetector.onTouchEvent(event);
+        this.masterDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
-    }
-
-
-
-    /**
-     * Downloads contents from provided url and displays it as the background for the current view
-     *
-     * Created by Tristan on 2/20/2016.
-     */
-    class DownloadFromURLTask  extends AsyncTask<URL, Integer, Drawable>{
-
-        @Override
-        /**
-         * All asynctasks need at least one of their methods overriden. This function is where the main
-         * meat of the method you want to execute will go. The result is then fed to onPostExecute
-         * So you can do whatever operations you need to on the returned object.
-         */
-        protected Drawable doInBackground(URL... params) {
-            try {
-                InputStream curInputStream = (InputStream) params[0].getContent();
-                //According to stack overflow, the src name portion is just a relic and really doesn't
-                //do anything but don't forget to include it!
-                Drawable targetDraw;
-                targetDraw= Drawable.createFromStream(curInputStream, "src name");
-                return targetDraw;
-
-            } catch(Exception e) {
-                Log.i("Downloadfromurl", e.getMessage());
-                return null;
-            }
-        }
-        /**
-         * Executes after doInBackground. Draws image to the screen as the background of the view.
-         *
-         */
-        @Override
-        protected void onPostExecute(Drawable result) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                drawView.setBackground(result);
-            }
-
-        }
     }
 
 
@@ -548,6 +513,46 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             }
         }
         return false;
+    }
+
+    /**
+     * Downloads contents from provided url and displays it as the background for the current view
+     *
+     * Created by Tristan on 2/20/2016.
+     */
+    class DownloadFromURLTask  extends AsyncTask<URL, Integer, Drawable>{
+
+        @Override
+        /**
+         * All asynctasks need at least one of their methods overriden. This function is where the main
+         * meat of the method you want to execute will go. The result is then fed to onPostExecute
+         * So you can do whatever operations you need to on the returned object.
+         */
+        protected Drawable doInBackground(URL... params) {
+            try {
+                InputStream curInputStream = (InputStream) params[0].getContent();
+                //According to stack overflow, the src name portion is just a relic and really doesn't
+                //do anything but don't forget to include it!
+                Drawable targetDraw;
+                targetDraw= Drawable.createFromStream(curInputStream, "src name");
+                return targetDraw;
+
+            } catch(Exception e) {
+                Log.i("Downloadfromurl", e.getMessage());
+                return null;
+            }
+        }
+        /**
+         * Executes after doInBackground. Draws image to the screen as the background of the view.
+         *
+         */
+        @Override
+        protected void onPostExecute(Drawable result) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                drawView.setBackground(result);
+            }
+
+        }
     }
 
 }

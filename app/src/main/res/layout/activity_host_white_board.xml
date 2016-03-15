@@ -8,9 +8,9 @@
     tools:context="com.umdcs4995.whiteboard.HostWhiteBoardActivity">
 
     <RelativeLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/background"
         android:background="#FFFFFF"
         android:backgroundTint="@color/whiteboardBrightBlue">
 
