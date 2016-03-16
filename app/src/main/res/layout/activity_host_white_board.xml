@@ -25,7 +25,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:layout_alignParentBottom="true" />
 
 
 
@@ -45,18 +46,18 @@
                 android:src="@drawable/new_page"/>
 
             <ImageButton
-                android:id="@+id/addFile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/picture"
-                android:src="@drawable/addfile" />
-
-            <ImageButton
                 android:id="@+id/draw_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/brush"
                 android:src="@drawable/brush"/>
+
+            <ImageButton
+                android:id="@+id/addFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/picture"
+                android:src="@drawable/addfile" />
 
             <ImageButton
                 android:id="@+id/erase_btn"
@@ -246,10 +247,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/picture"
             android:src="@drawable/drive_save"
-            android:layout_marginTop="32dp"
-            android:layout_below="@+id/optionButtons"
-            android:layout_toRightOf="@+id/textView"
-            android:layout_toEndOf="@+id/textView" />
+            android:layout_alignTop="@+id/paintOptions"
+            android:layout_centerHorizontal="true" />
 
         <ImageButton
             android:id="@+id/load"

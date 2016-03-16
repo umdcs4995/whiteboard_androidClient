@@ -61,18 +61,20 @@
                     android:layout_height="fill_parent"
                     android:contentDescription="@string/start_new"
                     android:src="@drawable/new_page" />
-                <ImageButton
-                    android:id="@+id/addFile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/picture"
-                    android:src="@drawable/addfile" />
+
                 <ImageButton
                     android:id="@+id/draw_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:contentDescription="@string/brush"
                     android:src="@drawable/brush" />
+
+                <ImageButton
+                    android:id="@+id/addFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/picture"
+                    android:src="@drawable/addfile" />
 
                 <ImageButton
                     android:id="@+id/erase_btn"
@@ -258,9 +260,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/picture"
             android:src="@drawable/drive_save"
-            android:layout_alignTop="@+id/paint_colors"
-            android:layout_alignLeft="@+id/load"
-            android:layout_alignStart="@+id/load" />
+            android:layout_below="@+id/frameLayout"
+            android:layout_centerHorizontal="true" />
 
         <ImageButton
             android:id="@+id/load"
@@ -269,8 +270,7 @@
             android:contentDescription="@string/picture"
             android:src="@drawable/load"
             android:layout_below="@+id/drive_save"
-            android:layout_toRightOf="@+id/camera_window"
-            android:layout_toEndOf="@+id/camera_window" />
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 

@@ -40,7 +40,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
         GestureDetector.OnDoubleTapListener {
 
     private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
 
 
     // Test button that will load an image from a url
@@ -56,7 +56,7 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
     //option menus for the buttons and paints
     private LinearLayout masterOptionButtons, masterPaintOptions;
 
-    //gesture detector for swip menues
+    //gesture detector for swipe menus
     private GestureDetectorCompat masterDetector;
 
     //background view
@@ -109,6 +109,12 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
 
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
+
+        loadBtn = (ImageButton)findViewById(R.id.load);
+        loadBtn.setOnClickListener(this);
+
+        driveBtn = (ImageButton)findViewById(R.id.drive_save);
+        driveBtn.setOnClickListener(this);
 
         //set the size of the brushes
             //small = 5dp
@@ -360,26 +366,35 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
                 }
             });
             saveDialog.show();
-        }
-        else if (view.getId() == R.id.addFile){
+        }else if (view.getId() == R.id.addFile){
             fileBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //click button code here
-                    //goal is to get a drawable object and then draw it to canvas put in just the right
-                    //layer
-                    Log.i(TAG, "did click the button");
-
-                    URL tempURL = null;
-                    try {
-                        tempURL = new URL(testURL);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
+                    if(driveBtn.getVisibility() == View.GONE){
+                        driveBtn.setVisibility(View.VISIBLE);
+                        loadBtn.setVisibility(View.VISIBLE);
+                    }else{
+                        driveBtn.setVisibility(View.GONE);
+                        loadBtn.setVisibility(View.GONE);
                     }
-                    new DownloadFromURLTask().execute(tempURL);
-
                 }
         });
+        }
+        else if (view.getId() == R.id.drive_save){
+            fileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO add drive save implementation
+                }
+            });
+        }
+        else if (view.getId() == R.id.load){
+            fileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO add load implementation
+                }
+            });
         }
 
     }
@@ -513,9 +528,11 @@ public class MasterWhiteboardAddActivity extends AppCompatActivity implements Vi
             if (masterOptionButtons.getVisibility() == View.GONE) {
                 masterOptionButtons.setVisibility(View.VISIBLE);
                 masterPaintOptions.setVisibility(View.VISIBLE);
-            } else {
+            }else {
                 masterOptionButtons.setVisibility(View.GONE);
                 masterPaintOptions.setVisibility(View.GONE);
+                driveBtn.setVisibility(View.GONE);
+                loadBtn.setVisibility(View.GONE);
             }
         }
         return false;

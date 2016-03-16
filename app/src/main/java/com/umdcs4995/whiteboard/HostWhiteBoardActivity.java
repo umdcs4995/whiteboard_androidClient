@@ -33,7 +33,7 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
         GestureDetector.OnDoubleTapListener{
 
     private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn,fileBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn,fileBtn, loadBtn, driveBtn;
 
     private float smallBrush, mediumBrush, largeBrush;
 
@@ -91,6 +91,11 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
         saveBtn = (ImageButton) findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
+        loadBtn = (ImageButton)findViewById(R.id.load);
+        loadBtn.setOnClickListener(this);
+
+        driveBtn = (ImageButton)findViewById(R.id.drive_save);
+        driveBtn.setOnClickListener(this);
 
         // brushes
         smallBrush = 5;
@@ -275,22 +280,31 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
             fileBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //click button code here
-                    //goal is to get a drawable object and then draw it to canvas put in just the right
-                    //layer
-                    Log.i(TAG, "did click the button");
-
-                    URL tempURL = null;
-                    try {
-                        tempURL = new URL(testURL);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
+                    if(driveBtn.getVisibility() == View.GONE){
+                        driveBtn.setVisibility(View.VISIBLE);
+                        loadBtn.setVisibility(View.VISIBLE);
+                    }else{
+                        driveBtn.setVisibility(View.GONE);
+                        loadBtn.setVisibility(View.GONE);
                     }
-                    new DownloadFromURLTask().execute(tempURL);
-
+                }
+            });
+        }else if (view.getId() == R.id.drive_save){
+            fileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO add drive save implementation
+                }
+            });
+        }else if (view.getId() == R.id.load){
+            fileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO add load implementation
                 }
             });
         }
+
 
     }
 
@@ -446,6 +460,8 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
             } else {
                 hostOptionButtons.setVisibility(View.GONE);
                 hostPaintOptions.setVisibility(View.GONE);
+                driveBtn.setVisibility(View.GONE);
+                loadBtn.setVisibility(View.GONE);
             }
         }
         return false;

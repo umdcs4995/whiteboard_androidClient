@@ -112,10 +112,15 @@ public class DrawingView extends View{
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
+        //TODO if resized make a clone of the current bit map to make sure that it is still there when copied otherwise all will be lost
         super.onSizeChanged(w, h, oldw, oldh);
-        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        if(canvasBitmap != null) {
+            canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, false);
+        }
+        else {
+            canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        }
         drawCanvas = new Canvas(canvasBitmap);
-
     }
 
     /**
