@@ -10,28 +10,21 @@
     tools:context="com.umdcs4995.whiteboard.MasterWhiteboardAddActivity">
 
     <RelativeLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:background="@color/whiteboardOrange"
-        android:backgroundTint="@color/whiteboardOrange"
-        android:clickable="true"
-        android:foregroundTint="@color/whiteboardOrange">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:background="#FFFFFF"
+        android:backgroundTint="@color/whiteboardOrange">
 
         <com.umdcs4995.whiteboard.DrawingView
             android:id="@+id/drawing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_centerHorizontal="true"
-            android:background="#FFFFFFFF" />
+            android:background="#FFFFFFFF"
+            android:layout_alignParentBottom="true" />
 
         <FrameLayout
             android:id="@+id/camera_window"
@@ -257,10 +250,6 @@
                 android:src="@drawable/paint"
                 android:tag="#FF000000" />
         </LinearLayout>
-
-    </RelativeLayout>
-
-
 
     </RelativeLayout>
 

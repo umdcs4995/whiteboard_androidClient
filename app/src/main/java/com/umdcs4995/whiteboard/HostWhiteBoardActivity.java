@@ -48,7 +48,7 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
 
     private RelativeLayout background;
 
-    private GestureDetectorCompat mDetector;
+    private GestureDetectorCompat hostDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +58,10 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
-        mDetector = new GestureDetectorCompat(getApplicationContext(),this);
+        hostDetector = new GestureDetectorCompat(getApplicationContext(),this);
         // Set the gesture detector as the double tap
         // listener.
-        mDetector.setOnDoubleTapListener(this);
+        hostDetector.setOnDoubleTapListener(this);
 
         background = (RelativeLayout)findViewById(R.id.background);
 
@@ -128,7 +128,7 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        this.mDetector.onTouchEvent(event);
+        this.hostDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
     }
@@ -136,8 +136,6 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
     private Intent makeAddIntent() {
         return new Intent(this, MasterWhiteboardAddActivity.class);
     }
-
-
 
     /**
      * Responds to clicks of the following buttons on the whiteboard:
@@ -364,7 +362,6 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
      */
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.d("Host on Down", "on down motion");
         return false;
     }
 
