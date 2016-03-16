@@ -249,7 +249,28 @@
                 android:onClick="paintClicked"
                 android:src="@drawable/paint"
                 android:tag="#FF000000" />
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/drive_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/picture"
+            android:src="@drawable/drive_save"
+            android:layout_alignTop="@+id/paint_colors"
+            android:layout_alignLeft="@+id/load"
+            android:layout_alignStart="@+id/load" />
+
+        <ImageButton
+            android:id="@+id/load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/picture"
+            android:src="@drawable/load"
+            android:layout_below="@+id/drive_save"
+            android:layout_toRightOf="@+id/camera_window"
+            android:layout_toEndOf="@+id/camera_window" />
 
     </RelativeLayout>
 
