@@ -47,7 +47,7 @@
             <ImageButton
                 android:id="@+id/addFile"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/picture"
                 android:src="@drawable/addfile" />
 
@@ -71,6 +71,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/save"
                 android:src="@drawable/save"/>
+
         </LinearLayout>
 
         <TextView
@@ -238,6 +239,27 @@
             android:layout_alignParentBottom="true"
             android:layout_alignRight="@+id/paintOptions"
             android:layout_alignEnd="@+id/paintOptions" />
+
+        <ImageButton
+            android:id="@+id/drive_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/picture"
+            android:src="@drawable/drive_save"
+            android:layout_marginTop="32dp"
+            android:layout_below="@+id/optionButtons"
+            android:layout_toRightOf="@+id/textView"
+            android:layout_toEndOf="@+id/textView" />
+
+        <ImageButton
+            android:id="@+id/load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/picture"
+            android:src="@drawable/load"
+            android:layout_below="@+id/drive_save"
+            android:layout_alignLeft="@+id/drive_save"
+            android:layout_alignStart="@+id/drive_save" />
 
 
     </RelativeLayout>
