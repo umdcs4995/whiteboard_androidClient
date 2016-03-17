@@ -15,6 +15,10 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_contact_list">ContactListActivity</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
     <string name="title_activity_drawing">Drawing</string>
     <string name="picture">Picture</string>
     <string name="start_new">New</string>

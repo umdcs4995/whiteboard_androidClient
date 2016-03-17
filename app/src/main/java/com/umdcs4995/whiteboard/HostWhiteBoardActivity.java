@@ -10,12 +10,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,7 +36,8 @@ import java.util.UUID;
 
 public class HostWhiteBoardActivity extends AppCompatActivity implements View.OnClickListener,
         GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener{
+        GestureDetector.OnDoubleTapListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn,fileBtn, loadBtn, driveBtn;
@@ -117,6 +124,19 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
                 startActivity(makeAddIntent());
             }
         });
+
+        //Navigation bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
     }
 
@@ -465,6 +485,39 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
             }
         }
         return false;
+    }
+
+    /**
+     * Called when an item in the navigation menu is selected.
+     *
+     * @param item The selected item
+     * @return true to display the item as the selected item
+     */
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.add_board) {
+            Intent in = new Intent(this, HostWhiteBoardActivity.class);
+            startActivity(in);
+        } else if (id == R.id.join_board) {
+
+        } else if (id == R.id.load_board) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.contacts) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     /**
