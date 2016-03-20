@@ -55,7 +55,7 @@ public class SplashActivity extends AppCompatActivity {
      * @return Intent to execute the IntroActivity.
      */
     private Intent makeMainIntent() {
-        return new Intent(this, IntroActivity.class);
+        return new Intent(this, MasterWhiteboardAddActivity.class);
     }
 
 

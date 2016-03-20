@@ -1,4 +1,4 @@
-package uiFragments;
+package uiElements;
 
 import android.content.Context;
 import android.widget.Toast;

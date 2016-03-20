@@ -1,61 +1,41 @@
 package com.umdcs4995.whiteboard;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
-import uiFragments.NotYetImplementedToast;
+import uiElements.NotYetImplementedToast;
 
 /**
  * Activity for handling the contact list screen for the app.
  */
 
-public class ContactListActivity extends AppCompatActivity {
+public class ContactListFragment extends Fragment {
 
     ContactList contactList = new ContactList();
 
+    /**
+     * Called on creation of the fragment.
+     * @param savedInstanceState
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) { //Set the title.
-            getSupportActionBar().setTitle("Contacts");
-        }
+
 
         setupTestContacts();
         setupContactListView();
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
+
 
     /**
-     * This method override creates the settings menu (the three dots in the upper right corner.
-     * It's called automatically after onCreate(..).  To see the xml code for the menu, see the
-     * menu_mainoverflow.xml file.
+     * Briefly setup some test contacts.
      */
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_mainoverflow, menu);
-        return true;
-    }
-
     private void setupTestContacts() {
         contactList.addContact("rob0001", "Rob", ContactList.STATUS_CONNECTED);
         contactList.addContact("pet0001", "Peter", ContactList.STATUS_CONNECTED);
@@ -70,6 +50,9 @@ public class ContactListActivity extends AppCompatActivity {
         contactList.addContact("maz0001", "Maz", ContactList.STATUS_DISCONNECTED);
     }
 
+    /**
+     * Creates the contact list view and adapters.
+     */
     private void setupContactListView() {
         //First get some strings
         ContactWb[] people = new ContactWb[contactList.getSize()];
@@ -79,11 +62,15 @@ public class ContactListActivity extends AppCompatActivity {
             people[i] = contactList.getContactOrdinal(i);
         }
 
-        ListAdapter customAdapter = new ContactListAdapter(this, people);
+        ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
         //Grab the list view and set the adapter.
-        ListView listView = (ListView) findViewById(R.id.contact_listview);
-        listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(makeContactListListener());
+
+        //TO DO: Fix this line when creating a new layout fo the contact list.
+        //Then remove assert.8
+        assert (false);
+        //ListView listView = (ListView) this.getActivity().findViewById(R.id.contact_listview);
+        //listView.setAdapter(customAdapter);
+        //listView.setOnItemClickListener(makeContactListListener());
     }
 
     /**
@@ -96,7 +83,7 @@ public class ContactListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //This is where the code goes for a click of an item of the list.
                 ContactWb person = (ContactWb) parent.getItemAtPosition(position);
-                new NotYetImplementedToast(ContactListActivity.this, person.getName() + " clicked!");
+                new NotYetImplementedToast(getContext(), person.getName() + " clicked!");
             }
         };
 
