@@ -16,7 +16,7 @@
         android:background="#FFFFFF"
         android:backgroundTint="@color/whiteboardOrange">
 
-        <com.umdcs4995.whiteboard.DrawingView
+        <com.umdcs4995.whiteboard.drawing.DrawingView
             android:id="@+id/drawing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

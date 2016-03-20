@@ -102,6 +102,7 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
      */
     public void surfaceDestroyed(SurfaceHolder holder) {
         // Called when the activity is destroyed.
+        if(!cameraAvailable || camera == null) return; //Camera isn't working / on this device, so bail.
 
         camera.stopPreview();
         camera.release();

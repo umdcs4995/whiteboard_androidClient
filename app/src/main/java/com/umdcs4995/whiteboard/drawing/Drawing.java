@@ -1,22 +1,19 @@
-package com.umdcs4995.whiteboard;
+package com.umdcs4995.whiteboard.drawing;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.URL;
+import com.umdcs4995.whiteboard.R;
+
 import java.util.UUID;
 
 /**

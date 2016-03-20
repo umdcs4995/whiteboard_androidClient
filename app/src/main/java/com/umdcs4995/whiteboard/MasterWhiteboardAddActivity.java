@@ -25,8 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.umdcs4995.whiteboard.drawing.DrawingView;
+
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 

@@ -41,13 +41,10 @@ public class IntroActivity extends AppCompatActivity {
      * for the button in the XML.  Android allows linking buttons in that way, which avoids the
      * extra code final Button b = ..., b.setOnClickListener(...
      *
-     * Starts a new HostWhiteBoardActivity.
+     * Starts a new .
      * @param view
      */
-    public void onClickButtonNew(View view) {
-        Intent in = new Intent(this, HostWhiteBoardActivity.class);
-        startActivity(in);
-    }
+
 
     /**
      * Executed when the Join Whiteboard button is clicked.
@@ -66,13 +63,6 @@ public class IntroActivity extends AppCompatActivity {
         startActivity(in);
     }
 
-    /**
-     * Executed on the click of the Settings button.  It launches a settings activity.
-     */
-    public void onSettingsClick(View view) {
-        Intent in = new Intent(this, HostWhiteBoardActivity.class);
-        startActivity(in);
-    }
 
     /**
      * Executed on the click of the Settings button.  It launches a settings activity.

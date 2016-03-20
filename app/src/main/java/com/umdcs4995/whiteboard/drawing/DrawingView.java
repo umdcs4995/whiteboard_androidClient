@@ -1,4 +1,4 @@
-package com.umdcs4995.whiteboard;
+package com.umdcs4995.whiteboard.drawing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
