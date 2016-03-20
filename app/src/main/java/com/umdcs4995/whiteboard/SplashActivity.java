@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
     /**
      * Value for the time to show the splash screen (in milliseconds).
      */
-    private final int DELAYTIME = 2000;
+    private final int DELAYTIME = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

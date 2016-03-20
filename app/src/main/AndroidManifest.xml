@@ -47,11 +47,6 @@
             android:label="@string/title_activity_contact_list"
             android:theme="@style/WhiteboardMainTheme"/>
         <activity
-            android:name=".ConnectionActivity"
-            android:label="@string/title_activity_connection"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar">

@@ -91,13 +91,6 @@ public class IntroActivity extends AppCompatActivity {
         about.show(getFragmentManager(), "About");
     }
 
-    /**
-     * Executed on the click of the XMPPConnect button.
-     */
-    public void onClickButtonXMPP(View view) {
-        Intent in = new Intent(this, ConnectionActivity.class);
-        startActivity(in);
-    }
 
     public void onClickButtonLogin(View view) {
         Intent in = new Intent(this, LoginActivity.class);

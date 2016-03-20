@@ -133,7 +133,6 @@
         <!--<Button-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
-            <!--android:text="XMPP Connection"-->
             <!--android:textSize="22dp"-->
             <!--android:id="@+id/xmppConnection"-->
             <!--android:onClick="onClickButtonXMPP"-->
