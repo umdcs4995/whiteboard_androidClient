@@ -73,6 +73,7 @@ public class SocketService extends Service {
     @Override
     public void onDestroy() {
         //This hopefully stops socket memory leaks.
+        socket.off("chat message");
         socket.disconnect();
         Log.i(TAG, "Whiteboard Disconnected");
         super.onDestroy();
