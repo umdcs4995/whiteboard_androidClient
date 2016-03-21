@@ -27,15 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MasterWhiteboardAddActivity"
-            android:label="@string/title_activity_master_whiteboard_add"
-            android:noHistory="true"
-            android:theme="@style/WhiteboardAddTheme" />
-        <activity
-            android:name=".ContactListFragment"
-            android:label="@string/title_activity_contact_list"
-            android:theme="@style/WhiteboardMainTheme" />
-        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
@@ -46,7 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/WhiteboardAddTheme"></activity>
     </application>
 
 </manifest>

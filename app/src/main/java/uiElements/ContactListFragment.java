@@ -1,4 +1,4 @@
-package com.umdcs4995.whiteboard;
+package uiElements;
 
 import android.app.Fragment;
 import android.os.Bundle;
