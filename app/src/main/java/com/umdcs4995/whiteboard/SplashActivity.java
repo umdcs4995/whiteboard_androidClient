@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
+
 /**
  * Activity handling the opening splash screen.
  */
@@ -37,6 +39,16 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             tv.setText("Welcome!");
         }
+
+        //Initiatie the singleton.
+        Globals.init(this.getApplicationContext());
+        Globals g = Globals.getInstance();
+
+        //Create the DrawingEventQueue
+        g.setDrawEventQueue(new DrawingEventQueue());
+
+        //Start the socket service.
+        g.startSocketService();
 
 
         /**
