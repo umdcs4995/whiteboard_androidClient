@@ -12,7 +12,7 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 
-import uiElements.ErrorToast;
+import com.umdcs4995.whiteboard.uiElements.ErrorToast;
 
 /**
  * This class will handle interfacing the camera with the app.

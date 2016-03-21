@@ -1,4 +1,4 @@
-package uiElements;
+package com.umdcs4995.whiteboard.uiElements;
 
 import android.content.Context;
 import android.widget.Toast;

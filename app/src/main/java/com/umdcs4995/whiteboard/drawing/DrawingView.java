@@ -12,6 +12,11 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+
+import java.util.LinkedList;
+
 /**
  * Creates a drawing on a canvas using user input.
  */
@@ -28,9 +33,19 @@ public class DrawingView extends View{
     private Bitmap canvasBitmap;
     //brush size and previous size
     private float brushSize, lastBrushSize;
+    //A placeholder representing the currently drawn line.
+    private LinkedList<DrawingEvent> currentLine = new LinkedList<>();
+    private Boolean firstDrawEvent = true;
+    private long startTime = -1;
+
+    //Network interaction member items.
+    private DrawingEventQueue drawingEventQueue;
+    private WhiteboardProtocol protocol;
 
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
+        Globals g = Globals.getInstance();
+        protocol = g.getWhiteboardProtocol();
         setupDrawing();
     }
 
@@ -77,24 +92,43 @@ public class DrawingView extends View{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //detect user touch
+        if (firstDrawEvent) {
+            startTime = System.currentTimeMillis();
+            firstDrawEvent = false;
+        }
         float touchX = event.getX();
         float touchY = event.getY();
+        Long eventTime = System.currentTimeMillis();
+
+        DrawingEvent de;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // When user touches the View, move to that
                 // position to start drawing.
+                de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
+                        eventTime, touchX, touchY);
+                currentLine = new LinkedList<>();
+                currentLine.add(de);
                 drawPath.moveTo(touchX, touchY);
                 break;
             case MotionEvent.ACTION_MOVE:
                 // When user moves finger, draw a path
                 // along with their touch.
+                de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
+                        eventTime, touchX, touchY);
+                currentLine.add(de);
                 drawPath.lineTo(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
                 // When user lifts finger, draw the path
                 // and reset it for the next draw.
+                de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
+                        eventTime, touchX, touchY);
+                currentLine.add(de);
+                protocol.outDrawProtocol(currentLine);
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
+                firstDrawEvent = true; //<- Added to reset the start time on the next stroke.
                 break;
             default:
                 return false;
@@ -102,6 +136,8 @@ public class DrawingView extends View{
         invalidate(); // this allows the onDraw method to execute
         return true;
     }
+
+
     /**Used to deal with a user rotating the screen. Uses a bitmap to map the screen from its old
      * orientation to the new one.
      * @param w
@@ -193,4 +229,6 @@ public class DrawingView extends View{
     public Canvas getDrawCanvas() {
         return drawCanvas;
     }
+
+
 }

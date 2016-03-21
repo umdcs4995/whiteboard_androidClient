@@ -1,6 +1,5 @@
-package uiElements;
+package com.umdcs4995.whiteboard.uiElements;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import com.umdcs4995.whiteboard.R;
 import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
-import uiElements.NotYetImplementedToast;
 
 /**
  * Activity for handling the contact list screen for the app.

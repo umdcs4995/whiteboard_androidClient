@@ -16,8 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import uiElements.ContactListFragment;
-import uiElements.WhiteboardDrawFragment;
+import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
+import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
