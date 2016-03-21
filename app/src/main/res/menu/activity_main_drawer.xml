@@ -23,7 +23,7 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/contacts"
+                android:id="@+id/nav_contacts"
                 android:icon="@drawable/users"
                 android:title="Contacts"/>
             <item

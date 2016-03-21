@@ -10,11 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.umdcs4995.whiteboard.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/activity_main">
 
-
-    <FrameLayout
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mainFrame"></FrameLayout>
+        android:id="@+id/contact_listview"></ListView>
+
 </RelativeLayout>

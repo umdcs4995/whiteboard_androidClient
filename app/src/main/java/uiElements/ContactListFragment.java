@@ -1,10 +1,17 @@
 package uiElements;
 
-import android.app.Fragment;
+import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import com.umdcs4995.whiteboard.R;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
@@ -23,15 +30,27 @@ public class ContactListFragment extends Fragment {
      * Called on creation of the fragment.
      * @param savedInstanceState
      */
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setupTestContacts();
-        setupContactListView();
+
+        View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
+        return view;
     }
 
+    /**
+     * Called after onCreateView.  Important because setupContactListView() requires that the
+     * view has been created and set.
+     * @param view
+     * @param savedInstanceState
+     */
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupContactListView();
+    }
 
     /**
      * Briefly setup some test contacts.
@@ -65,12 +84,10 @@ public class ContactListFragment extends Fragment {
         ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
         //Grab the list view and set the adapter.
 
-        //TO DO: Fix this line when creating a new layout fo the contact list.
-        //Then remove assert.8
-        assert (false);
-        //ListView listView = (ListView) this.getActivity().findViewById(R.id.contact_listview);
-        //listView.setAdapter(customAdapter);
-        //listView.setOnItemClickListener(makeContactListListener());
+
+        ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
+        listView.setAdapter(customAdapter);
+        listView.setOnItemClickListener(makeContactListListener());
     }
 
     /**
