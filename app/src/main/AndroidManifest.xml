@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.umdcs4995.whiteboard"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.umdcs4995.whiteboard">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <!---This line is used to make sure the phone can download stuff from the internet -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- -This line is used to make sure the phone can download stuff from the internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"/>
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -20,30 +21,32 @@
             android:noHistory="true"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MasterWhiteboardAddActivity"
             android:label="@string/title_activity_master_whiteboard_add"
             android:noHistory="true"
-            android:theme="@style/WhiteboardAddTheme"/>
+            android:theme="@style/WhiteboardAddTheme" />
         <activity
             android:name=".ContactListFragment"
             android:label="@string/title_activity_contact_list"
-            android:theme="@style/WhiteboardMainTheme"/>
+            android:theme="@style/WhiteboardMainTheme" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".SignupActivity"
             android:label="@string/title_activity_signup"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

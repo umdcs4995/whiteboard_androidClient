@@ -115,10 +115,12 @@ public class DrawingView extends View{
         //TODO if resized make a clone of the current bit map to make sure that it is still there when copied otherwise all will be lost
         super.onSizeChanged(w, h, oldw, oldh);
         if(canvasBitmap != null) {
-            canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, false);
+            canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         else {
-            canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+            Bitmap immutableBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         drawCanvas = new Canvas(canvasBitmap);
     }
