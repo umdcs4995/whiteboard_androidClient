@@ -18,6 +18,14 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
+        <item
+            android:id="@+id/google_drive"
+            android:icon="@drawable/drive_save"
+            android:title="Google Drive"/>
+        <item
+            android:id="@+id/addFile"
+            android:icon="@drawable/load"
+            android:title="Load Drive"/>
     </group>
 
     <item android:title="Communicate">
@@ -34,10 +42,7 @@
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
-            <item
-                android:id="@+id/google_drive"
-                android:icon="@drawable/drive_save"
-                android:title="Google Drive"/>
+
         </menu>
     </item>
 

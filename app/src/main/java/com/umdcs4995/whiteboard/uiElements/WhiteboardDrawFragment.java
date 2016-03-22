@@ -75,12 +75,12 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         setupOnClickListeners();
+        super.onActivityCreated(savedInstanceState);
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
-        //set default brush size to small
-        drawView.setBrushSize(smallBrush);
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
+        //set up the Drawing view
+        drawView.setupDrawing();
         }
 
 //TODO look at and revise if needed

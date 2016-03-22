@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
+import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
@@ -72,8 +73,6 @@ public class DrawingView extends View{
         drawingEventQueue = g.getDrawEventQueue();
 
         final DrawingView placeholder = this;
-
-
 
         setupDrawing();
     }

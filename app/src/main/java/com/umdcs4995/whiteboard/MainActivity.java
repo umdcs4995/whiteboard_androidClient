@@ -110,12 +110,13 @@ public class MainActivity extends AppCompatActivity
 
         if(id == R.id.nav_contacts) {
             changeMainFragment(contactListFragment);
-        }
-
-        if(id == R.id.nav_settings) {
+        }else if(id == R.id.nav_settings) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
+        }else if(id == R.id.drive_save){
+            //TODO add google drive handling!
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
