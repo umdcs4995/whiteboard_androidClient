@@ -137,7 +137,6 @@ public class HostWhiteBoardActivity extends AppCompatActivity implements View.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     /**
