@@ -85,6 +85,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         super.onActivityCreated(savedInstanceState);
         setupOnClickListeners();
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
+        currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
     }
 
 
@@ -145,6 +146,33 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
         button = (ImageButton) getActivity().findViewById(R.id.drive_save);
         button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color2);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color3);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color4);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color5);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color6);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color7);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color8);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color9);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color10);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color11);
+        button.setOnClickListener(this);
+        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
+        button.setOnClickListener(this);
+
+
     }
 
 
@@ -354,13 +382,16 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
         }
+        else if (view.getContentDescription().equals("Paint")) {
+            paintClicked(view);
+        }
 
     }
 
     /**
      * Notified when a single-tap occurs.
      * <p/>
-     * Unlike {@link OnGestureListener#onSingleTapUp(MotionEvent)}, this
+     * Unlike { OnGestureListener#onSingleTapUp(MotionEvent)}, this
      * will only be called after the detector is confident that the user's
      * first tap is not followed by a second tap leading to a double-tap
      * gesture.
