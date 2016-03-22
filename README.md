@@ -1,106 +1,79 @@
 # Whiteboard_InterfaceTeam
 
-#Important for SMACK
-When building with Smack I wrongly assumed that we had to download the jars and attach them to the project in our finder. However since we are using GRADLE we can add GRADLE packaages to the build path like so:
+# Node JS
 
-  - // Optional for XMPPTCPConnection
+## Java sending information
 
-	 compile "org.igniterealtime.smack:smack-tcp:4.1.0" 
-	 
-  - // Optional for XMPP-IM (RFC 6121) support (Roster, Threaded Chats, …)
-  
-	 compile "org.igniterealtime.smack:smack-im:4.1.0"
+When sending information via Java to the NODE JS server you must build a JSON object if you are sending multiple bits of informations. Otherwise you can send it as a string, but we will not parse that information.
 
-  - // Optional for XMPP extensions support
-  
-	 compile "org.igniterealtime.smack:smack-extensions:4.1.0"
+So your code in Java would look like:
 
-Note that you should not include the smack-java7:4.1.0 package as this will cause your project to not build as I have found out. 
+String action_id = "createWhiteboard";
+JSONObject jsonData = new JSONObject();
+jsonData.put("name", "testBoard");
+jsonData.put("access", "public");
 
-Another thing to note is that with our project we can also do it via the application's gradle.build file as well by including:
+socket.emit(action_id, jsonData.toString());
+
+This allows us to parse the msg (aka the jsonData) in Javascript to grab the information such as "name" and "access"
+
+So in summary:
+	action_id to apply the correct logic to the information
+	JSONData to send all information for logic 
 	
-```
+## Java Listeners
+
+For actions that require a response back from the server you will need to build a listener in order to interpret the information that is sent from server to client.
+
+For example in the SocketService you would add:
 	
-	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots'
+
+	private void setupListeners(){
+		socket.on(action_id, new Emitter.Listener(){
+			public void call(Object ...args){
+				args can be parsed as one string.
+			}
+		}
 	}
-	mavenCentral()
-	
-```
-under the repository area in the gradle.build
+
+Mitch is adding a method called (SocketService.addListener(action_id, Emitter.Listener anonymous function)) which will add the listener from wherever this is called. You should use this wherever you will need to add a listener, this will make it easier to read through the code and understand the logic that is happening.
+
+This will allow you to handle all the incoming information from the server.
+
+## Node actions
+MSG: 'createWhiteboard',function(msg)
+    
+    Takes a whiteBoard JSON object and will return a confirmation message:
+
+    'status': 100, 'message': 'Successful creation'
 
 
-You can find all this information here:
+MSG: 'joinWhitebboard',function(clientSocket)
 
-[Smack README] (https://github.com/igniterealtime/Smack/wiki/Smack-4.1-Readme-and-Upgrade-Guide)
+    Takes a JSON object containing the mandatory fields
 
-
-#Important for creating an XMPPTCPConnectionConfiguration 
-	
-This took me a while to figure out and it shouldn't've but in most tutorials you will see a settup where it asks you to do something like:
-
-```
-		ConnectionConfiguration config = new ConnectionConfiguration
-```
-
-But now this gives us a "Cannot instantiate Abstract Class" error so digging through the source code you can find the real way to do it in their comments which is:
-
-```
-		XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder()
-                        .setServiceName("45.55.183.45").setUsernameAndPassword("hcc", "adminpassword")
-                        .setCompressionEnabled(false).build();
-```
-
-This allows us to correctly instantiate a config file for use with our connection.
-
-
-#Important for Connections in our Application
-
-One thing I found out is that you cannot, cannot, CANNOT create a connection in the main application thread (ie the onCreate method) in the main activity. This is because as our connection is made the application thread must then wait for a response and cannot do anything in the mean time. In order to fix this you must make an ASyncTask method that will handle this stuff on a seperate thread. This was shown in the tutorial that Pete posted but it did not explain why it was necessary.
-
-Here is what I did :
-
-```
-		public void connect(){
-        AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>(){
-            @Override
-            protected Boolean doInBackground(Void... arg0){
-                boolean isConnected = false;
-
-                XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder()
-                        .setServiceName("45.55.183.45").setUsernameAndPassword("hcc", "adminpassword")
-                        .setCompressionEnabled(false).build();
-
-                connection = new XMPPTCPConnection(conf);
-
-                XMPPConnectionListener connectionListener = new XMPPConnectionListener();
-                connection.addConnectionListener(connectionListener);
-                try{
-                    connection.connect();
-                    isConnected = true;
-                } catch (IOException e){
-                } catch (SmackException e){
-                } catch (XMPPException e){
-                }
-
-                return isConnected;
-            }
-        };
-        connectionThread.execute();
+    object{
+        name (name of whiteBoard)
+        username (name of user)
     }
 
-```
-#User Permissions
-List all extra permissions added here.
 
-   - \<uses-permission android:name="android.permission.INTERNET"/\>
+MSG: 'chat message',function(msg)
 
-#TODO
+    Takes a string message that will be echoed to all members of the whiteBoard.
 
-So the only issue I am running into now is that connection to the server is getting dropped due to an :
+MSG: 'motionevent',function(msg)
 
->           javax.net.ssl.SSLHandshakeException: java.security.cert.CertPathValidatorException: Trust anchor for certification path not found.
+    Takes in a motionEvent JSON Object that will be emitted to all members of the whiteBoard as a motionevent message.
 
-which, as far as I have read, means we need to create a certificate that will handle this connection so that this does not bypass Androids security standards
+MSG: 'disconnect',function()
 
+    Will disconnect the current client from the whiteboard on the server side.
 
+MSG: 'leave',function()
+
+    Will let the client leave from the whtiebaord on the server side.
+
+MSG: 'list',funcgion(msg)
+
+    Will return a string of clients.
