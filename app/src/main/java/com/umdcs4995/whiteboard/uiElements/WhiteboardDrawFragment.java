@@ -52,8 +52,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
 
 
-    //brush sizes
-    private float smallBrush, mediumBrush, largeBrush;
+    //initialize brush sizes
+    private float smallBrush = R.dimen.small_brush, mediumBrush = R.dimen.medium_brush, largeBrush = R.dimen.large_brush;
 
     //option menus for the buttons and paints
     private LinearLayout OptionButtons, PaintOptions;
@@ -77,10 +77,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setupOnClickListeners();
-        drawView.setBrushSize(smallBrush);
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
+        //set default brush size to small
+        drawView.setBrushSize(smallBrush);
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
-    }
+        }
 
 //TODO look at and revise if needed
     /**
