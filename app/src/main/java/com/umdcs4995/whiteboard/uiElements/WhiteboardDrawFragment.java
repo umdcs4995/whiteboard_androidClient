@@ -39,9 +39,7 @@ import java.util.UUID;
  * This class contains the code for the drawing fragment.
  * Created by Rob on 3/21/2016.
  */
-public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener,
-        GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener {
+public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
     private DrawingView drawView;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
@@ -58,13 +56,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private float smallBrush, mediumBrush, largeBrush;
 
     //option menus for the buttons and paints
-    private LinearLayout masterOptionButtons, masterPaintOptions;
+    private LinearLayout OptionButtons, PaintOptions;
 
-    //gesture detector for swipe menus
-    private GestureDetectorCompat masterDetector;
-
-    //background view
-    private RelativeLayout background;
 
     //Camera Window
     private FrameLayout cameraWindow;
@@ -84,11 +77,12 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setupOnClickListeners();
+        drawView.setBrushSize(smallBrush);
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
     }
 
-
+//TODO look at and revise if needed
     /**
      * calls on the gesture motion detection to be used when the application is touched
      * @param event the touch event happening
@@ -386,145 +380,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             paintClicked(view);
         }
 
-    }
-
-    /**
-     * Notified when a single-tap occurs.
-     * <p/>
-     * Unlike { OnGestureListener#onSingleTapUp(MotionEvent)}, this
-     * will only be called after the detector is confident that the user's
-     * first tap is not followed by a second tap leading to a double-tap
-     * gesture.
-     *
-     * @param e The down motion event of the single-tap.
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
-    /**
-     * Notified when a double-tap occurs.
-     *
-     * @param e The down motion event of the first tap of the double-tap.
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        return false;
-    }
-
-    /**
-     * Notified when an event within a double-tap gesture occurs, including
-     * the down, move, and up events.
-     *
-     * @param e The motion event that occurred during the double-tap gesture.
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
-
-    /**
-     * Notified when a tap occurs with the down {@link MotionEvent}
-     * that triggered it. This will be triggered immediately for
-     * every down event. All other events should be preceded by this.
-     *
-     * @param e The down motion event.
-     */
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    /**
-     * The user has performed a down {@link MotionEvent} and not performed
-     * a move or up yet. This event is commonly used to provide visual
-     * feedback to the user to let them know that their action has been
-     * recognized i.e. highlight an element.
-     *
-     * @param e The down motion event
-     */
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    /**
-     * Notified when a tap occurs with the up {@link MotionEvent}
-     * that triggered it.
-     *
-     * @param e The up motion event that completed the first tap
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    /**
-     * Notified when a scroll occurs with the initial on down {@link MotionEvent} and the
-     * current move {@link MotionEvent}. The distance in x and y is also supplied for
-     * convenience.
-     *
-     * @param e1        The first down motion event that started the scrolling.
-     * @param e2        The move motion event that triggered the current onScroll.
-     * @param distanceX The distance along the X axis that has been scrolled since the last
-     *                  call to onScroll. This is NOT the distance between {@code e1}
-     *                  and {@code e2}.
-     * @param distanceY The distance along the Y axis that has been scrolled since the last
-     *                  call to onScroll. This is NOT the distance between {@code e1}
-     *                  and {@code e2}.
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    /**
-     * Notified when a long press occurs with the initial on down {@link MotionEvent}
-     * that trigged it.
-     *
-     * @param e The initial on down motion event that started the longpress.
-     */
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    /**
-     * Notified of a fling event when it occurs with the initial on down {@link MotionEvent}
-     * and the matching up {@link MotionEvent}. The calculated velocity is supplied along
-     * the x and y axis in pixels per second.
-     *
-     * @param e1        The first down motion event that started the fling.
-     * @param e2        The move motion event that triggered the current onFling.
-     * @param velocityX The velocity of this fling measured in pixels per second
-     *                  along the x axis.
-     * @param velocityY The velocity of this fling measured in pixels per second
-     *                  along the y axis.
-     * @return true if the event is consumed, else false
-     */
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if(velocityX > 0){
-            //TODO add swipe from Left for contact menu
-
-        }else if(velocityX < 0){
-            if (masterOptionButtons.getVisibility() == View.GONE) {
-                masterOptionButtons.setVisibility(View.VISIBLE);
-                masterPaintOptions.setVisibility(View.VISIBLE);
-            }else {
-                masterOptionButtons.setVisibility(View.GONE);
-                masterPaintOptions.setVisibility(View.GONE);
-                driveBtn.setVisibility(View.GONE);
-                loadBtn.setVisibility(View.GONE);
-            }
-        }
-        return false;
     }
 
     /**
