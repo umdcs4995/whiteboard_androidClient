@@ -1,5 +1,6 @@
 package com.umdcs4995.whiteboard.drawing;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,7 +14,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
 import java.util.LinkedList;
 
@@ -41,13 +44,41 @@ public class DrawingView extends View{
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol protocol;
+    private Thread pollingThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                final LinkedList<DrawingEvent> drawQueue = drawingEventQueue.peekPriorityQueue();
+                if (drawQueue == null) {
+                    //Sleep for half second if queue is empty.
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        //Do nothing
+                    }
+                } else {
+                    Activity activity = (MainActivity) getContext();
+                    activity.runOnUiThread(new PollingRunnable(drawQueue, getThis()));
+                    drawingEventQueue.popPriorityQueue();
+                }
+            }
+        }
+    });
 
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
         Globals g = Globals.getInstance();
         protocol = g.getWhiteboardProtocol();
+        drawingEventQueue = g.getDrawEventQueue();
+
+        final DrawingView placeholder = this;
+
+
+
         setupDrawing();
     }
+
+
 
     /**
      * Initializes the drawing canvas.
@@ -65,6 +96,10 @@ public class DrawingView extends View{
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+
+        if(!pollingThread.isAlive()) {
+            pollingThread.start();
+        }
     }
 
 
@@ -228,6 +263,36 @@ public class DrawingView extends View{
      */
     public Canvas getDrawCanvas() {
         return drawCanvas;
+    }
+
+    /**
+     * Return a reference to the instance of this view.
+     */
+    public DrawingView getThis() {
+        return DrawingView.this;
+    }
+
+
+    /**
+     * This class creates a runnable to parse through an incoming network line event.
+     */
+    private class PollingRunnable implements Runnable{
+        private LineSegment ls;
+        private DrawingView view;
+
+        public PollingRunnable(LinkedList<DrawingEvent> dq, DrawingView view) {
+            ls = new LineSegment(-1, dq);
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            try {
+                ls.drawLine(true, drawPath, drawPaint, drawCanvas, view);
+            } catch(InterruptedException e) {
+
+            }
+        }
     }
 
 

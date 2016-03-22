@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.CameraWb;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
@@ -78,6 +80,14 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setupOnClickListeners();
+        drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
+    }
+
+
     /**
      * calls on the gesture motion detection to be used when the application is touched
      * @param event the touch event happening
@@ -87,7 +97,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 //    public boolean onTouchEvent(MotionEvent event){
 //        this.masterDetector.onTouchEvent(event);
 //        // Be sure to call the superclass implementation
-//        return getActivity().super.onTouchEvent(event);
+//        return getActivity().onTouchEvent(event);
 //    }
 
 
@@ -108,6 +118,33 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             currPaint=(ImageButton)view;
         }
 
+    }
+
+
+    /**
+     * This method sets all the buttons onClick listeners to "this", passing the licks into
+     * the onClick method below.
+     */
+    private void setupOnClickListeners() {
+        ImageButton button;
+
+        button = (ImageButton) getActivity().findViewById(R.id.new_btn);
+        button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.draw_btn);
+        button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.erase_btn);
+        button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.save_btn);
+        button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.addFile);
+        button.setOnClickListener(this);
+
+        button = (ImageButton) getActivity().findViewById(R.id.drive_save);
+        button.setOnClickListener(this);
     }
 
 

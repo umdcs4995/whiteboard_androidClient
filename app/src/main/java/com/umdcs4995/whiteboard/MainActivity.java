@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
         //SETUP THE DEFAULT FRAGMENT
         changeMainFragment(whiteboardDrawFragment);
+
     }
 
     @Override
