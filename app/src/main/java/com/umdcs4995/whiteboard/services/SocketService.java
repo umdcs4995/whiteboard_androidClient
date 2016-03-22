@@ -24,6 +24,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketService extends Service {
     private final String TAG = "SocketService";
+    //TODO: move this to strings.xml or use the value already there
     private final String TCPADDRESS = "https://lempo.d.umn.edu:4995";
 
     //Create binder to bind service with client
@@ -73,10 +74,18 @@ public class SocketService extends Service {
     @Override
     public void onDestroy() {
         //This hopefully stops socket memory leaks.
-        socket.off("chat message");
+        clearListener("chat message");
         socket.disconnect();
         Log.i(TAG, "Whiteboard Disconnected");
         super.onDestroy();
+    }
+    
+    public void addListener(String id, Emitter.Listener listener) {
+        socket.on(id, listener);
+    }
+
+    public void clearListener(String id) {
+        socket.off(id);
     }
 
     /**
@@ -84,7 +93,7 @@ public class SocketService extends Service {
      */
     private void setupListeners() {
         //First listener for chat messages.
-        socket.on("chat message", new Emitter.Listener() {
+        addListener("chat message", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 //On a chat message, simply log it.  Note that all messages at this time
@@ -121,8 +130,12 @@ public class SocketService extends Service {
             socket.connect();
             Log.i(TAG, "Socket Opened");
         } catch(URISyntaxException e) {
-            Log.e(TAG, "Malfromed connection address");
+            Log.e(TAG, "Malformed connection address");
         }
+    }
+
+    public void sendMessage(String id, JSONObject message) {
+        sendMessage(id, message.toString());
     }
 
     /**
