@@ -15,9 +15,9 @@
             android:icon="@drawable/loading"
             android:title="Load Whiteboard" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Settings" />
     </group>
 
     <item android:title="Communicate">

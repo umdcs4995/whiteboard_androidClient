@@ -38,6 +38,10 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/WhiteboardAddTheme"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/WhiteboardAddTheme"></activity>
         <service
             android:name=".services.SocketService"
             android:enabled="true"></service>

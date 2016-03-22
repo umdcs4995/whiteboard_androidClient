@@ -1,6 +1,8 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
+import com.umdcs4995.whiteboard.uiElements.SettingsFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -108,6 +112,10 @@ public class MainActivity extends AppCompatActivity
             changeMainFragment(contactListFragment);
         }
 
+        if(id == R.id.nav_settings) {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivity(i);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
