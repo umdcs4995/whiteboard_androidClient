@@ -113,10 +113,7 @@ public class MainActivity extends AppCompatActivity
         }else if(id == R.id.nav_settings) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
-        }else if(id == R.id.drive_save){
-            //TODO add google drive handling!
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

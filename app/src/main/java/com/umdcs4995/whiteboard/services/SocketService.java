@@ -109,6 +109,8 @@ public class SocketService extends Service {
                     protocol.inc((String) args[0]);
                 } catch (WbProtocolException e) {
                     Log.e(TAG, "Protocol Error, malfromed string");
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullpointerError Error, malfromed string");
                 }
             }
         });

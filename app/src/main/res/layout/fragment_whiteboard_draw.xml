@@ -23,8 +23,8 @@
         android:layout_height="150dp"
         android:layout_weight="1"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/Color"
-        android:layout_toEndOf="@+id/Color">
+        android:layout_alignLeft="@+id/drawing"
+        android:layout_alignStart="@+id/drawing">
 
     </FrameLayout>
 
@@ -61,13 +61,6 @@
                 android:src="@drawable/brush" />
 
             <ImageButton
-                android:id="@+id/addFile"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/picture"
-                android:src="@drawable/addfile" />
-
-            <ImageButton
                 android:id="@+id/erase_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
@@ -84,34 +77,15 @@
         </LinearLayout>
     </FrameLayout>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Color">
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:id="@+id/paintOptions"
-            android:layout_marginTop="2dp">
-
-
-        </LinearLayout>
-    </FrameLayout>
-
-
     <LinearLayout
         android:id="@+id/paint_colors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginRight="5dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_below="@+id/frameLayout"
+        android:layout_alignRight="@+id/drawing"
+        android:layout_alignEnd="@+id/drawing"
+        android:layout_marginRight="2dp">
         <!-- Color Row -->
         <ImageButton
             android:id="@+id/btn_drawfrag_color1"
@@ -235,24 +209,5 @@
             android:tag="#FF000000" />
 
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/drive_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/picture"
-        android:src="@drawable/drive_save"
-        android:layout_below="@+id/frameLayout"
-        android:layout_centerHorizontal="true" />
-
-    <ImageButton
-        android:id="@+id/load"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/picture"
-        android:src="@drawable/load"
-        android:layout_below="@+id/drive_save"
-        android:layout_alignLeft="@+id/drive_save"
-        android:layout_alignStart="@+id/drive_save" />
 
 </RelativeLayout>

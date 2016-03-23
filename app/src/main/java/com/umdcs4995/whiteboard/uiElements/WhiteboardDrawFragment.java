@@ -53,7 +53,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
 
     //initialize brush sizes
-    private float smallBrush = R.dimen.small_brush, mediumBrush = R.dimen.medium_brush, largeBrush = R.dimen.large_brush;
+    private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
 
     //option menus for the buttons and paints
     private LinearLayout OptionButtons, PaintOptions;
@@ -134,12 +134,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.save_btn);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.addFile);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.drive_save);
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
@@ -358,22 +352,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                         driveBtn.setVisibility(View.GONE);
                         loadBtn.setVisibility(View.GONE);
                     }
-                }
-            });
-        }
-        else if (view.getId() == R.id.drive_save){
-            fileBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO add drive save implementation
-                }
-            });
-        }
-        else if (view.getId() == R.id.load){
-            fileBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO add load implementation
                 }
             });
         }

@@ -69,6 +69,7 @@ public class DrawingView extends View{
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
         Globals g = Globals.getInstance();
+        //TODO find out my this is throwing an NullPointerException
         protocol = g.getWhiteboardProtocol();
         drawingEventQueue = g.getDrawEventQueue();
 
