@@ -36,7 +36,7 @@ import java.util.UUID;
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
     private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
+    private ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
 
 
     // Test button that will load an image from a url
@@ -124,7 +124,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button = (ImageButton) getActivity().findViewById(R.id.draw_btn);
         button.setOnClickListener(this);
 
-        button = (ImageButton) getActivity().findViewById(R.id.erase_btn);
+        button = (ImageButton) getActivity().findViewById(R.id.undo_btn);
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.save_btn);
@@ -205,7 +205,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     /**
      * Responds to clicks of the following buttons on the whiteboard:
      *  - draw_btn
-     *  - erase_btn
+     *  - undo_btn
      *  - new_btn
      *  - save_btn
      * @param view the view that the click is from
@@ -253,7 +253,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             });
 
             brushDialog.show();
-        } else if (view.getId() == R.id.erase_btn) {
+        } else if (view.getId() == R.id.undo_btn) {
             drawView.undoLastLine();
         } else if (view.getId() == R.id.new_btn) {
             //new button
