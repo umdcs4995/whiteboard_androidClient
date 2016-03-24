@@ -39,8 +39,8 @@
     <string name="back">back</string>
 
     <!-- TODO: determine how to best have a 'secure' switch -->
-    <bool name="secure">false</bool>
-    <string name="hostname">rysavys.me</string>
+    <bool name="secure">true</bool>
+    <string name="hostname">lempo.d.umn.edu</string>
     <string name="port">3000</string>
     <string name="secure_port">4995</string>
     <string name="rtc_port">3001</string>
