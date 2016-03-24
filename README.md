@@ -74,6 +74,10 @@ MSG: 'leave',function()
 
     Will let the client leave from the whtiebaord on the server side.
 
-MSG: 'list',funcgion(msg)
+MSG: 'listAllClients',funcgion(msg)
 
-    Will return a string of clients.
+    Will return a string of clients in CSV format.
+
+MSG: 'listAllWhiteBoards',function(msg)
+
+    Will return a string of whiteboards in CSV format.
