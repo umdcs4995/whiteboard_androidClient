@@ -144,24 +144,8 @@ public class SocketService extends Service {
      * Sends an outgoing message to the server.
      */
     public void sendMessage(String id, String message){
-        //Temporary code to get the server to respond.
-        id = "chat message";
-        //end temporary code.
-        Log.v(TAG, "SENT: " + message);
+        Log.v(TAG, "SENT: " + id + ": " + message);
         socket.emit(id, message);
-
-        // Test to see if I can send back to the server
-        try {
-            JSONObject jsonData = new JSONObject();
-            jsonData.put("name", "testBoard"); // Set the first name/pair
-            jsonData.put("access", "public");
-
-            socket.emit("createWhiteboard", jsonData.toString());
-        }
-        catch(JSONException ex) {
-            ex.printStackTrace();
-        }
-
     }
 
     /**
