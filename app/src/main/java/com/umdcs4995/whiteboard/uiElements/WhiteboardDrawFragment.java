@@ -11,23 +11,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.CameraWb;
-import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
@@ -42,7 +36,7 @@ import java.util.UUID;
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
     private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
+    private ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
 
 
     // Test button that will load an image from a url
@@ -114,7 +108,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button = (ImageButton) getActivity().findViewById(R.id.draw_btn);
         button.setOnClickListener(this);
 
-        button = (ImageButton) getActivity().findViewById(R.id.erase_btn);
+        button = (ImageButton) getActivity().findViewById(R.id.undo_btn);
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.save_btn);
@@ -197,7 +191,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     /**
      * Responds to clicks of the following buttons on the whiteboard:
      *  - draw_btn
-     *  - erase_btn
+     *  - undo_btn
      *  - new_btn
      *  - save_btn
      * @param view the view that the click is from
@@ -245,41 +239,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             });
 
             brushDialog.show();
-        } else if (view.getId() == R.id.erase_btn) {
-            //switch to erase - choose size
-            final Dialog brushDialog = new Dialog(getContext());
-            brushDialog.setTitle("Eraser size:");
-            brushDialog.setContentView(R.layout.brush_chooser);
-
-            ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
-            smallBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(smallBrush);
-                    brushDialog.dismiss();
-                }
-            });
-            ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
-            mediumBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(mediumBrush);
-                    brushDialog.dismiss();
-                }
-            });
-            ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
-            largeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(largeBrush);
-                    brushDialog.dismiss();
-                }
-            });
-
-            brushDialog.show();
+        } else if (view.getId() == R.id.undo_btn) {
+            drawView.undoLastLine();
         } else if (view.getId() == R.id.new_btn) {
             //new button
             AlertDialog.Builder newDialog = new AlertDialog.Builder(getContext());
