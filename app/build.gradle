@@ -38,4 +38,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
+
+    // Use this for the Volley library for HTTP requests
+    compile 'com.android.volley:volley:1.0.0'
 }
