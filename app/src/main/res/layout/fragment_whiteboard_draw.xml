@@ -62,7 +62,7 @@
                 android:src="@drawable/brush" />
 
             <ImageButton
-                android:id="@+id/undo_btn"
+                android:id="@+id/erease_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:contentDescription="@string/erase"
@@ -76,7 +76,7 @@
                 android:src="@drawable/save" />
 
             <ImageButton
-                android:id="@+id/back_btn"
+                android:id="@+id/undo_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/back"
