@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,17 +18,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.drawing.DrawingView;
+import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
+import com.umdcs4995.whiteboard.uiElements.JoinBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.SettingsFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
+    Fragment joinBoardFragment = new JoinBoardFragment();
+
+    private SocketService socketService = Globals.getInstance().getSocketService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +120,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if(id == R.id.nav_contacts) {
-            changeMainFragment(contactListFragment);
-        }else if(id == R.id.nav_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
+        switch (id) {
+
+            case R.id.add_board:
+                JSONObject createWbRequest = new JSONObject();
+                try {
+                    // TODO: make a whiteboard name chooser and use its input here
+                    createWbRequest.put("name", "replace_me");
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error making createWhiteboard request - this is bad...", Toast.LENGTH_LONG);
+                }
+                socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, createWbRequest);
+
+                socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        // TODO: Set up the whiteboard + join it here
+                        JSONObject recvd = (JSONObject)args[0];
+                        try {
+                            Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
+                        } catch (JSONException e) {
+                            Log.w("createWhiteboard", "error parsing received message");
+                        }
+                        socketService.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
+                    }
+                });
+                break;
+
+            case R.id.join_board:
+                changeMainFragment(joinBoardFragment);
+                break;
+
+            case R.id.nav_contacts:
+                changeMainFragment(contactListFragment);
+                break;
+
+            case R.id.nav_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

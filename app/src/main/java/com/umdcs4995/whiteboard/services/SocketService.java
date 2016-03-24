@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WbProtocolException;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 
@@ -24,8 +26,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketService extends Service {
     private final String TAG = "SocketService";
-    //TODO: move this to strings.xml or use the value already there
-    private final String TCPADDRESS = "https://lempo.d.umn.edu:4995";
+    private final String TCPADDRESS = Globals.getInstance().getServerAddress();
 
     //Create binder to bind service with client
     private final IBinder ibinder = new SocketLocalBinder();
@@ -34,6 +35,14 @@ public class SocketService extends Service {
 
     //Socket to do the connection.
     private Socket socket;
+
+    // Poor man's enum for Message id's
+    public class Messages {
+        public static final String CREATE_WHITEBOARD = "createWhiteboard";
+        public static final String JOIN_WHITEBOARD = "joinWhiteboard";
+        public static final String CHAT_MESSAGE = "chat message";
+        // TODO: put the rest of the messages in here
+    }
 
     /**
      * Constructor for socket service.  Difficult to say when this method is (if ever) called.
@@ -55,9 +64,10 @@ public class SocketService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         connect();
-        //Test the server
+
+        // TODO: Move listener code to other parts of the codebase
         setupListeners();
-        this.sendMessage(null, "Hello World");
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -73,13 +83,19 @@ public class SocketService extends Service {
      */
     @Override
     public void onDestroy() {
-        //This hopefully stops socket memory leaks.
-        clearListener("chat message");
+        // TODO: This hopefully stops socket memory leaks.
+        clearListener(Messages.CHAT_MESSAGE);
+
         socket.disconnect();
         Log.i(TAG, "Whiteboard Disconnected");
         super.onDestroy();
     }
-    
+
+    /**
+     * Adds a listener (essentially an anonymous function) for a specific message
+     * @param id
+     * @param listener
+     */
     public void addListener(String id, Emitter.Listener listener) {
         socket.on(id, listener);
     }
@@ -93,7 +109,7 @@ public class SocketService extends Service {
      */
     private void setupListeners() {
         //First listener for chat messages.
-        addListener("chat message", new Emitter.Listener() {
+        addListener(Messages.CHAT_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 //On a chat message, simply log it.  Note that all messages at this time

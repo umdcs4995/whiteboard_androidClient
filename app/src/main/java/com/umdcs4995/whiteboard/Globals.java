@@ -83,9 +83,6 @@ public class Globals {
      * @return an instance of Globals.
      */
     public static Globals getInstance(){
-        if(instance == null) {
-            return null;
-        }
         return instance;
     }
 
@@ -150,6 +147,12 @@ public class Globals {
      */
     public WhiteboardProtocol getWhiteboardProtocol() {
         return whiteboardProtocol;
+    }
+
+    public String getServerAddress() {
+        String protocol = (context.getResources().getBoolean(R.bool.secure) ? "https" : "http") + "://";
+        String port = context.getResources().getBoolean(R.bool.secure) ? context.getString(R.string.secure_port) : context.getString(R.string.port);
+        return protocol + context.getString(R.string.hostname) + ":" + port;
     }
 
 }
