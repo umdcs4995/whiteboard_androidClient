@@ -47,10 +47,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
 
     //initialize brush sizes
+    //TODO grab from the resource file
     private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
-
-    //option menus for the buttons and paints
-    private LinearLayout OptionButtons, PaintOptions;
 
 
     //Camera Window
@@ -76,20 +74,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         //set up the Drawing view
         drawView.setupDrawing();
         }
-
-//TODO look at and revise if needed
-    /**
-     * calls on the gesture motion detection to be used when the application is touched
-     * @param event the touch event happening
-     * @return if the touch was handled
-     */
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event){
-//        this.masterDetector.onTouchEvent(event);
-//        // Be sure to call the superclass implementation
-//        return getActivity().onTouchEvent(event);
-//    }
-
 
     /**
      * Sets a the brush color when a paint color is selected to the input view's
@@ -130,6 +114,9 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button = (ImageButton) getActivity().findViewById(R.id.save_btn);
         button.setOnClickListener(this);
 
+        button = (ImageButton) getActivity().findViewById(R.id.back_btn);
+        button.setOnClickListener(this);
+
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         button.setOnClickListener(this);
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color2);
@@ -154,7 +141,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button.setOnClickListener(this);
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
         button.setOnClickListener(this);
-
 
     }
 
