@@ -15,7 +15,6 @@ import android.view.View;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
-import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
@@ -41,6 +40,7 @@ public class DrawingView extends View{
     private LinkedList<DrawingEvent> currentLine = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
+    private LinkedList<LineSegment> lineHistory = new LinkedList<>();
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
@@ -60,6 +60,7 @@ public class DrawingView extends View{
                 } else {
                     Activity activity = (MainActivity) getContext();
                     activity.runOnUiThread(new PollingRunnable(drawQueue, getThis()));
+                    lineHistory.add(new LineSegment(-1, drawQueue));
                     drawingEventQueue.popPriorityQueue();
                 }
             }
@@ -160,6 +161,7 @@ public class DrawingView extends View{
                 de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
                         eventTime, touchX, touchY);
                 currentLine.add(de);
+                lineHistory.add(new LineSegment(-1, currentLine));
                 protocol.outDrawProtocol(currentLine);
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
@@ -272,6 +274,20 @@ public class DrawingView extends View{
         return DrawingView.this;
     }
 
+    /**
+     * Undo the last line that has been drawn.
+     */
+    public void undoLastLine() {
+        lineHistory.removeLast();
+        startNew();
+        for (LineSegment ls: lineHistory) {
+            try {
+                ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
+            } catch(InterruptedException e) {
+
+            }
+        }
+    }
 
     /**
      * This class creates a runnable to parse through an incoming network line event.
