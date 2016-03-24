@@ -114,7 +114,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button = (ImageButton) getActivity().findViewById(R.id.save_btn);
         button.setOnClickListener(this);
 
-        button = (ImageButton) getActivity().findViewById(R.id.back_btn);
+        button = (ImageButton) getActivity().findViewById(R.id.erease_btn);
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
