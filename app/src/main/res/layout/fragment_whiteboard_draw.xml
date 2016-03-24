@@ -37,14 +37,15 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="270dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:orientation="horizontal"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:touchscreenBlocksFocus="false"
-            android:id="@+id/optionButtons">
+            android:id="@+id/optionButtons"
+            android:weightSum="1">
 
             <ImageButton
                 android:id="@+id/new_btn"
@@ -73,6 +74,13 @@
                 android:layout_height="fill_parent"
                 android:contentDescription="@string/save"
                 android:src="@drawable/save" />
+
+            <ImageButton
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/back"
+                android:src="@drawable/undo_btn" />
 
         </LinearLayout>
     </FrameLayout>
