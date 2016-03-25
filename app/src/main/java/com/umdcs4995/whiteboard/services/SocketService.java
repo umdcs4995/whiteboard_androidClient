@@ -26,7 +26,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketService extends Service {
     private final String TAG = "SocketService";
-    private final String TCPADDRESS = Globals.getInstance().getServerAddress();
+    private final String TCP_ADDRESS = Globals.getInstance().getServerAddress();
 
     //Create binder to bind service with client
     private final IBinder ibinder = new SocketLocalBinder();
@@ -41,6 +41,7 @@ public class SocketService extends Service {
         public static final String CREATE_WHITEBOARD = "createWhiteboard";
         public static final String JOIN_WHITEBOARD = "joinWhiteboard";
         public static final String CHAT_MESSAGE = "chat message";
+        public static final String DRAW_EVENT = "drawevent";
         // TODO: put the rest of the messages in here
     }
 
@@ -83,9 +84,7 @@ public class SocketService extends Service {
      */
     @Override
     public void onDestroy() {
-        // TODO: This hopefully stops socket memory leaks.
-        clearListener(Messages.CHAT_MESSAGE);
-
+        socket.off();
         socket.disconnect();
         Log.i(TAG, "Whiteboard Disconnected");
         super.onDestroy();
@@ -109,7 +108,7 @@ public class SocketService extends Service {
      */
     private void setupListeners() {
         //First listener for chat messages.
-        addListener(Messages.CHAT_MESSAGE, new Emitter.Listener() {
+        addListener(Messages.DRAW_EVENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 //On a chat message, simply log it.  Note that all messages at this time
@@ -124,7 +123,7 @@ public class SocketService extends Service {
                 try {
                     protocol.inc((String) args[0]);
                 } catch (WbProtocolException e) {
-                    Log.e(TAG, "Protocol Error, malfromed string");
+                    Log.e(TAG, "Protocol Error, malformed string");
                 } catch (NullPointerException e) {
                     Log.e(TAG, "NullpointerError Error, malfromed string");
                 }
@@ -144,7 +143,7 @@ public class SocketService extends Service {
      */
     private void connect() {
         try {
-            socket = IO.socket(TCPADDRESS);
+            socket = IO.socket(TCP_ADDRESS);
             socket.connect();
             Log.i(TAG, "Socket Opened");
         } catch(URISyntaxException e) {

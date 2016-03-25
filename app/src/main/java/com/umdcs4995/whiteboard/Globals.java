@@ -149,10 +149,19 @@ public class Globals {
         return whiteboardProtocol;
     }
 
+    private static String serverAddress = "";
+
+    /**
+     * Builds the server address based on the data in strings.xml
+     * Uses private field serverAddress to load it once and not again
+     */
     public String getServerAddress() {
-        String protocol = (context.getResources().getBoolean(R.bool.secure) ? "https" : "http") + "://";
-        String port = context.getResources().getBoolean(R.bool.secure) ? context.getString(R.string.secure_port) : context.getString(R.string.port);
-        return protocol + context.getString(R.string.hostname) + ":" + port;
+        if(serverAddress == "") {
+            String protocol = (context.getResources().getBoolean(R.bool.secure) ? "https" : "http") + "://";
+            String port = context.getResources().getBoolean(R.bool.secure) ? context.getString(R.string.secure_port) : context.getString(R.string.port);
+            serverAddress = protocol + context.getString(R.string.hostname) + ":" + port;
+        }
+        return serverAddress;
     }
 
 }
