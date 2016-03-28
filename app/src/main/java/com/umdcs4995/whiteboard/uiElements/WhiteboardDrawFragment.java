@@ -26,6 +26,7 @@ import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -307,6 +308,20 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
+    public void setNewBackground(String urlString){
+        //click button code here
+        //goal is to get a drawable object and then draw it to canvas put in just the right
+        //layer
+        Log.i(TAG, "did click the button");
+
+        URL tempURL = null;
+        try {
+            tempURL = new URL(urlString);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        new DownloadFromURLTask().execute(tempURL);
+    }
 
     /**
      * Downloads contents from provided url and displays it as the background for the current view
@@ -328,6 +343,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 //do anything but don't forget to include it!
                 Drawable targetDraw;
                 targetDraw= Drawable.createFromStream(curInputStream, "src name");
+                Log.i("Downloadfromurl", targetDraw.toString());
                 return targetDraw;
 
             } catch(Exception e) {
@@ -347,4 +363,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
         }
     }
+
+
 }

@@ -1,8 +1,8 @@
 package com.umdcs4995.whiteboard;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -20,11 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
 import com.umdcs4995.whiteboard.uiElements.JoinBoardFragment;
-import com.umdcs4995.whiteboard.uiElements.SettingsFragment;
+import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 import org.json.JSONException;
@@ -33,11 +32,14 @@ import org.json.JSONObject;
 import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        LoadURLFragment.OnOkBtnClickedListener,
+        LoadURLFragment.OnFragmentInteractionListener{
 
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
+    Fragment loadURLFragment = new LoadURLFragment();
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
@@ -159,6 +161,12 @@ public class MainActivity extends AppCompatActivity
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
+
+            case R.id.add_url:
+                //loadURLFragment.startActivity(new Intent(this, LoadURLFragment.class));
+                changeMainFragment(loadURLFragment);
+                break;
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -172,5 +180,18 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.mainFrame, fragment);
         transaction.addToBackStack(fragment.toString());
         transaction.commit();
+    }
+
+    @Override
+    public void onOkBtnClicked(String urlString) {
+        WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
+       tempFragment.setNewBackground(urlString);
+        changeMainFragment(whiteboardDrawFragment);
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

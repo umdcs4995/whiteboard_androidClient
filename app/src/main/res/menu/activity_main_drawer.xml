@@ -26,6 +26,10 @@
             android:id="@+id/addFile"
             android:icon="@drawable/load"
             android:title="Load Drive"/>
+        <item
+            android:id="@+id/add_url"
+            android:icon="@drawable/load"
+            android:title="Load From URL"/>
     </group>
 
     <item android:title="Communicate">
