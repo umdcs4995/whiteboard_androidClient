@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
         //SET THE TOOLBAR BELOW
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Whiteboard");
         setSupportActionBar(toolbar);
 
@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 WhiteboardDrawFragment.fabHideMenu(view);
+                if(toolbar.getVisibility()==view.GONE){
+                    toolbar.setVisibility(view.VISIBLE);
+                }
+                else{
+                    toolbar.setVisibility(view.GONE);
+                }
             }
         });
 
