@@ -303,9 +303,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
-    //Method to hide and show the menu, triggered by FAB
-    public static void fabHideMenu(View view){
 
+    /**
+     * Currently tied to the fab button this function hides or un-hides the menu
+     * Both the top / side menus are shown or hidden when this function is called
+     * @param view Function intakes a view
+     */
+    public static void fabHideMenu(View view){
         if (newBtn.getVisibility() == View.GONE) {
                 undoBtn.setVisibility(View.VISIBLE);
                 newBtn.setVisibility(View.VISIBLE);
