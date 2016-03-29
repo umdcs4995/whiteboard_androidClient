@@ -77,7 +77,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         //set up the Drawing view
         drawView.setupDrawing();
-        drawView.setBrushSize(smallBrush);
+        drawView.setBrushSize(smallBrush);//sets initial brush size
         }
 
     /**
@@ -213,6 +213,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
 
+            //small brush option
             ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
             smallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -224,6 +225,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //medium brush option
             ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
             mediumBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -235,6 +237,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //large brush option
             ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
             largeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -247,10 +250,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             });
 
             brushDialog.show();
-        } else if (view.getId() == R.id.undo_btn) {
+        }
+        //undo button, undoes last brush stroke
+        else if (view.getId() == R.id.undo_btn) {
             drawView.undoLastLine();
-        } else if (view.getId() == R.id.new_btn) {
-            //new button
+        }
+        //new drawing button, prompts user to make sure they want to proceed
+        else if (view.getId() == R.id.new_btn) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(getContext());
             newDialog.setTitle("New drawing");
             newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
@@ -303,7 +309,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
-    //Method to hide and show the menu, triggered by FAB
+
+    /**
+     * Method to hide and show the menu, triggered by FAB
+     * Checks current visibility of each component and reverses it.
+     */
     public static void fabHideMenu(View view){
 
         if (newBtn.getVisibility() == View.GONE) {
