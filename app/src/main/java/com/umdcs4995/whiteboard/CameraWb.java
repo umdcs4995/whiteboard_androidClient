@@ -174,8 +174,11 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    //Method here rotates the camera based on the rotation of the screen.
-    public void setCameraOritentation(int degrees) {
+    /**
+     * Coordinates the camera orientation with the display orientation.
+     * @param degrees
+     */
+    public void setCameraOrientation(int degrees) {
         if(camera != null) {camera.setDisplayOrientation(degrees);}
         else {return;}
     }

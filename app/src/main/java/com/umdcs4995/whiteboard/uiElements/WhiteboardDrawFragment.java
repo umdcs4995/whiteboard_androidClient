@@ -230,7 +230,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private void goGoCamera() {
 
         CameraWb cameraWb = new CameraWb(getActivity().getApplicationContext());
-//        cameraWb.setCameraOritentation(degrees);
+//        cameraWb.setCameraOrientation(degrees);
         cameraWindow = (FrameLayout) getActivity().findViewById(R.id.camera_window);
         cameraWindow.addView(cameraWb);
 

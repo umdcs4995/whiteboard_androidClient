@@ -42,6 +42,7 @@ public class SocketService extends Service {
         public static final String JOIN_WHITEBOARD = "joinWhiteboard";
         public static final String CHAT_MESSAGE = "chat message";
         public static final String DRAW_EVENT = "drawevent";
+        public static final String MOTION_EVENT = "motionevent";
         // TODO: put the rest of the messages in here
     }
 
@@ -73,7 +74,8 @@ public class SocketService extends Service {
     }
 
     /**
-     * Set the protocol
+     * Set the protocol accordingly.
+     * @param wp
      */
     public void setProtocol(WhiteboardProtocol wp) {
         protocol = wp;
@@ -99,6 +101,10 @@ public class SocketService extends Service {
         socket.on(id, listener);
     }
 
+    /**
+     * Removes the message listener when the socket is closed.
+     * @param id
+     */
     public void clearListener(String id) {
         socket.off(id);
     }
@@ -151,6 +157,11 @@ public class SocketService extends Service {
         }
     }
 
+    /**
+     * Used to convert JSONObject to String before calling sendMessage
+     * @param id
+     * @param message
+     */
     public void sendMessage(String id, JSONObject message) {
         sendMessage(id, message.toString());
     }

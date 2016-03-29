@@ -24,6 +24,7 @@ import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
 import com.umdcs4995.whiteboard.uiElements.JoinBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
+import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 import org.json.JSONException;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
+    Fragment newBoardFragment = new NewBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
 
     private SocketService socketService = Globals.getInstance().getSocketService();
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
+            // TODO: move to NewBoardFragment class and call changeMainFragment()
             case R.id.add_board:
                 JSONObject createWbRequest = new JSONObject();
                 try {
@@ -173,6 +176,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Replaces the current fragment on the mainFrame layout.
+     * @param fragment
+     */
     private void changeMainFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
