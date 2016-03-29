@@ -8,11 +8,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
-import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WbProtocolException;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -40,8 +38,13 @@ public class SocketService extends Service {
     public class Messages {
         public static final String CREATE_WHITEBOARD = "createWhiteboard";
         public static final String JOIN_WHITEBOARD = "joinWhiteboard";
-        public static final String CHAT_MESSAGE = "chat message";
-        public static final String DRAW_EVENT = "drawevent";
+        // Uncomment the following 2 lines when the server has been fixed:
+        //public static final String CHAT_MESSAGE = "chat message";
+        //public static final String DRAW_EVENT = "drawevent";
+
+        // The following 2 lines are a workaround while the server is being fixed:
+        public static final String CHAT_MESSAGE = "drawevent";
+        public static final String DRAW_EVENT = "chat message";
         // TODO: put the rest of the messages in here
     }
 

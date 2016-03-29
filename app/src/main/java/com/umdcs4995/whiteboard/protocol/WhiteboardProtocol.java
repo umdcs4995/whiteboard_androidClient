@@ -1,11 +1,9 @@
 package com.umdcs4995.whiteboard.protocol;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
-import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.services.SocketService;
 
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 /**
  * WhiteboardProtocol provides an interface between the socket and the client.  The SocketService
