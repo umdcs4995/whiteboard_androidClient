@@ -69,6 +69,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    /*
+     * This function sets up the activity with its necessary components
+     * including setting up the brush color and size
+     * also sets up the drawView, which retrieves the current drawing
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
@@ -309,13 +314,14 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
+    
 
     /**
-     * Method to hide and show the menu, triggered by FAB
-     * Checks current visibility of each component and reverses it.
+     * Currently tied to the fab button this function hides or un-hides the toolbar
+     * Both the top / side drawing menus are shown or hidden when this function is called
+     * @param view Function intakes a view
      */
     public static void fabHideMenu(View view){
-
         if (newBtn.getVisibility() == View.GONE) {
                 undoBtn.setVisibility(View.VISIBLE);
                 newBtn.setVisibility(View.VISIBLE);
