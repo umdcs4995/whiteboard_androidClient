@@ -258,6 +258,7 @@ public class DrawingView extends View{
      */
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        clearQueue();
         invalidate();
     }
     /**
@@ -278,17 +279,25 @@ public class DrawingView extends View{
      * Undo the last line that has been drawn.
      */
     public void undoLastLine() {
-        lineHistory.removeLast();
-        startNew();
-        for (LineSegment ls: lineHistory) {
-            try {
-                ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
-            } catch(InterruptedException e) {
+        if(lineHistory.size() > 0) {
+            lineHistory.removeLast();
+            startNew();
+            for (LineSegment ls : lineHistory) {
+                try {
+                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
+                } catch (InterruptedException e) {
 
+                }
             }
         }
     }
 
+    /**
+     * Clears the queue from drawing that are stored
+     */
+    public void clearQueue(){
+        lineHistory.clear();
+    }
     /**
      * This class creates a runnable to parse through an incoming network line event.
      */
