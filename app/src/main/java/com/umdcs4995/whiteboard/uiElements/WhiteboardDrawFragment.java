@@ -69,6 +69,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    /*
+     * This function sets up the activity with its necessary components
+     * including setting up the brush color and size
+     * also sets up the drawView, which retrieves the current drawing
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
