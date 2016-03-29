@@ -257,6 +257,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     drawView.startNew();
+                    drawView.clearQueue();
                     dialog.dismiss();
                 }
             });
