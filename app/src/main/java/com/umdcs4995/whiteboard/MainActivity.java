@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    /*
+     * This function handles the back button making sure the drawer is closed
+     * then calling the parent back pressed function
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -186,10 +190,15 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    /*
+     * This function handles the "ok" button for loading images from a URL
+     * it creates a temporary fragment and sets the new background to the
+     * specified url and changes the fragment to the new one
+     */
     @Override
     public void onOkBtnClicked(String urlString) {
         WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
-       tempFragment.setNewBackground(urlString);
+        tempFragment.setNewBackground(urlString);
         changeMainFragment(whiteboardDrawFragment);
 
     }
