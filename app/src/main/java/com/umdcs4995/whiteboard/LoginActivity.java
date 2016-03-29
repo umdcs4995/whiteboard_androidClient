@@ -44,12 +44,14 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                //handle login  button clicks
                 login();
             }
         });
 
         _signupLink.setOnClickListener(new View.OnClickListener() {
 
+            //send user to singin activity if they click on signup
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
@@ -63,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     public void login() {
         Log.d(TAG, "Login");
 
+        //validate username and password
         if (!validate()) {
             onLoginFailed();
             return;
@@ -72,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme);
+        //show login progress
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
@@ -79,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement authentication logic here.
+        // TODO: integrate oauth
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -122,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
+        //validate email
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
             valid = false;
@@ -129,6 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
+        //validate password
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
