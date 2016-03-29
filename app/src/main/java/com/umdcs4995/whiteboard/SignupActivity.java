@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//activity to sign up with an email,username,password
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
@@ -33,6 +34,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //handle signup button clicks
                 signup();
             }
         });
@@ -49,6 +51,7 @@ public class SignupActivity extends AppCompatActivity {
     public void signup() {
         Log.d(TAG, "Signup");
 
+        //make sure user submitted valid usernames/passwords/etc
         if (!validate()) {
             onSignupFailed();
             return;
@@ -58,6 +61,7 @@ public class SignupActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.WhiteboardMainTheme);
+        //show signup progress
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
@@ -66,8 +70,8 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
 
+        //TODO: all the tie-ins with oauth
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -81,6 +85,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
+    
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -93,6 +98,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setEnabled(true);
     }
 
+    //function to check if email, username, and password entered are valid
     public boolean validate() {
         boolean valid = true;
 
@@ -100,6 +106,7 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
+        //validate name
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("at least 3 characters");
             valid = false;
@@ -107,6 +114,7 @@ public class SignupActivity extends AppCompatActivity {
             _nameText.setError(null);
         }
 
+        //validate email
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
             valid = false;
@@ -114,6 +122,7 @@ public class SignupActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
+        //validate password
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
