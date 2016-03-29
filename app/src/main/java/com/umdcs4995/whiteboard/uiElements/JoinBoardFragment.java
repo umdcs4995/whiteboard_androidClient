@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.uiElements;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +20,19 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.services.SocketService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Socket;
 import java.util.logging.Logger;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
+import io.socket.emitter.Emitter;
 
 /**
  * Activity for handling the contact list screen for the app.
@@ -92,7 +96,30 @@ public class JoinBoardFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //This is where the code goes for a click of an item of the list.
                 ContactWb person = (ContactWb) parent.getItemAtPosition(position);
-                new NotYetImplementedToast(getContext(), person.getName() + " clicked!");
+                JSONObject joinWbRequest = new JSONObject();
+                try {
+                    joinWbRequest.put("name", person.getName());
+                } catch (JSONException e) {
+                    Log.i("joinWhiteboard", "failed to join whiteboard");
+                }
+
+                final SocketService socket = Globals.getInstance().getSocketService();
+
+                socket.addListener(SocketService.Messages.JOIN_WHITEBOARD, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        JSONObject recvd = (JSONObject)args[0];
+                        try {
+                            Log.i("joinWhiteboard", "received message: " + recvd.getString("message"));
+                        } catch (JSONException e) {
+                            Log.w("joinWhiteboard", "error parsing received message");
+                        }
+                        socket.clearListener(SocketService.Messages.JOIN_WHITEBOARD);
+                    }
+                });
+
+                socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+
             }
         };
 
