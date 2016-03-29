@@ -51,12 +51,15 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitle("Whiteboard");
         setSupportActionBar(toolbar);
 
-        //SET THE FLOATING ACTION BELOW
+        /**
+         *Hides or makes visible the draw components and toolbar
+         */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WhiteboardDrawFragment.fabHideMenu(view);
+                WhiteboardDrawFragment.fabHideMenu(view);//Function used to set draw components visibility
+                //Statement used to set toolbars visibility
                 if(toolbar.getVisibility()==view.GONE){
                     toolbar.setVisibility(view.VISIBLE);
                 }
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    //closes navigation drawer on back press if it is open
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -157,11 +161,11 @@ public class MainActivity extends AppCompatActivity
                 changeMainFragment(joinBoardFragment);
                 break;
 
-            case R.id.nav_contacts:
+            case R.id.nav_contacts://Navigates to list of contacts
                 changeMainFragment(contactListFragment);
                 break;
 
-            case R.id.nav_settings:
+            case R.id.nav_settings://Navigates to Settings Activity
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
