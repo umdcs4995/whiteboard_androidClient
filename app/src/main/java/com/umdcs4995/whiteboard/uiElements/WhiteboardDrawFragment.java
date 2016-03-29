@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,9 +37,11 @@ import java.util.UUID;
  */
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
-    private DrawingView drawView;
-    private ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, fileBtn, loadBtn, driveBtn;
+    private static DrawingView drawView;
+    private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn, fileBtn, loadBtn, driveBtn;
 
+    //Color Options
+    private static ImageButton c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
 
     // Test button that will load an image from a url
     private static final String TAG = "WhiteboardDrawFragment";
@@ -96,14 +99,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     }
 
-
     /**
      * This method sets all the buttons onClick listeners to "this", passing the licks into
      * the onClick method below.
      */
     private void setupOnClickListeners() {
         ImageButton button;
-
+        /*
         button = (ImageButton) getActivity().findViewById(R.id.new_btn);
         button.setOnClickListener(this);
 
@@ -117,8 +119,55 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button.setOnClickListener(this);
 
         button = (ImageButton) getActivity().findViewById(R.id.erease_btn);
-        button.setOnClickListener(this);
+        button.setOnClickListener(this); */
 
+        // Editing Buttons
+
+        //Drawing View and Buttons
+        drawBtn = (ImageButton) getActivity().findViewById(R.id.draw_btn);
+        drawBtn.setOnClickListener(this);
+
+        eraseBtn = (ImageButton) getActivity().findViewById(R.id.erease_btn);
+        eraseBtn.setOnClickListener(this);
+
+        newBtn = (ImageButton) getActivity().findViewById(R.id.new_btn);
+        newBtn.setOnClickListener(this);
+
+        saveBtn = (ImageButton) getActivity().findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
+
+        undoBtn = (ImageButton) getActivity().findViewById(R.id.undo_btn);
+        undoBtn.setOnClickListener(this);
+        //Done Editing Horizontal Buttons
+
+        //Vertical Colors Menu
+        c1 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
+        c1.setOnClickListener(this);
+        c2 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color2);
+        c2.setOnClickListener(this);
+        c3 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color3);
+        c3.setOnClickListener(this);
+        c4 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color4);
+        c4.setOnClickListener(this);
+        c5 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color5);
+        c5.setOnClickListener(this);
+        c6 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color6);
+        c6.setOnClickListener(this);
+        c7 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color7);
+        c7.setOnClickListener(this);
+        c8 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color8);
+        c8.setOnClickListener(this);
+        c9 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color9);
+        c9.setOnClickListener(this);
+        c10 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color10);
+        c10.setOnClickListener(this);
+        c11 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color11);
+        c11.setOnClickListener(this);
+        c12 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
+        c12.setOnClickListener(this);
+        //End Colors
+
+        /*
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         button.setOnClickListener(this);
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color2);
@@ -143,8 +192,10 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         button.setOnClickListener(this);
         button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
         button.setOnClickListener(this);
-
+        */
     }
+
+
 
 
     /**
@@ -171,7 +222,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 cameraWindow.setVisibility(View.GONE);
             }
         }
-
     }
 
     /**
@@ -309,6 +359,50 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
+    //Method to hide and show the menu, triggered by FAB
+    public static void fabHideMenu(View view){
+        //Snackbar.make(view, "Should Hide Menu", Snackbar.LENGTH_LONG)
+               //.setAction("Action", null).show();
+        if (newBtn.getVisibility() == View.GONE) {
+                undoBtn.setVisibility(View.VISIBLE);
+                newBtn.setVisibility(View.VISIBLE);
+                eraseBtn.setVisibility(View.VISIBLE);
+                drawBtn.setVisibility(View.VISIBLE);
+                saveBtn.setVisibility(View.VISIBLE);
+                c1.setVisibility(View.VISIBLE);
+                c2.setVisibility(View.VISIBLE);
+                c3.setVisibility(View.VISIBLE);
+                c4.setVisibility(View.VISIBLE);
+                c5.setVisibility(View.VISIBLE);
+                c6.setVisibility(View.VISIBLE);
+                c7.setVisibility(View.VISIBLE);
+                c8.setVisibility(View.VISIBLE);
+                c9.setVisibility(View.VISIBLE);
+                c10.setVisibility(View.VISIBLE);
+                c11.setVisibility(View.VISIBLE);
+                c12.setVisibility(View.VISIBLE);
+        } else {
+                undoBtn.setVisibility(View.GONE);
+                newBtn.setVisibility(View.GONE);
+                eraseBtn.setVisibility(View.GONE);
+                drawBtn.setVisibility(View.GONE);
+                saveBtn.setVisibility(View.GONE);
+                c1.setVisibility(View.GONE);
+                c2.setVisibility(View.GONE);
+                c3.setVisibility(View.GONE);
+                c4.setVisibility(View.GONE);
+                c5.setVisibility(View.GONE);
+                c6.setVisibility(View.GONE);
+                c7.setVisibility(View.GONE);
+                c8.setVisibility(View.GONE);
+                c9.setVisibility(View.GONE);
+                c10.setVisibility(View.GONE);
+                c11.setVisibility(View.GONE);
+                c12.setVisibility(View.GONE);
+        }
+
+    }
+
     public void setNewBackground(String urlString){
         //click button code here
         //goal is to get a drawable object and then draw it to canvas put in just the right
@@ -364,6 +458,4 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
         }
     }
-
-
 }
