@@ -74,6 +74,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         //set up the Drawing view
         drawView.setupDrawing();
+        drawView.setBrushSize(smallBrush);
         }
 
     /**
