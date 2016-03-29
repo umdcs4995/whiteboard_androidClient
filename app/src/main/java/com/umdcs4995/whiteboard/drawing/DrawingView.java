@@ -258,7 +258,6 @@ public class DrawingView extends View{
      */
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-        clearQueue();
         invalidate();
     }
     /**
