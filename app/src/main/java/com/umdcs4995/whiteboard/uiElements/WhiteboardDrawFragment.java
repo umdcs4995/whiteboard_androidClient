@@ -66,6 +66,10 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    /**
+     * Executes when the activity starts. Initializes UI elements and sets up the drawing.
+     * @param savedInstanceState
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
@@ -308,13 +312,19 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
-    public void setNewBackground(String urlString){
+
+    /**
+     * Takes URL and downloads the image it refers to.
+     * @param urlString The url that you want to download your image from.
+     */
+    public void loadBackgroundFromURL(String urlString){
         //click button code here
         //goal is to get a drawable object and then draw it to canvas put in just the right
         //layer
         Log.i(TAG, "did click the button");
 
         URL tempURL = null;
+        //This catches if the url provided was not a valid url.
         try {
             tempURL = new URL(urlString);
         } catch (MalformedURLException e) {
