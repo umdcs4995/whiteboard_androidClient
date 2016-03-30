@@ -1,4 +1,6 @@
 <resources>
+
+
     <string name="app_name">Whiteboard</string>
     <string name="title_activity_intro">IntroActivity</string>
     <string name="title_activity_host_white_board">HostWhiteBoardActivity</string>
@@ -32,7 +34,10 @@
     <string name="title_activity_connection">ConnectionActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="Login">Login</string>
-    <string name="title_activity_signup">SignupActivity</string>
+    <string name="signed_out">Signed out</string>
+    <string name="signed_in">Signed in</string>
+    <!---The client ID provided with OAuth credentials-->
+    <string name="server_client_id">635513881022-50i1nvlsk143gct1kae3m2lbmj7lb20s.apps.googleusercontent.com</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="action_settings">Settings</string>
