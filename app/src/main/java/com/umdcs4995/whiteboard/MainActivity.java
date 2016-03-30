@@ -1,6 +1,5 @@
 package com.umdcs4995.whiteboard;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,8 +23,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
@@ -63,12 +60,8 @@ public class MainActivity extends AppCompatActivity
     private SocketService socketService = Globals.getInstance().getSocketService();
 
     private LoginFragment.GoogleSignInActivityResult pendingGoogleSigninResult;
-
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {GmailScopes.GMAIL_LABELS};
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
-    private ProgressDialog progressDialog;
     private boolean isSignedIn;
     private OnFragmentInteractionListener onFragmentInteractionListener;
 
@@ -114,29 +107,13 @@ public class MainActivity extends AppCompatActivity
 
         //SETUP THE DEFAULT FRAGMENT
         changeMainFragment(whiteboardDrawFragment);
-
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        gso = new Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER)).build();
-//
-//        // Build a GoogleAPIClient with access to the Google Sign-in api and
-//        // the other options specified above by the gso.
-//        googleApiClient = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this, this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).build();
-//        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-//        googleAccountCredential = GoogleAccountCredential.usingOAuth2(getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
-
-
     }
 
-    @Override
-    
     /*
      * This function handles the back button closing the navigation drawer and
      * then calling the parent back pressed function
      */
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -164,11 +141,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      * NavItem selected method
@@ -235,7 +209,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.login:
 //                Intent in = new Intent(this, LoginFragment.class);
                 changeMainFragment(loginFragment);
-                signIn();
+//                signIn();
                 break;
 
         }
@@ -271,6 +245,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
     public void onLoginBtnClicked() {
         WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
         changeMainFragment(whiteboardDrawFragment);
@@ -288,10 +263,6 @@ public class MainActivity extends AppCompatActivity
         // LoginFragment doesn't get all of the onActivityResults for google sign in
         // so the activity needs to proxy them through but only after the LoginFragment has
         // been registered with the event bus.
-//        if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
-//            mPendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
-//                    resultCode, data);
-//        }
         if (requestCode == RC_SIGN_IN) {
 //            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             pendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
@@ -315,41 +286,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
-
-    private void signIn() {
-        //Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        //startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            //progressDialog.setMessage(getString(R.string.loading));
-            progressDialog.setIndeterminate(true);
-        }
-        progressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.hide();
-        }
-    }
-
-//    public boolean openLoginDialogIfLoggedOut() {
-//        if (!isSignedIn) {
-//            //LoginFragment.newInstance().show(getSupportFragmentManager(), "LoginFragment");
-//            return true;
-//        } else {
-//            return false;
-//        }
+//    private void signIn() {
+//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+//        startActivityForResult(signInIntent, RC_SIGN_IN);
 //    }
+
+
+    public boolean openLoginDialogIfLoggedOut() {
+        if (!isSignedIn) {
+            //LoginFragment.newInstance().show(getSupportFragmentManager(), "LoginFragment");
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public int getActivityid() {
         return 0;
