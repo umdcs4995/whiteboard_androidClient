@@ -48,7 +48,9 @@ public class Authenticator extends AbstractAccountAuthenticator {
     }
 
     public static String getAccountType() {
-        return "com.umdcs4995.whiteboard." + BuildConfig.SITE_NAME;
+        //TODO fix this too
+        return "com.umdcs4995.whiteboard.";
+        //return "com.umdcs4995.whiteboard." + BuildConfig.SITE_NAME;
     }
 
     /**
@@ -80,9 +82,10 @@ public class Authenticator extends AbstractAccountAuthenticator {
         // Accounts cannot share the same name so we must prefix the username with the site
         // name if this is the whiteboard app
         String accountName = userName;
-        if (BuildConfig.SITE_NAME.equals("dozuki")) {
-            accountName = site.mTitle + ": " + userName;
-        }
+        //TODO FIX THIS
+//        if (BuildConfig.SITE_NAME.equals("dozuki")) {
+//            accountName = site.mTitle + ": " + userName;
+//        }
 
         Account newAccount = new Account(accountName, getAccountType());
 

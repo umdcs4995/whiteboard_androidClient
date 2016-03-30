@@ -98,12 +98,13 @@ public class Site implements Serializable {
     }
 
     public String getAPIDomain() {
-        String domain;
+        //TODO fix errors that show up
+        String domain= mDomain;
         if (App.inDebug()) {
             if (isWhiteboard()) {
-                domain = BuildConfig.DEV_SERVER;
+                //domain = BuildConfig.DEV_SERVER;
             } else {
-                domain = mName + "." + BuildConfig.DEV_SERVER;
+                //domain = mName + "." + BuildConfig.DEV_SERVER;
             }
         } else {
             domain = mDomain;

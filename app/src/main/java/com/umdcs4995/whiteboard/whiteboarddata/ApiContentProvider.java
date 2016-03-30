@@ -18,7 +18,8 @@ public class ApiContentProvider extends ContentProvider {
     private static String sAuthority;
     public static String getAuthority() {
         if (sAuthority == null) {
-            sAuthority = "com.dozuki." + BuildConfig.SITE_NAME + ".provider";
+            //TODO Fix this
+            //sAuthority = "com.dozuki." + BuildConfig.SITE_NAME + ".provider";
         }
 
         return sAuthority;
