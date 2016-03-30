@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.uiElements;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,8 +28,11 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.R;
+
+import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,21 +112,21 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        statusTextView = (TextView) loginView.findViewById(R.id.status);
+//        statusTextView = (TextView) loginView.findViewById(R.id.status);
         // Configure sign-in to request the user's ID, email address, and
         // basic profile.
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER)).build();
-//
-//        // Build a GoogleAPIClient with access to the Google Sign-in api and
-//        // the other options specified above by the gso.
-//        Context context = getActivity();
-//        googleApiClient = new GoogleApiClient.Builder(getActivity())
-//            .enableAutoManage(getActivity(), this)
-//            .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).build();
-//        //loginView.findViewById(R.id.sign_in_button).setOnClickListener(this);
-//        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+
+        // Build a GoogleAPIClient with access to the Google Sign-in api and
+        // the other options specified above by the gso.
+        Context context = getActivity();
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+            .enableAutoManage(getActivity(), this)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).build();
+        //loginView.findViewById(R.id.sign_in_button).setOnClickListener(this);
+        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+        credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
     }
 
     @Override
@@ -133,6 +137,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         signInButton = (SignInButton) loginView.findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setScopes(gso.getScopeArray());
+        statusTextView = (TextView) loginView.findViewById(R.id.status);
+
 //        signInButton.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
 //                if (loginBtnClickedListener != null) {
@@ -155,12 +161,13 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            listener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        listener = (OnFragmentInteractionListener) context;
+//        if (context instanceof OnFragmentInteractionListener) {
+//            listener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
 
     @Override
@@ -263,12 +270,12 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            //loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             //loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
             //this.finish();
         } else {
             statusTextView.setText(R.string.signed_out);
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            //loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             //loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
 
         }
@@ -349,4 +356,5 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             mData = data;
         }
     }
+
 }

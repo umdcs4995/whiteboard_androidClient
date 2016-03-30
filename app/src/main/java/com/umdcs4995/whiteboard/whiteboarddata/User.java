@@ -1,5 +1,10 @@
 package com.umdcs4995.whiteboard.whiteboarddata;
 
+import android.media.Image;
+
+import com.google.gson.annotations.SerializedName;
+
+
 /**
  * This class represents a physical user.
  * Created by Rob on 3/21/2016.
@@ -12,6 +17,34 @@ public class User {
     private String name;
     private int status;
     private String id;
+
+    private static final long serialVersionUID = 6209686573278334361L;
+
+    @SerializedName("userid") private int mUserid;
+    @SerializedName("username") private String mUsername;
+    @SerializedName("image") private Image mAvatar;
+    @SerializedName("reputation") private int mReputation;
+    @SerializedName("join_date") private int mDate;
+    @SerializedName("certification_count") private int mCertificationCount;
+    @SerializedName("summary") private String mSummary;
+    @SerializedName("about_raw") private String mAboutRaw;
+    @SerializedName("about_rendered") private String mAboutRendered;
+    @SerializedName("authToken") private String mAuthToken;
+
+    /**
+     * Used for reauthentication. It isn't returned by the API but it's used internally.
+     */
+    public String mEmail;
+
+    /**
+     * Used for using the correct site for syncing the user's data. It isn't returned by
+     * the API but it's used internally.
+     */
+    public String mSiteName;
+
+    public User() {
+
+    }
 
     /**
      * Default constructor for user
@@ -74,4 +107,85 @@ public class User {
         return id;
     }
 
-}
+        public int getUserid() {
+            return mUserid;
+        }
+
+        public void setUserid(int userid) {
+            mUserid = userid;
+        }
+
+        public String getUsername() {
+            return mUsername;
+        }
+
+        public void setUsername(String mUsername) {
+            this.mUsername = mUsername;
+        }
+
+        public Image getAvatar() {
+            return mAvatar;
+        }
+
+        public void setAvatar(Image mAvatar) {
+            this.mAvatar = mAvatar;
+        }
+
+        public int getReputation() {
+            return mReputation;
+        }
+
+        public void setReputation(int mReputation) {
+            this.mReputation = mReputation;
+        }
+
+        public int getJoinDate() {
+            return mDate;
+        }
+
+        public void setJoinDate(int mDate) {
+            this.mDate = mDate;
+        }
+
+        public int getCertificationCount() {
+            return mCertificationCount;
+        }
+
+        public void setCertificationCount(int mCertificationCount) {
+            this.mCertificationCount = mCertificationCount;
+        }
+
+        public String getSummary() {
+            return mSummary;
+        }
+
+        public void setSummary(String mSummary) {
+            this.mSummary = mSummary;
+        }
+
+        public String getAboutRaw() {
+            return mAboutRaw;
+        }
+
+        public void setAboutRaw(String mAboutRaw) {
+            this.mAboutRaw = mAboutRaw;
+        }
+
+        public String getAboutRendered() {
+            return mAboutRendered;
+        }
+
+        public void setAboutRendered(String mAboutRendered) {
+            this.mAboutRendered = mAboutRendered;
+        }
+
+        public String getAuthToken() {
+            return mAuthToken;
+        }
+
+        public void setAuthToken(String mAuthToken) {
+            this.mAuthToken = mAuthToken;
+        }
+    }
+
+

@@ -36,6 +36,22 @@
     <string name="Login">Login</string>
     <string name="signed_out">Signed out</string>
     <string name="signed_in">Signed in</string>
+    <string name="fatal_error_title">Fatal Error</string>
+    <string name="fatal_error">Fatal Error</string>
+    <string name="parse_error_title">Parse Error</string>
+    <string name="parse_error_message">There was an error in parsing</string>
+    <string name="no_connection_title">No Connection</string>
+    <string name="no_connection">The application failed to make a connection</string>
+    <string name="error">Error</string>
+    <string name="login_error">There was an error in logging in</string>
+    <string name="forbidden_error">No access</string>
+    <string name="not_found_error">Data not found</string>
+    <string name="invalid_revision_error_title">Invalid revision</string>
+    <string name="invalid_revision_error">There has been an invalid revision</string>
+    <string name="validation_error_title">Validation Error</string>
+    <string name="validation_error_body">There has been an error in validating your credentials</string>
+    
+    
     <!---The client ID provided with OAuth credentials-->
     <string name="server_client_id">635513881022-50i1nvlsk143gct1kae3m2lbmj7lb20s.apps.googleusercontent.com</string>
     <string name="title_activity_main">MainActivity</string>
@@ -49,4 +65,6 @@
     <string name="port">3000</string>
     <string name="secure_port">4995</string>
     <string name="rtc_port">3001</string>
+    <string name="try_again"/>
+    <string name="error_confirm"/>
 </resources>
