@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
+            // The client tries to create new whiteboard by sending the server the name of the whiteboard.
+            // The server then replies with a error message or a create successful message.
             case R.id.add_board:
                 JSONObject createWbRequest = new JSONObject();
                 try {
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void call(Object... args) {
                         // TODO: Set up the whiteboard + join it here
-                        JSONObject recvd = (JSONObject)args[0];
+                        JSONObject recvd = (JSONObject) args[0];
                         try {
                             Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
                         } catch (JSONException e) {
@@ -161,6 +163,8 @@ public class MainActivity extends AppCompatActivity
                 });
                 break;
 
+            // The client tries to join a whiteboard by sending the server the name of the whiteboard.
+            // The server then replies with a error message or a join successful message.
             case R.id.join_board:
                 changeMainFragment(joinBoardFragment);
                 break;
