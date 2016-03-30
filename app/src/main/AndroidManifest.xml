@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.umdcs4995.whiteboard">
+    package="com.umdcs4995.whiteboard"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- -This line is used to make sure the phone can download stuff from the internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- used in handling google signin -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -31,13 +38,9 @@
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".SignupActivity"
-            android:label="@string/title_activity_signup"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/WhiteboardAddTheme"></activity>
+            android:theme="@style/WhiteboardAddTheme"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -45,6 +48,9 @@
         <service
             android:name=".services.SocketService"
             android:enabled="true"></service>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

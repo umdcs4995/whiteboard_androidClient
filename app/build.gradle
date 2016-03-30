@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.umdcs4995.whiteboard"
@@ -24,7 +24,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
     compile 'com.jakewharton:butterknife:5.1.1'
-    compile 'com.jakewharton:butterknife:5.1.1'
 
     compile('io.socket:socket.io-client:0.7.0') {
         // excluding org.json which is provided by Android
@@ -36,19 +35,10 @@ dependencies {
     }
 
     // Use this for the Volley library for HTTP requests
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
-    compile 'com.android.support:support-v4:23.2.1'
     compile 'com.jakewharton:butterknife:5.1.1'
-    compile 'com.android.volley:volley:1.0.0'
 
-    compile 'com.google.android.gms:play-services-plus:8.4.0'
-    compile 'com.google.android.gms:play-services-drive:8.4.0'
-    compile 'com.google.android.gms:play-services-identity:8.4.0'
     //compile 'com.google.android.gms:play-services-auth:8.3.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     // Dependency for Google Sign-In
-    compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile('com.google.api-client:google-api-client-android:1.20.0') {
         exclude group: 'org.apache.httpcomponents'
     }
@@ -61,10 +51,20 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
 
     }
-    compile 'com.firebase:firebase-client-android:2.0.3+'
-    compile 'com.squareup.picasso:picasso:2.5.2'
 
+    compile 'com.jakewharton:butterknife:5.1.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.google.android.gms:play-services-plus:8.4.0'
+    compile 'com.google.android.gms:play-services-drive:8.4.0'
+    compile 'com.google.android.gms:play-services-identity:8.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
+
 

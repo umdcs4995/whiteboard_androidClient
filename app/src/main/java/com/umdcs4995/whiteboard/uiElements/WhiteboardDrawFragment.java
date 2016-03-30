@@ -74,6 +74,12 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      * This function sets up the activity with its necessary components
      * including setting up the brush color and size
      * also sets up the drawView, which retrieves the current drawing
+
+    /**
+     * Sets up the activity with its necessary components
+     * including setting up the brush color and size
+     * also sets up the drawView, which retrieves the current drawing
+     * @param savedInstanceState
      */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -314,7 +320,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
-    
 
     /**
      * Currently tied to the fab button this function hides or un-hides the toolbar
@@ -362,13 +367,18 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
     }
 
-    public void setNewBackground(String urlString){
+    /**
+     * Takes URL and downloads the image it refers to.
+     * @param urlString The url that you want to download your image from.
+     */
+    public void loadBackgroundFromURL(String urlString){
         //click button code here
         //goal is to get a drawable object and then draw it to canvas put in just the right
         //layer
         Log.i(TAG, "did click the button");
 
         URL tempURL = null;
+        //This catches if the url provided was not a valid url.
         try {
             tempURL = new URL(urlString);
         } catch (MalformedURLException e) {
