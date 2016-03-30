@@ -20,6 +20,8 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 /**
+ * The SocketService maintains a background connection to the server.  It's methods are used by
+ * the protocols to send and receive messages from the server.
  * Created by rob on 2/27/16.
  */
 public class SocketService extends Service {

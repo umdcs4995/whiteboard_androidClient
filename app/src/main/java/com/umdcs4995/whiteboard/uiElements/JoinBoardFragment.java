@@ -35,12 +35,12 @@ import contacts.ContactWb;
 import io.socket.emitter.Emitter;
 
 /**
- * Activity for handling the contact list screen for the app.
+ * Activity for handling the list of whiteboards that the user can join
  */
 
 public class JoinBoardFragment extends Fragment {
 
-    ContactList contactList = new ContactList();
+    ContactList whiteboardList = new ContactList();
 
     /**
      * Called on creation of the fragment.
@@ -63,19 +63,19 @@ public class JoinBoardFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fetchStreamlist();
+        fetchWhiteboardlist();
     }
 
     /**
      * Creates the contact list view and adapters.
      */
-    private void setupContactListView() {
+    private void setupWhiteboardListView() {
         //First get some strings
-        ContactWb[] people = new ContactWb[contactList.getSize()];
+        ContactWb[] people = new ContactWb[whiteboardList.getSize()];
 
         //Pull the contact list in.
-        for(int i = 0; i < contactList.getSize(); i++) {
-            people[i] = contactList.getContactOrdinal(i);
+        for(int i = 0; i < whiteboardList.getSize(); i++) {
+            people[i] = whiteboardList.getContactOrdinal(i);
         }
 
         ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
@@ -83,14 +83,14 @@ public class JoinBoardFragment extends Fragment {
 
         ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
         listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(makeContactListListener());
+        listView.setOnItemClickListener(makeWhiteboardListListener());
     }
 
     /**
-     * Make an item lick listener for the contacts.
-     * @return the item click listener associated with the contact list
+     * Make an item lick listener for the whiteboards to join.
+     * Sends a JSON request via socketIO and logs the response
      */
-    private AdapterView.OnItemClickListener makeContactListListener() {
+    private AdapterView.OnItemClickListener makeWhiteboardListListener() {
         AdapterView.OnItemClickListener l = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -127,9 +127,11 @@ public class JoinBoardFragment extends Fragment {
     }
 
     /**
-     * fetches the stream list for the json requests
+     * Fetches the JSON file at
+     * http[s]://[servername]:[port]/whiteboards.json
+     * and parses it, adding each entry to the 'ContactList' object (that's really a whiteboard list)
      */
-    private void fetchStreamlist() {
+    private void fetchWhiteboardlist() {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Globals.getInstance().getServerAddress() + "/whiteboards.json";
@@ -144,7 +146,7 @@ public class JoinBoardFragment extends Fragment {
                         for(int i = 0; i < response.length(); i++) {
                             try {
                                 String whiteboard = response.getString(i);
-                                contactList.addContact(whiteboard, whiteboard, ContactList.STATUS_CONNECTED);
+                                whiteboardList.addContact(whiteboard, whiteboard, ContactList.STATUS_CONNECTED);
                             } catch (JSONException e) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
@@ -154,7 +156,7 @@ public class JoinBoardFragment extends Fragment {
                                 });
                             }
                         }
-                        setupContactListView();
+                        setupWhiteboardListView();
                     }
                 }, new Response.ErrorListener() {
             @Override

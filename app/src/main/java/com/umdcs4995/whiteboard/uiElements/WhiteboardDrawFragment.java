@@ -32,7 +32,8 @@ import java.net.URL;
 import java.util.UUID;
 
 /**
- * This class contains the code for the drawing fragment.
+ * This class contains the code for the drawing fragment.  This fragment should be enclosed in the
+ * main activity.
  * Created by Rob on 3/21/2016.
  */
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{

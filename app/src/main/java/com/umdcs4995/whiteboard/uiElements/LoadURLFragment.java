@@ -61,6 +61,12 @@ public class LoadURLFragment extends Fragment {
     }
 
     @Override
+    /**
+     * Note that onCreate methods are called on actual instantiation of the object by an intent.
+     * and not on instantiation or activation of the fragment.
+     *
+     * In general, don't put things in the onCreate method.
+     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
