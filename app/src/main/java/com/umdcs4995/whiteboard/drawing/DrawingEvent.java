@@ -32,7 +32,7 @@ public class DrawingEvent implements Delayed {
     public DrawingEvent(int action, long startTime, long eventTime, float xValue, float yValue) {
         this.action = action;
         this.startTime = startTime; // time where drawing started
-        this.eventTime = eventTime; // time where draw event happended
+        this.eventTime = eventTime; // time where draw event happened
         this.xValue = xValue;
         this.yValue = yValue;
 
