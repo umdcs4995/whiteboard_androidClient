@@ -283,7 +283,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onOkBtnClicked(String urlString) {
         WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
-        tempFragment.setNewBackground(urlString);
+        //tempFragment.setNewBackground(urlString);
+       tempFragment.loadBackgroundFromURL(urlString);
         changeMainFragment(whiteboardDrawFragment);
 
     }
