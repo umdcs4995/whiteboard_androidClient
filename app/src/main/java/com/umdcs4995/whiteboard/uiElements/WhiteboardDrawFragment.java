@@ -69,6 +69,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    /*
+     * This function sets up the activity with its necessary components
+     * including setting up the brush color and size
+     * also sets up the drawView, which retrieves the current drawing
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
@@ -77,7 +82,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         //set up the Drawing view
         drawView.setupDrawing();
-        drawView.setBrushSize(smallBrush);
+        drawView.setBrushSize(smallBrush);//sets initial brush size
         }
 
     /**
@@ -100,11 +105,10 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     }
 
     /**
-     * This method sets all the buttons onClick listeners to "this", passing the licks into
+     * This method sets all the buttons onClick listeners to "this", passing the clicks into
      * the onClick method below.
      */
     private void setupOnClickListeners() {
-        // Editing Buttons
 
         //Drawing View and Buttons
         drawBtn = (ImageButton) getActivity().findViewById(R.id.draw_btn);
@@ -186,7 +190,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private void goGoCamera() {
 
         CameraWb cameraWb = new CameraWb(getActivity().getApplicationContext());
-//        cameraWb.setCameraOritentation(degrees);
+//        cameraWb.setCameraOrientation(degrees);
         cameraWindow = (FrameLayout) getActivity().findViewById(R.id.camera_window);
         cameraWindow.addView(cameraWb);
 
@@ -198,7 +202,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     /**
      * Responds to clicks of the following buttons on the whiteboard:
-     *  - draw_btn
+     *  - draw_btn handles the size of the brush
      *  - undo_btn
      *  - new_btn
      *  - save_btn
@@ -213,6 +217,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
 
+            //small brush option
             ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
             smallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -224,6 +229,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //medium brush option
             ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
             mediumBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -235,6 +241,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //large brush option
             ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
             largeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -247,10 +254,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             });
 
             brushDialog.show();
-        } else if (view.getId() == R.id.undo_btn) {
+        }
+        //undo button, undoes last brush stroke
+        else if (view.getId() == R.id.undo_btn) {
             drawView.undoLastLine();
-        } else if (view.getId() == R.id.new_btn) {
-            //new button
+        }
+        //new drawing button, prompts user to make sure they want to proceed
+        else if (view.getId() == R.id.new_btn) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(getContext());
             newDialog.setTitle("New drawing");
             newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
@@ -303,9 +313,15 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
 
     }
-    //Method to hide and show the menu, triggered by FAB
-    public static void fabHideMenu(View view){
+    
 
+    /**
+     * Currently tied to the fab button this function hides or un-hides the toolbar
+     * Both the top / side drawing menus are shown or hidden when this function is called
+     * @param view Function intakes a view
+     */
+    public static void fabHideMenu(View view){
+        //set all the components to Visible or Gone
         if (newBtn.getVisibility() == View.GONE) {
                 undoBtn.setVisibility(View.VISIBLE);
                 newBtn.setVisibility(View.VISIBLE);
@@ -325,25 +341,24 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 c11.setVisibility(View.VISIBLE);
                 c12.setVisibility(View.VISIBLE);
         } else {
-                undoBtn.setVisibility(View.GONE);
-                newBtn.setVisibility(View.GONE);
-                eraseBtn.setVisibility(View.GONE);
-                drawBtn.setVisibility(View.GONE);
-                saveBtn.setVisibility(View.GONE);
-                c1.setVisibility(View.GONE);
-                c2.setVisibility(View.GONE);
-                c3.setVisibility(View.GONE);
-                c4.setVisibility(View.GONE);
-                c5.setVisibility(View.GONE);
-                c6.setVisibility(View.GONE);
-                c7.setVisibility(View.GONE);
-                c8.setVisibility(View.GONE);
-                c9.setVisibility(View.GONE);
-                c10.setVisibility(View.GONE);
-                c11.setVisibility(View.GONE);
-                c12.setVisibility(View.GONE);
+            undoBtn.setVisibility(View.GONE);
+            newBtn.setVisibility(View.GONE);
+            eraseBtn.setVisibility(View.GONE);
+            drawBtn.setVisibility(View.GONE);
+            saveBtn.setVisibility(View.GONE);
+            c1.setVisibility(View.GONE);
+            c2.setVisibility(View.GONE);
+            c3.setVisibility(View.GONE);
+            c4.setVisibility(View.GONE);
+            c5.setVisibility(View.GONE);
+            c6.setVisibility(View.GONE);
+            c7.setVisibility(View.GONE);
+            c8.setVisibility(View.GONE);
+            c9.setVisibility(View.GONE);
+            c10.setVisibility(View.GONE);
+            c11.setVisibility(View.GONE);
+            c12.setVisibility(View.GONE);
         }
-
     }
 
     public void setNewBackground(String urlString){

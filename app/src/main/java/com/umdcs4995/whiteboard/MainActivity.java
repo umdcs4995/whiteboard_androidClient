@@ -47,10 +47,12 @@ import com.umdcs4995.whiteboard.services.SocketService.Messages;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
 import com.umdcs4995.whiteboard.uiElements.JoinBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
+
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnFragmentInteractionListener;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnOkBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment;
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
+import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 import org.json.JSONException;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
+    Fragment newBoardFragment = new NewBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
     //Fragment loginFragment = new LoginFragment();
 
@@ -95,16 +98,25 @@ public class MainActivity extends AppCompatActivity
         //SET THE TOOLBAR BELOW
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Whiteboard");
         setSupportActionBar(toolbar);
 
-        //SET THE FLOATING ACTION BELOW
+        /**
+         *Hides or makes visible the draw components and toolbar
+         */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                WhiteboardDrawFragment.fabHideMenu(view);
+                WhiteboardDrawFragment.fabHideMenu(view);//Function used to set draw components visibility
+                //Statement used to set toolbars visibility
+                if(toolbar.getVisibility()==view.GONE){
+                    toolbar.setVisibility(view.VISIBLE);
+                }
+                else{
+                    toolbar.setVisibility(view.GONE);
+                }
             }
         });
 
@@ -138,6 +150,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    
+    /*
+     * This function handles the back button closing the navigation drawer and
+     * then calling the parent back pressed function
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -185,6 +202,9 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
+            // TODO: move to NewBoardFragment class and call changeMainFragment()
+            // The client tries to create new whiteboard by sending the server the name of the whiteboard.
+            // The server then replies with a error message or a create successful message.
             case R.id.add_board:
                 JSONObject createWbRequest = new JSONObject();
                 try {
@@ -210,15 +230,17 @@ public class MainActivity extends AppCompatActivity
                 });
                 break;
 
+            // The client tries to join a whiteboard by sending the server the name of the whiteboard.
+            // The server then replies with a error message or a join successful message.
             case R.id.join_board:
                 changeMainFragment(joinBoardFragment);
                 break;
 
-            case R.id.nav_contacts:
+            case R.id.nav_contacts://Navigates to list of contacts
                 changeMainFragment(contactListFragment);
                 break;
 
-            case R.id.nav_settings:
+            case R.id.nav_settings://Navigates to Settings Activity
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
@@ -241,6 +263,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Replaces the current fragment on the mainFrame layout.
+     * @param fragment
+     */
     private void changeMainFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -249,6 +275,11 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    /*
+     * This function handles the "ok" button for loading images from a URL
+     * it creates a temporary fragment and sets the new background to the
+     * specified url and changes the fragment to the new one
+     */
     @Override
     public void onOkBtnClicked(String urlString) {
         WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
