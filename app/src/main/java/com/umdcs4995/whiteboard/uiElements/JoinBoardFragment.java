@@ -88,7 +88,7 @@ public class JoinBoardFragment extends Fragment {
 
     /**
      * Make an item lick listener for the contacts.
-     * @return
+     * @return the item click listener associated with the contact list
      */
     private AdapterView.OnItemClickListener makeContactListListener() {
         AdapterView.OnItemClickListener l = new AdapterView.OnItemClickListener() {
@@ -126,6 +126,9 @@ public class JoinBoardFragment extends Fragment {
         return l;
     }
 
+    /**
+     * fetches the stream list for the json requests
+     */
     private void fetchStreamlist() {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
