@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_id": "whiteboard-8503e",
+    "project_number": "635513881022",
+    "name": "Whiteboard"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635513881022:android:d8d9ee65fd130833",
+        "client_id": "android:com.umdcs4995.whiteboard",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.umdcs4995.whiteboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635513881022-50i1nvlsk143gct1kae3m2lbmj7lb20s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umdcs4995.whiteboard",
+            "certificate_hash": "864D203E538251FCD7C250621065018189C9B829"
+          }
+        },
+        {
+          "client_id": "635513881022-h7q9lo4t96u19kcdio62kkmf8ncj9pbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

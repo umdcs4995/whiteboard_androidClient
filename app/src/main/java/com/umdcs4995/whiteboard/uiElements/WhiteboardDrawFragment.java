@@ -38,7 +38,7 @@ import java.util.UUID;
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
     private static DrawingView drawView;
-    private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn, fileBtn, loadBtn, driveBtn;
+    private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
 
     //Color Options
     private static ImageButton c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
@@ -69,6 +69,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         return view;
     }
 
+    /*
+     * This function sets up the activity with its necessary components
+     * including setting up the brush color and size
+     * also sets up the drawView, which retrieves the current drawing
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
@@ -77,7 +82,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
         //set up the Drawing view
         drawView.setupDrawing();
-        drawView.setBrushSize(smallBrush);
+        drawView.setBrushSize(smallBrush);//sets initial brush size
         }
 
     /**
@@ -104,23 +109,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      * the onClick method below.
      */
     private void setupOnClickListeners() {
-        ImageButton button;
-        /*
-        button = (ImageButton) getActivity().findViewById(R.id.new_btn);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.draw_btn);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.undo_btn);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.save_btn);
-        button.setOnClickListener(this);
-
-        button = (ImageButton) getActivity().findViewById(R.id.erease_btn);
-        button.setOnClickListener(this); */
-
         // Editing Buttons
 
         //Drawing View and Buttons
@@ -166,33 +154,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         c12 = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
         c12.setOnClickListener(this);
         //End Colors
-
-        /*
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color2);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color3);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color4);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color5);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color6);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color7);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color8);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color9);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color10);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color11);
-        button.setOnClickListener(this);
-        button = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color12);
-        button.setOnClickListener(this);
-        */
     }
 
 
@@ -202,7 +163,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      * This method is called when the user clicks "Grant" or "Deny" for any permission.
      * For this activity, that should only be a camera request.  None-the-less, to extend this
      * code, set a constant in the AppConstants class and then add another if statement for
-     * the new request code.  This is only neccessary in Android 6.0+
+     * the new request code.  This is only necessary in Android 6.0+
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -257,6 +218,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
 
+            //small brush option
             ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
             smallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -268,6 +230,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //medium brush option
             ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
             mediumBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -279,6 +242,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
 
+            //large brush option
             ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
             largeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -291,16 +255,20 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             });
 
             brushDialog.show();
-        } else if (view.getId() == R.id.undo_btn) {
+        }
+        //undo button, undoes last brush stroke
+        else if (view.getId() == R.id.undo_btn) {
             drawView.undoLastLine();
-        } else if (view.getId() == R.id.new_btn) {
-            //new button
+        }
+        //new drawing button, prompts user to make sure they want to proceed
+        else if (view.getId() == R.id.new_btn) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(getContext());
             newDialog.setTitle("New drawing");
             newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
             newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     drawView.startNew();
+                    drawView.clearQueue();
                     dialog.dismiss();
                 }
             });
@@ -340,29 +308,20 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 }
             });
             saveDialog.show();
-        }else if (view.getId() == R.id.addFile){
-            fileBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(driveBtn.getVisibility() == View.GONE){
-                        driveBtn.setVisibility(View.VISIBLE);
-                        loadBtn.setVisibility(View.VISIBLE);
-                    }else{
-                        driveBtn.setVisibility(View.GONE);
-                        loadBtn.setVisibility(View.GONE);
-                    }
-                }
-            });
         }
         else if (view.getContentDescription().equals("Paint")) {
             paintClicked(view);
         }
 
     }
-    //Method to hide and show the menu, triggered by FAB
+    
+
+    /**
+     * Currently tied to the fab button this function hides or un-hides the toolbar
+     * Both the top / side drawing menus are shown or hidden when this function is called
+     * @param view Function intakes a view
+     */
     public static void fabHideMenu(View view){
-        //Snackbar.make(view, "Should Hide Menu", Snackbar.LENGTH_LONG)
-               //.setAction("Action", null).show();
         if (newBtn.getVisibility() == View.GONE) {
                 undoBtn.setVisibility(View.VISIBLE);
                 newBtn.setVisibility(View.VISIBLE);
