@@ -149,7 +149,6 @@ public class SocketService extends Service {
         return ibinder;
     }
 
-
     /**
      * Attempts to open the socket.
      */
@@ -164,9 +163,10 @@ public class SocketService extends Service {
     }
 
     /**
-     * Used to convert JSONObject to String before calling sendMessage
-     * @param id
-     * @param message
+     * Sends an outgoing message (JSON Object) to the server. JSON Object
+     * will have toString() called on it.
+     * @param id        String that contains the key for the server function
+     * @param message   JSON Object that is passed in with message data.
      */
     public void sendMessage(String id, JSONObject message) {
         sendMessage(id, message.toString());
@@ -174,6 +174,8 @@ public class SocketService extends Service {
 
     /**
      * Sends an outgoing message to the server.
+     * @param id        String that contains the key for the server function
+     * @param message   String that contains the message data.
      */
     public void sendMessage(String id, String message){
         Log.v(TAG, "SENT: " + id + ": " + message);
