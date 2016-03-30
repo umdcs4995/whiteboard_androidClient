@@ -11,7 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//activity to sign up with an email,username,password
+/**
+ * Class used to signup users with email and password combinations.
+ */
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
@@ -20,6 +22,11 @@ public class SignupActivity extends AppCompatActivity {
     Button _signupButton;
     TextView _loginLink;
 
+    /**
+     * Executes when an instance of this activity is created. Used for initialization of UI elements etc.
+     * Also where onclicklisteners should be implemented.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +55,9 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attempts to sign up a user with their specified credentials.
+     */
     public void signup() {
         Log.d(TAG, "Signup");
 
@@ -85,20 +95,29 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
-    
+    /**
+     * Executes when sign up has completed successfully. Sets the result code and turns the sign
+     * up button back on.
+     */
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         finish();
     }
 
+    /**
+     * Executes when sign up has failed. Re-enables the signup button and dislays an error message.
+     */
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
 
-    //function to check if email, username, and password entered are valid
+    /**
+     * Checks if email, username, and password entered are valid.
+     * Displays a message depending on what was wrong if the credentials are not valid.
+     */
     public boolean validate() {
         boolean valid = true;
 

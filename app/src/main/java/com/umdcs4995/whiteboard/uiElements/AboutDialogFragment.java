@@ -12,7 +12,11 @@ import com.umdcs4995.whiteboard.R;
  * Fragment for the About button press.  Returns a simple dialog box.
  */
 public class AboutDialogFragment extends DialogFragment {
-
+    /**
+     * Executes when an instance of this fragment is created. Used for initialization
+     * @param savedInstanceState
+     * @return an instance of this fragment
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         //Builder creates a view to look at.
