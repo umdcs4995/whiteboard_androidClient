@@ -1,7 +1,9 @@
 package com.umdcs4995.whiteboard;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,13 +25,22 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
@@ -39,28 +50,34 @@ import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnFragmentInteractionListener;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnOkBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment;
-import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
+//import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 import io.socket.emitter.Emitter.Listener;
+
+
 
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener,
         OnOkBtnClickedListener,
-        OnFragmentInteractionListener, OnLoginBtnClickedListener, GoogleApiClient.ConnectionCallbacks {
+        OnFragmentInteractionListener, /*OnLoginBtnClickedListener,*/
+        ConnectionCallbacks, OnConnectionFailedListener {
 
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
-    Fragment loginFragment = new LoginFragment();
+    //Fragment loginFragment = new LoginFragment();
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
-    private GoogleApiClient client, googleApiClient;
+    private LoginFragment.GoogleSignInActivityResult pendingGoogleSigninResult;
+    private GoogleApiClient googleApiClient;
     private GoogleSignInOptions gso;
     private GoogleAccountCredential googleAccountCredential;
     private static final String PREF_ACCOUNT_NAME = "accountName";
@@ -68,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private ProgressDialog progressDialog;
+    private boolean isSignedIn;
 
 
 
@@ -105,17 +123,17 @@ public class MainActivity extends AppCompatActivity
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        //client = new Builder(this).addApi(AppIndex.API).build();
-//        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER)).build();
+        gso = new Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER)).build();
 
         // Build a GoogleAPIClient with access to the Google Sign-in api and
         // the other options specified above by the gso.
-//        googleApiClient = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this, (OnConnectionFailedListener) this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).build();
-//        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-//        googleAccountCredential = GoogleAccountCredential.usingOAuth2(getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).build();
+        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        googleAccountCredential = GoogleAccountCredential.usingOAuth2(getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+
 
     }
 
@@ -210,10 +228,11 @@ public class MainActivity extends AppCompatActivity
                 changeMainFragment(loadURLFragment);
                 break;
 
-//            case R.id.login:
+            case R.id.login:
 //                Intent in = new Intent(this, LoginFragment.class);
 //                changeMainFragment(loginFragment);
-//                break;
+                signIn();
+                break;
 
         }
 
@@ -252,9 +271,18 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        // LoginFragment doesn't get all of the onActivityResults for google sign in
+        // so the activity needs to proxy them through but only after the LoginFragment has
+        // been registered with the event bus.
+//        if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
+//            mPendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
+//                    resultCode, data);
+//        }
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            pendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
+                    resultCode, data);
+            //handleSignInResult(result);
         }
     }
 
@@ -263,24 +291,16 @@ public class MainActivity extends AppCompatActivity
         if (result.isSuccess()) {
             //Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            isSignedIn = true;
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            updateUI(true);
+            //updateUI(true);
 
         } else {
             //Signed Out, show unathenticated UI.
-            updateUI(false);
+            isSignedIn = false;
         }
     }
 
-    private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-
-        } else {
-            //mStatusTextView.setText(R.string.signed_out);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-        }
-    }
 
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
@@ -288,50 +308,73 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        googleApiClient.connect();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        googleApiClient.connect();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Main Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(googleApiClient, viewAction);
-//
-//        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
-//        if (opr.isDone()) {
-//            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-//            // and the GoogleSignInResult will be available instantly.
-//            Log.d(TAG, "Got cached sign-in");
-//            GoogleSignInResult result = opr.get();
-//            handleSignInResult(result);
-//        } else {
-//            // If the user has not previously signed in on this device or the sign-in has expired,
-//            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-//            // single sign-on will occur in this branch.
-//            showProgressDialog();
-//            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-//                @Override
-//                public void onResult(GoogleSignInResult googleSignInResult) {
-//                    hideProgressDialog();
-//                    handleSignInResult(googleSignInResult);
-//                }
-//            });
-//        }
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
+        );
+        //AppIndex.AppIndexApi.start(googleApiClient, viewAction);
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(TAG, "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.start(googleApiClient, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction2 = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(googleApiClient, viewAction2);
 
         //disconnect api if it is connected
         if (googleApiClient.isConnected()) {
@@ -352,6 +395,9 @@ public class MainActivity extends AppCompatActivity
         );
 //        AppIndex.AppIndexApi.end(googleApiClient, viewAction);
 //        googleApiClient.disconnect();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        googleApiClient.disconnect();
     }
 
     private void showProgressDialog() {
@@ -380,12 +426,21 @@ public class MainActivity extends AppCompatActivity
 
         //processUserInfoAndUpdateUI();
 
-        updateUI(true);
+        //updateUI(true);
 
     }
 
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    public boolean openLoginDialogIfLoggedOut() {
+        if (!isSignedIn) {
+            //LoginFragment.newInstance().show(getSupportFragmentManager(), "LoginFragment");
+            return true;
+        } else {
+            return false;
+        }
     }
 }
