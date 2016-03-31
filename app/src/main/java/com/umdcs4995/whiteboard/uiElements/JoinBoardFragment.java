@@ -63,6 +63,7 @@ public class JoinBoardFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        whiteboardList = new ContactList();
         fetchWhiteboardlist();
     }
 
