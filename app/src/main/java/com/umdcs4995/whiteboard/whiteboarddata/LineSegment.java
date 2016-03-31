@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
