@@ -5,30 +5,19 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.services.SocketService;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.logging.Logger;
-
-import contacts.ContactList;
-import contacts.ContactListAdapter;
-import contacts.ContactWb;
 import io.socket.emitter.Emitter;
 
 /*
@@ -36,43 +25,57 @@ import io.socket.emitter.Emitter;
  */
 public class NewBoardFragment extends DialogFragment {
 
+    /**
+     * Empty constructor required for DialogFragment
+     */
+    public NewBoardFragment() {}
+
     private SocketService socketService = Globals.getInstance().getSocketService();
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_add_board).setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User tries to create a new whiteboard
-                JSONObject createWbRequest = new JSONObject();
-                try {
-                    // TODO: make a whiteboard name chooser and use its input here
-                    createWbRequest.put("name", "Test");
-                } catch (JSONException e) {
-                    Toast.makeText(Globals.getInstance().getGlobalContext(), "Error making createWhiteboard request - this is bad...", Toast.LENGTH_LONG);
-                }
-                socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, createWbRequest);
 
-                socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        // TODO: Set up the whiteboard + join it here
-                        JSONObject recvd = (JSONObject) args[0];
-                        try {
-                            Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
-                        } catch (JSONException e) {
-                            Log.w("createWhiteboard", "error parsing received message");
-                        }
-                        socketService.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
-                    }
-                });
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User cancelled the creation
-            }
-        });
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.fragment_new_whiteboard, null);
+        builder.setView(dialogView);
+
+        final EditText whiteboardName = (EditText) dialogView.findViewById(R.id.txt_board_name);
+
+        builder.setTitle(R.string.dialog_new_whiteboard_title);
+        builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       JSONObject addWbRequest = new JSONObject();
+                       try {
+                           addWbRequest.put("name", whiteboardName);
+                       } catch (JSONException e) {
+                           Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG);
+                       }
+
+                       socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+
+                       socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
+                           @Override
+                           public void call(Object... args) {
+                               JSONObject recvd = (JSONObject) args[0];
+                               try {
+                                   Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
+                               } catch (JSONException e) {
+                                   Log.e("createWhiteboard", "error parsing received message");
+                               }
+                               socketService.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
+                           }
+                       });
+                   }
+               });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+
+                   }
+               });
+
         return builder.create();
     }
 

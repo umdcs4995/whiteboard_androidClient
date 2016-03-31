@@ -4,15 +4,10 @@
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content" android:layout_gravity="center">
 
-    <TextView
-        android:id="@+id/board_name"
-        android:text="Whiteboard name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <EditText
         android:id="@+id/txt_board_name"
         android:inputType="text"
+        android:hint="whiteboard name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
