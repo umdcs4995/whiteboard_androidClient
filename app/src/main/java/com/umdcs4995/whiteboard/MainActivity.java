@@ -38,6 +38,8 @@ import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 import io.socket.emitter.Emitter.Listener;
 
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
@@ -165,7 +167,8 @@ public class MainActivity extends AppCompatActivity
                 JSONObject createWbRequest = new JSONObject();
                 try {
                     // TODO: make a whiteboard name chooser and use its input here
-                    createWbRequest.put("name", "replace_me");
+                    String uuid = UUID.randomUUID().toString();
+                    createWbRequest.put("name", uuid);
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error making createWhiteboard request - this is bad...", Toast.LENGTH_LONG);
                 }
