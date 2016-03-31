@@ -38,7 +38,7 @@ public class NewBoardFragment extends DialogFragment {
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
-    public Dialog onCreatDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_add_board).setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
             @Override
@@ -47,7 +47,7 @@ public class NewBoardFragment extends DialogFragment {
                 JSONObject createWbRequest = new JSONObject();
                 try {
                     // TODO: make a whiteboard name chooser and use its input here
-                    createWbRequest.put("name", "replace_me");
+                    createWbRequest.put("name", "Test");
                 } catch (JSONException e) {
                     Toast.makeText(Globals.getInstance().getGlobalContext(), "Error making createWhiteboard request - this is bad...", Toast.LENGTH_LONG);
                 }
