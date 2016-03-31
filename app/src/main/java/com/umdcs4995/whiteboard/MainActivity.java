@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     Fragment newBoardFragment = new NewBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
     Fragment loginFragment = new LoginFragment();
+    Fragment driveSaveFragment = new DriveSaveFragment();
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
@@ -210,9 +212,10 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.login:
-//                Intent in = new Intent(this, LoginFragment.class);
                 changeMainFragment(loginFragment);
-//                signIn();
+                break;
+            case R.id.google_drive:
+                changeMainFragment(driveSaveFragment);
                 break;
 
         }
@@ -250,10 +253,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoginBtnClicked() {
-        WhiteboardDrawFragment tempFragment = (WhiteboardDrawFragment) whiteboardDrawFragment;
         changeMainFragment(whiteboardDrawFragment);
-        //tempFragment.
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -267,10 +269,8 @@ public class MainActivity extends AppCompatActivity
         // so the activity needs to proxy them through but only after the LoginFragment has
         // been registered with the event bus.
         if (requestCode == RC_SIGN_IN) {
-//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             pendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
                     resultCode, data);
-            //handleSignInResult(result);
         }
     }
 
@@ -288,12 +288,6 @@ public class MainActivity extends AppCompatActivity
             isSignedIn = false;
         }
     }
-
-//    private void signIn() {
-//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-//        startActivityForResult(signInIntent, RC_SIGN_IN);
-//    }
-
 
     public boolean openLoginDialogIfLoggedOut() {
         if (!isSignedIn) {

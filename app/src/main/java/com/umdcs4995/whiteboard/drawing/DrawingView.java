@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
-import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
@@ -335,5 +333,8 @@ public class DrawingView extends View{
         }
     }
 
+    public Bitmap getCanvasBitmap() {
+        return canvasBitmap;
+    }
 
 }

@@ -58,8 +58,7 @@ import java.util.Arrays;
  */
 public class LoginFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener, GoogleApiClient.ConnectionCallbacks {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "LoginFragment";
@@ -81,6 +80,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
     /* Client for accessing Google APIs */
     private GoogleApiClient googleApiClient = null;
+    private GoogleSignInOptions gso;
+
     private SignInButton signInButton;
 
     /* Keys for persisting instance variables in savedInstanceState */
@@ -97,7 +98,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private TextView statusTextView;
     private ProgressDialog progressDialog;
     private View loginView;
-    private GoogleSignInOptions gso;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -236,6 +236,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         void onFragmentInteraction(Uri uri);
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
