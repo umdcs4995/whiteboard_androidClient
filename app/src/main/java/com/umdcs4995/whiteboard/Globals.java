@@ -156,7 +156,7 @@ public class Globals {
      * Uses private field serverAddress to load it once and not again
      */
     public String getServerAddress() {
-        if(serverAddress == "") {
+        if(serverAddress == "" && context != null) {
             String protocol = (context.getResources().getBoolean(R.bool.secure) ? "https" : "http") + "://";
             String port = context.getResources().getBoolean(R.bool.secure) ? context.getString(R.string.secure_port) : context.getString(R.string.port);
             serverAddress = protocol + context.getString(R.string.hostname) + ":" + port;
