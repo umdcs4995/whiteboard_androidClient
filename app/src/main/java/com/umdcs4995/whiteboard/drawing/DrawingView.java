@@ -9,12 +9,15 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
+import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
@@ -24,6 +27,8 @@ import java.util.LinkedList;
  * Creates a drawing on a canvas using user input.
  */
 public class DrawingView extends View{
+    //textfield to move
+    private TextView username;
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
@@ -128,6 +133,13 @@ public class DrawingView extends View{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //detect user touch
+        /**
+         * username =  (TextView) findViewById(R.id.usernameText);
+         * username.setX(touchX);
+         * username.setY(touchY);
+         */
+
+
         if (firstDrawEvent) {
             startTime = System.currentTimeMillis();
             firstDrawEvent = false;
@@ -135,6 +147,8 @@ public class DrawingView extends View{
         float touchX = event.getX();
         float touchY = event.getY();
         Long eventTime = System.currentTimeMillis();
+
+
 
         DrawingEvent de;
         switch (event.getAction()) {
@@ -276,19 +290,29 @@ public class DrawingView extends View{
 
     /**
      * Undo the last line that has been drawn.
+     * The line must not be empty
+     * If the line is interrupted finishes where it was interrupted and does not finish the drawing
      */
     public void undoLastLine() {
-        lineHistory.removeLast();
-        startNew();
-        for (LineSegment ls: lineHistory) {
-            try {
-                ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
-            } catch(InterruptedException e) {
+        if(lineHistory.size() > 0) {
+            lineHistory.removeLast();
+            startNew();
+            for (LineSegment ls : lineHistory) {
+                try {
+                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
+                } catch (InterruptedException e) {
 
+                }
             }
         }
     }
 
+    /**
+     * Clears the queue from drawing that are stored
+     */
+    public void clearQueue(){
+        lineHistory.clear();
+    }
     /**
      * This class creates a runnable to parse through an incoming network line event.
      */

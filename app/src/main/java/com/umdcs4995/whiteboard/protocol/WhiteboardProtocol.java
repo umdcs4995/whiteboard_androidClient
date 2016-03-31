@@ -1,11 +1,9 @@
 package com.umdcs4995.whiteboard.protocol;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
-import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.services.SocketService;
 
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 /**
  * WhiteboardProtocol provides an interface between the socket and the client.  The SocketService
@@ -64,7 +62,7 @@ public class WhiteboardProtocol {
     @Deprecated
     public void outDrawProtocol(DrawingEvent de) {
         String output = DrawProtocol.generateOutputString(de);
-        socketService.sendMessage(null, output);
+        socketService.sendMessage(SocketService.Messages.DRAW_EVENT, output);
     }
 
     /**
@@ -72,7 +70,7 @@ public class WhiteboardProtocol {
      */
     public void outDrawProtocol(LinkedList<DrawingEvent> deq) {
         String output = DrawProtocol.generateOutputString(deq);
-        socketService.sendMessage(null, output);
+        socketService.sendMessage(SocketService.Messages.DRAW_EVENT, output);
     }
 
 }
