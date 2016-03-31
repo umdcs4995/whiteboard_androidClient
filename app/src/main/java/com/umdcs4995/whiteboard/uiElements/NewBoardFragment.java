@@ -32,6 +32,9 @@ public class NewBoardFragment extends DialogFragment {
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
+    /*
+     * Creates the Dialog popup using an AlertDialog builder.
+     */
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -48,7 +51,7 @@ public class NewBoardFragment extends DialogFragment {
                    public void onClick(DialogInterface dialog, int which) {
                        JSONObject addWbRequest = new JSONObject();
                        try {
-                           addWbRequest.put("name", whiteboardName);
+                           addWbRequest.put("name", whiteboardName.getText());
                        } catch (JSONException e) {
                            Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG);
                        }
@@ -79,6 +82,9 @@ public class NewBoardFragment extends DialogFragment {
         return builder.create();
     }
 
+    /*
+     * Creates the DialogFragment for the MainActivity
+     */
     public static NewBoardFragment newInstance() {
         return new NewBoardFragment();
     }
