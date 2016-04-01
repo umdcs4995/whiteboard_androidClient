@@ -19,8 +19,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
@@ -297,18 +299,26 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // handle the result from the startActivityForResult
         if ((requestCode == REQUEST_ACCOUNT_PICKER || requestCode == REQUEST_CODE_RESOLUTION)) {
+            Log.d(TAG, "in onActivityResult");
             if (resultCode == Activity.RESULT_OK) {
                 if (data != null && data.getExtras() != null) {
                     String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
+                    Log.d(TAG, "in onActivityResult; data != null");
+
                     if (accountName != null) {
+                        Log.d(TAG, "in onActivityResult: got account name");
+
                         credential.setSelectedAccountName(accountName);
                     }
                 }
                 // call method to start accessing drive
                 try {
                     fileURI = data.getData();
+                    Log.d(TAG, "in onActivityResult, about to call saveToDrive()");
+
                     saveToDrive();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -410,93 +420,96 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
      */
 
     public boolean saveToDrive() throws IOException {
+        Log.d(TAG, "made it to saveToDrive()");
         googleApiClient.connect();
         final DriveApi.DriveContentsResult[] result = {null};
         MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
                 .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
 
         Thread t = new Thread(new Runnable() {
+
             @Override
             public void run() {
-                Log.i(TAG, "Creating new contents.");
+                Log.i(TAG, "Inside the thread Creating new contents.");
                 // Should probably put this in separate thread to prevent main thread from doing too much work
                 //File file = new File();
                 //file.setName("Whiteboard File");
                 //file.setMimeType("application/vnd.google-apps.folder");
 
-                DriveId file = getDriveFile("Whiteboard File", "application/vnd.google-apps.folder");
-                final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
-                DriveFile driveFile = Drive.DriveApi.getFile(googleApiClient, file);
-                result[0] = driveFile.open(googleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
-
-                try {
-                    OutputStream outputStream = result[0].getDriveContents().getOutputStream();
-                    //Write the bitmap data
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    image.compress(CompressFormat.PNG, 100, byteArrayOutputStream);
-                    outputStream.write(byteArrayOutputStream.toByteArray());
-                    Log.i(TAG, "wrote file contents");
-                    //changeSet = new MetadataChangeSet.Builder()
-                     //       .setLastViewedByMeDate(new Date()).build();
-//                    return result.getDriveContents().commit(googleApiClient, changeSet)
-//                            .await().isSuccess();
-
-//            MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-//                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-                } catch (IOException io) {
-                    result[0].getDriveContents().discard(googleApiClient);
-                    try {
-                        throw io;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                DriveId file = getDriveFile("Whiteboard File", "application/vnd.google-apps.folder");
+//                final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
+//                DriveFile driveFile = Drive.DriveApi.getFile(googleApiClient, file);
+//                result[0] = driveFile.open(googleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
+//
+//                try {
+//                    OutputStream outputStream = result[0].getDriveContents().getOutputStream();
+//                    //Write the bitmap data
+//                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                    image.compress(CompressFormat.PNG, 100, byteArrayOutputStream);
+//                    outputStream.write(byteArrayOutputStream.toByteArray());
+//                    Log.i(TAG, "wrote file contents to stream");
+//                    //changeSet = new MetadataChangeSet.Builder()
+//                     //       .setLastViewedByMeDate(new Date()).build();
+////                    return result.getDriveContents().commit(googleApiClient, changeSet)
+////                            .await().isSuccess();
+//
+////            MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+////                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
+//                } catch (IOException io) {
+//                    result[0].getDriveContents().discard(googleApiClient);
+//                    try {
+//                        throw io;
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
                 //Drive.Files.Insert folderInsert;
 
-//        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
-//        Drive.DriveApi.newDriveContents(googleApiClient)
-//                .setResultCallback(new ResultCallback<DriveContentsResult>() {
-//                    @Override
-//                    public void onResult(DriveContentsResult result) {
-//                        // if the operation was not successful, we cannot do anything
-//                        // and must fail
-//                        if (!result.getStatus().isSuccess()) {
-//                            Log.i(TAG, "Failed to create new contents.");
-//                            return;
-//                        }
-//                        // Otherwise we can write our data to the new contents.
-//                        Log.i(TAG, "New contents created.");
-//                        // Get an output stream for the result
-//                        OutputStream outputStream = result.getDriveContents().getOutputStream();
-//                        // Write the bitmap data from it
-//                        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-//                        image.compress(CompressFormat.PNG, 100, bitmapStream);
+        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
+        Drive.DriveApi.newDriveContents(googleApiClient)
+                .setResultCallback(new ResultCallback<DriveContentsResult>() {
+                    @Override
+                    public void onResult(DriveContentsResult result) {
+                        // if the operation was not successful, we cannot do anything
+                        // and must fail
+                        if (!result.getStatus().isSuccess()) {
+                            Log.i(TAG, "Failed to create new contents.");
+                            return;
+                        }
+                        // Otherwise we can write our data to the new contents.
+                        Log.i(TAG, "New contents created.");
+                        // Get an output stream for the result
+                        OutputStream outputStream = result.getDriveContents().getOutputStream();
+                        // Write the bitmap data from it
+                        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+                        image.compress(CompressFormat.PNG, 100, bitmapStream);
+                        try {
+                            outputStream.write(bitmapStream.toByteArray());
+                            Log.i(TAG, "wrote file contents");
+                        } catch (IOException e) {
+                            Log.i(TAG, "Unable to write file contents");
+                        }
+                        // Create the initial metadata - MIME type and title
+                        // Note that the user will be able to change the title later, this is
+                        // just a default
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
+                        // Create an intent for the file chooser, and start it.
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(googleApiClient);
+                        Log.d(TAG, "built the intentSender");
 //                        try {
-//                            outputStream.write(bitmapStream.toByteArray());
-//                            Log.i(TAG, "wrote file contents");
-//                        } catch (IOException e) {
-//                            Log.i(TAG, "Unable to write file contents");
-//                        }
-//                        // Create the initial metadata - MIME type and title
-//                        // Note that the user will be able to change the title later, this is
-//                        // just a default
-//                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-//                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-//                        // Create an intent for the file chooser, and start it.
-//                        IntentSender intentSender = Drive.DriveApi
-//                                .newCreateFileActivityBuilder()
-//                                .setInitialMetadata(metadataChangeSet)
-//                                .setInitialDriveContents(result.getDriveContents())
-//                                .build(googleApiClient);
-//                        try {
-//                            startIntentSenderForResult(
-//                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+////                            startIntentSenderForResult(
+////                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
 //                            Log.i(TAG, "Launched file chooser");
 //                        } catch (SendIntentException e) {
 //                            Log.i(TAG, "Failed to launch file chooser.");
 //                        }
-//                    }
-//                });
+                    }
+                });
             }
         });
         t.start();
