@@ -21,8 +21,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
@@ -274,20 +272,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            //Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            isSignedIn = true;
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            //updateUI(true);
-
-        } else {
-            //Signed Out, show unathenticated UI.
-            isSignedIn = false;
-        }
-    }
+//    private void handleSignInResult(GoogleSignInResult result) {
+//        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+//        if (result.isSuccess()) {
+//            //Signed in successfully, show authenticated UI.
+//            GoogleSignInAccount acct = result.getSignInAccount();
+//            isSignedIn = true;
+//            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+//            //updateUI(true);
+//
+//        } else {
+//            //Signed Out, show unathenticated UI.
+//            isSignedIn = false;
+//        }
+//    }
 
     public boolean openLoginDialogIfLoggedOut() {
         if (!isSignedIn) {

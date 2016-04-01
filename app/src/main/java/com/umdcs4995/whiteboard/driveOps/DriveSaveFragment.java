@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.ConnectionResult;
@@ -47,7 +46,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,7 +83,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     private com.google.api.services.drive.Drive client;
     private Bitmap bitmapToSave;
 
-    private ImageButton driveSaveButton;
     private View driveSaveView, drawView;
 
     private OnDriveSaveButtonClickedListener onDriveSaveButtonClickedListener;
@@ -99,6 +96,8 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
+
+    private Uri fileURI;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -245,11 +244,11 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
         );
         Log.i(TAG, "Creating new contents.");
-        try {
-            saveToDrive();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            saveToDrive();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 //        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
 //        Drive.DriveApi.newDriveContents(googleApiClient)
 //                .setResultCallback(new ResultCallback<DriveContentsResult>() {
@@ -308,6 +307,13 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                     }
                 }
                 // call method to start accessing drive
+                try {
+                    fileURI = data.getData();
+                    saveToDrive();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 // cancelled
 
@@ -405,39 +411,47 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 
     public boolean saveToDrive() throws IOException {
         googleApiClient.connect();
+        final DriveApi.DriveContentsResult[] result = {null};
+        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
 
-        // new
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Creating new contents.");
+                // Should probably put this in separate thread to prevent main thread from doing too much work
+                //File file = new File();
+                //file.setName("Whiteboard File");
+                //file.setMimeType("application/vnd.google-apps.folder");
 
-        Log.i(TAG, "Creating new contents.");
-        // Should probably put this in separate thread to prevent main thread from doing too much work
-        //File file = new File();
-        //file.setName("Whiteboard File");
-        //file.setMimeType("application/vnd.google-apps.folder");
+                DriveId file = getDriveFile("Whiteboard File", "application/vnd.google-apps.folder");
+                final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
+                DriveFile driveFile = Drive.DriveApi.getFile(googleApiClient, file);
+                result[0] = driveFile.open(googleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
 
-        DriveId file = getDriveFile("Whiteboard File", "application/vnd.google-apps.folder");
-        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
-        DriveFile driveFile = Drive.DriveApi.getFile(googleApiClient, file);
-        DriveApi.DriveContentsResult result = driveFile.open(googleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
-
-        try {
-            OutputStream outputStream = result.getDriveContents().getOutputStream();
-            //Write the bitmap data
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            image.compress(CompressFormat.PNG, 100, byteArrayOutputStream);
-            outputStream.write(byteArrayOutputStream.toByteArray());
-            Log.i(TAG, "wrote file contents");
-            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                    .setLastViewedByMeDate(new Date()).build();
-            return result.getDriveContents().commit(googleApiClient, changeSet)
-                    .await().isSuccess();
+                try {
+                    OutputStream outputStream = result[0].getDriveContents().getOutputStream();
+                    //Write the bitmap data
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    image.compress(CompressFormat.PNG, 100, byteArrayOutputStream);
+                    outputStream.write(byteArrayOutputStream.toByteArray());
+                    Log.i(TAG, "wrote file contents");
+                    //changeSet = new MetadataChangeSet.Builder()
+                     //       .setLastViewedByMeDate(new Date()).build();
+//                    return result.getDriveContents().commit(googleApiClient, changeSet)
+//                            .await().isSuccess();
 
 //            MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
 //                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-        } catch (IOException io) {
-            result.getDriveContents().discard(googleApiClient);
-            throw io;
-        }
-        //Drive.Files.Insert folderInsert;
+                } catch (IOException io) {
+                    result[0].getDriveContents().discard(googleApiClient);
+                    try {
+                        throw io;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //Drive.Files.Insert folderInsert;
 
 //        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
 //        Drive.DriveApi.newDriveContents(googleApiClient)
@@ -483,6 +497,13 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 //                        }
 //                    }
 //                });
+            }
+        });
+        t.start();
+
+        // new
+        return result[0].getDriveContents().commit(googleApiClient, metadataChangeSet)
+                .await().isSuccess();
 
     }
 
