@@ -134,13 +134,13 @@ public class SocketService extends Service {
                 }
 
                 //After logging, process the message using the protocol.
-                try {
-                    protocol.inc((String) args[0]);
-                } catch (WbProtocolException e) {
-                    Log.e(TAG, "Protocol Error, malformed string");
-                } catch (NullPointerException e) {
-                    Log.e(TAG, "NullpointerError Error, malfromed string");
-                }
+//                try {
+//                    protocol.inc((String) args[0]);
+//                } catch (WbProtocolException e) {
+//                    Log.e(TAG, "Protocol Error, malformed string");
+//                } catch (NullPointerException e) {
+//                    Log.e(TAG, "NullpointerError Error, malfromed string");
+//                }
             }
         });
     }

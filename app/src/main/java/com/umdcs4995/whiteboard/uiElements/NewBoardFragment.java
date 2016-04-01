@@ -53,7 +53,7 @@ public class NewBoardFragment extends DialogFragment {
                        try {
                            addWbRequest.put("name", whiteboardName.getText());
                        } catch (JSONException e) {
-                           Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG);
+                           Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG).show();
                        }
 
                        socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
