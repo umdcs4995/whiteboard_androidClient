@@ -13,7 +13,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,6 +43,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.common.base.Charsets;
+import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 import java.io.BufferedWriter;
@@ -86,6 +90,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     private Bitmap bitmapToSave;
 
     private View driveSaveView, drawView;
+    private ProgressBar progressBar;
 
     private OnDriveSaveButtonClickedListener onDriveSaveButtonClickedListener;
 
@@ -161,28 +166,41 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 .build();
     }
 
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Inflate the layout for this fragment
-//        driveSaveView = inflater.inflate(R.layout.fragment_drive_save, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        super.onCreateView(inflater, container, savedInstanceState);
+        driveSaveView = inflater.inflate(R.layout.fragment_drive_save, container, false);
 //        drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
-//
-//        //Configure save to drive button
-//        // this might not be the right place to do this ****
-////        driveSaveButton = (ImageButton) driveSaveView.findViewById(R.id.google_drive);
-//////        statusTextView = (TextView) driveSaveView.findViewById(R.id.status);
-////        driveSaveButton.setOnClickListener(new View.OnClickListener() {
-////            public void onClick(View v) {
-////                if (onDriveSaveButtonClickedListener != null) {
-////                    onDriveSaveButtonClickedListener.onDriveSaveButtonClicked();
-////                }
-////            }
-////        });
-////        driveSaveButton.setOnClickListener(this);
+//        //progressBar = (ProgressBar) driveSaveView.findViewById(R.id.progressBar);
+//        progressBar.setMax(100);
+
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this.getContext())
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addScope(Drive.SCOPE_APPFOLDER) // required for App Folder sample
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        googleApiClient.connect();
+        //Configure save to drive button
+        // this might not be the right place to do this ****
+//        driveSaveButton = (ImageButton) driveSaveView.findViewById(R.id.google_drive);
 ////        statusTextView = (TextView) driveSaveView.findViewById(R.id.status);
-//        return driveSaveView;
-//    }
+//        driveSaveButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                if (onDriveSaveButtonClickedListener != null) {
+//                    onDriveSaveButtonClickedListener.onDriveSaveButtonClicked();
+//                }
+//            }
+//        });
+//        driveSaveButton.setOnClickListener(this);
+//        statusTextView = (TextView) driveSaveView.findViewById(R.id.status);
+        return driveSaveView;
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
