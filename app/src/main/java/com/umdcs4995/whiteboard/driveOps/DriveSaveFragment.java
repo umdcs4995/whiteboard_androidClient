@@ -8,13 +8,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,29 +31,20 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.drive.query.SortOrder;
-import com.google.android.gms.drive.query.SortableField;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.Charsets;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,7 +80,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     private GoogleAccountCredential credential;
 
     /* Client for accessing Google APIs */
-    private GoogleApiClient googleApiClient = null;
+    private GoogleApiClient googleApiClient;
     private com.google.api.services.drive.Drive client;
     private Bitmap bitmapToSave;
 
@@ -141,8 +129,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     public static DriveSaveFragment newInstance(String param1, String param2) {
         DriveSaveFragment fragment = new DriveSaveFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -161,13 +147,18 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         }
         // Build a GoogleAPIClient with access to the Google Drive api and
         // the other options specified by the scope
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(), this)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(), this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        if (googleApiClient.isConnected() == false) {
+            googleApiClient.connect();
+        }
 
 
         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -183,9 +174,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 //                startActivityForResult(storeIntent, RESULT_STORE_FILE);
 //            }
 //        });
-        client = new com.google.api.services.drive.Drive.Builder(
-                m_transport, m_jsonFactory, credential).setApplicationName("Whiteboard/1.0")
-                .build();
+//        client = new com.google.api.services.drive.Drive.Builder(
+//                m_transport, m_jsonFactory, credential).setApplicationName("Whiteboard/1.0")
+//                .build();
     }
 
     @Override
@@ -345,24 +336,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 //                        }
 //                        // Create the initial metadata - MIME type and title
 //                        // Note that the user will be able to change the title later, this is
-//                        // just a default
-//                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-//                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-//                        // Create an intent for the file chooser, and start it.
-//                        IntentSender intentSender = Drive.DriveApi
-//                                .newCreateFileActivityBuilder()
-//                                .setInitialMetadata(metadataChangeSet)
-//                                .setInitialDriveContents(result.getDriveContents())
-//                                .build(googleApiClient);
-//                        try {
-//                            startIntentSenderForResult(
-//                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
-//                            Log.i(TAG, "Launched file chooser");
-//                        } catch (SendIntentException e) {
-//                            Log.i(TAG, "Failed to launch file chooser.");
-//                        }
-//                    }
-//                });
+
 //
     }
 
@@ -410,21 +384,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 }
                 break;
         }
-        // call method to start accessing drive
-//                try {
-//                    fileURI = data.getData();
-//                    Log.d(TAG, "in onActivityResult, about to call saveToDrive()");
-//
-//                    saveToDrive();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                // cancelled
-//
-//            }
-//        }
     }
 
     private com.google.api.services.drive.Drive getDriveService(GoogleAccountCredential credential) {
@@ -432,25 +391,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 .setApplicationName("Whiteboard").build();
     }
 
-
-//    //////////new
-//    /**
-//     * Get or create the {@link DriveFile} named with {@code fileName} with
-//     * the specific {@code mimeType}.
-//     *
-//     * @return Return the {@code DriveId} of the fetched or created file.
-//     */
-//
-//    public DriveId getOrCreateFile(String fileName, String mimeType) {
-//        Log.d(TAG, "getOrCreateFile " + fileName + " mimeType " + mimeType);
-//        DriveId file = getDriveFile(fileName, mimeType);
-//        Log.d(TAG, "getDriveFile  returned " + file);
-//        if (file == null) {
-//            return createEmptyDriveFile(fileName, mimeType);
-//        } else {
-//            return file;
-//        }
-//    }
 
     /**
      * Create an empty file with the given {@code fileName} and {@code mimeType}.
@@ -479,103 +419,53 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
      *
      * @return driveId for the file it if exists.
      */
-    private DriveId getDriveFile(String fileName, String mimeType) {
-        googleApiClient.connect();
-        // Find the named file with the specific Mime type.
-        Query query = new Query.Builder()
-                .addFilter(Filters.and(
-                        Filters.eq(SearchableField.TITLE, fileName),
-                        Filters.eq(SearchableField.MIME_TYPE, mimeType)))
-                .setSortOrder(new SortOrder.Builder()
-                        .addSortDescending(SortableField.MODIFIED_DATE)
-                        .build())
-                .build();
-
-        MetadataBuffer buffer = null;
-        try {
-            if (googleApiClient.isConnected() == false) {
-                Log.d(TAG, "client not connected...");
-                googleApiClient.connect();
-            }
-            buffer = Drive.DriveApi.getAppFolder(googleApiClient)
-                    .queryChildren(googleApiClient, query).await().getMetadataBuffer();
-
-            if (buffer != null && buffer.getCount() > 0) {
-                Log.d(TAG, "got buffer " + buffer.getCount());
-                return buffer.get(0).getDriveId();
-            }
-            return null;
-        } finally {
-            if (buffer != null) {
-                buffer.close();
-            }
-        }
-    }
+//    private DriveId getDriveFile(String fileName, String mimeType) {
+//        googleApiClient.connect();
+//        // Find the named file with the specific Mime type.
+//        Query query = new Query.Builder()
+//                .addFilter(Filters.and(
+//                        Filters.eq(SearchableField.TITLE, fileName),
+//                        Filters.eq(SearchableField.MIME_TYPE, mimeType)))
+//                .setSortOrder(new SortOrder.Builder()
+//                        .addSortDescending(SortableField.MODIFIED_DATE)
+//                        .build())
+//                .build();
+//
+//        MetadataBuffer buffer = null;
+//        try {
+//            if (googleApiClient.isConnected() == false) {
+//                Log.d(TAG, "client not connected...");
+//                googleApiClient.connect();
+//            }
+//            buffer = Drive.DriveApi.getAppFolder(googleApiClient)
+//                    .queryChildren(googleApiClient, query).await().getMetadataBuffer();
+//
+//            if (buffer != null && buffer.getCount() > 0) {
+//                Log.d(TAG, "got buffer " + buffer.getCount());
+//                return buffer.get(0).getDriveId();
+//            }
+//            return null;
+//        } finally {
+//            if (buffer != null) {
+//                buffer.close();
+//            }
+//        }
+//    }
 
 
 /////////////
 
-    /**
-     * Save the {@code DriveFile} with the specific driveId.
-     *
-     * @return Return value indicates whether the save was successful.
-     */
-
     public void saveToDrive() throws IOException {
         Log.d(TAG, "made it to saveToDrive()");
         googleApiClient.connect();
-//        final DriveApi.DriveContentsResult[] result = {null};
-//        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-//                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-//
 //        Thread t = new Thread(new Runnable() {
 //
 //            @Override
 //            public void run() {
 //                Log.i(TAG, "Inside the thread Creating new contents.");
-//                // Should probably put this in separate thread to prevent main thread from doing too much work
-//                //File file = new File();
-//                //file.setName("Whiteboard File");
-//                //file.setMimeType("application/vnd.google-apps.folder");
-//
-////                DriveId file = getDriveFile("Whiteboard File", "application/vnd.google-apps.folder");
-////                final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
-////                DriveFile driveFile = Drive.DriveApi.getFile(googleApiClient, file);
-////                result[0] = driveFile.open(googleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
-////
-////                try {
-////                    OutputStream outputStream = result[0].getDriveContents().getOutputStream();
-////                    //Write the bitmap data
-////                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-////                    image.compress(CompressFormat.PNG, 100, byteArrayOutputStream);
-////                    outputStream.write(byteArrayOutputStream.toByteArray());
-////                    Log.i(TAG, "wrote file contents to stream");
-////                    //changeSet = new MetadataChangeSet.Builder()
-////                     //       .setLastViewedByMeDate(new Date()).build();
-//////                    return result.getDriveContents().commit(googleApiClient, changeSet)
-//////                            .await().isSuccess();
-////
-//////            MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-//////                                .setMimeType("image/jpeg").setTitle("Android Photo.png").build();
-////                } catch (IOException io) {
-////                    result[0].getDriveContents().discard(googleApiClient);
-////                    try {
-////                        throw io;
-////                    } catch (IOException e) {
-////                        e.printStackTrace();
-////                    }
-////                }
-//                //Drive.Files.Insert folderInsert;
-//(DrawingView) getActivity().findViewById(R.id.drawing);
-        //final Bitmap image = Bitmap.createBitmap(getActivity().findViewById(R.id.drawing).getDrawingCache());
+
 
         Bundle bundle = this.getArguments();
-//        if (bundle != null) {
-//            Parcelable pImage = bundle.getParcelable("bitmap");
-//        }
-//        Parcelable pImage = bundle.getParcelable("bitmap");
-
-
         final Bitmap image = BitmapFactory.decodeByteArray(bundle.getByteArray("byteArray"), 0, bundle.getByteArray("byteArray").length);
 
         Drive.DriveApi.newDriveContents(googleApiClient)
@@ -622,86 +512,28 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                         }
                     }
                 });
+        Log.d(TAG, "about to call fragment manager to remove this fragment");
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
-
-//        t.start();
-
 //        // new
 //        return result[0].getDriveContents().commit(googleApiClient, metadataChangeSet)
 //                .await().isSuccess();
-//    Thread t = new Thread(new Runnable() {
-//        public void run() {
-//            try {
-//                // Create URI from real path
-//                String path;
-//                path = getPathFromUri(fileURI);
-//                fileURI = Uri.fromFile(new java.io.File(path));
-//                ContentResolver contentResolver = getActivity().getContentResolver();
 
-//                // File's binary contents
-//                java.io.File fileContent = new java.io.File(fileUri.getPath());
-//                FileContent mediaContent = new FileContent(contentResolver.getType(fileUri), fileContent);
-//
-//                showToast("Uploading");
-
-//               // File's meta data
-//               com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
-//               //body.setTitle(fileContent.getName());
-//               body.setName(fileContent.getName());
-//               body.setMimeType(contentResolver.getType(fileUri));
-////
-//               com.google.api.services.drive.Drive.Files f1 = service.files();
-//               //com.google.api.services.drive.Drive.Insert i1 = f1.insert(body, mediaContent);
-//               File insertFile = service.files().create(body, mediaContent).execute();
-//               File file = i1.execute();
-//
 //               if (insertFile != null)
 //               {
 //                   showToast("Uploaded: " );
 //               }
-//           } catch (UserRecoverableAuthIOException e) {
-//               startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-//           } catch (Exception e) {
-//               e.printStackTrace();
-//               showToast("Upload error: " + e.toString());
-//           }
-//
-//
-//        }
-//    });
-//        t.start();
-//}
 
-    public void showToast(final String toast) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity().getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
-    public String getPathFromUri(Uri uri)
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
 
-    public static void writeToStream(String content, OutputStream os) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(os, Charsets.UTF_8)); // might have imported wrong charsets lib
-            writer.write(content);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-    }
+//    public void showToast(final String toast) {
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(getActivity().getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     /**
      * Called when a view has been clicked.

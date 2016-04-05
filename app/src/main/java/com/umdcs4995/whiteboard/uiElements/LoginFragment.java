@@ -37,6 +37,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -170,9 +171,11 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         Context context = getActivity();
         googleApiClient = new GoogleApiClient.Builder(getActivity())
             .enableAutoManage(getActivity(), this)
-            .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API).addApi(Drive.API).addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(Plus.API).build();
         //loginView.findViewById(R.id.sign_in_button).setOnClickListener(this);
+
+
         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
         credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
     }
@@ -349,9 +352,10 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
             }
             // Set button visibility
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-            loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+//            loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+//            loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+//            loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            statusTextView.setText("Signed in");
         } else {
             // Show signed-out message
             statusTextView.setText(R.string.signed_out);
