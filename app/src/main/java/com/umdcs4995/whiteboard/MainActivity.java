@@ -1,5 +1,8 @@
 package com.umdcs4995.whiteboard;
 
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,8 +41,6 @@ import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.UUID;
-
 import io.socket.emitter.Emitter.Listener;
 
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
-    Fragment newBoardFragment = new NewBoardFragment();
+    DialogFragment newBoardFragment = new NewBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
     Fragment loginFragment = new LoginFragment();
 
@@ -166,33 +167,11 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
-            // TODO: move to NewBoardFragment class and call changeMainFragment()
             // The client tries to create new whiteboard by sending the server the name of the whiteboard.
             // The server then replies with a error message or a create successful message.
             case R.id.add_board:
-                JSONObject createWbRequest = new JSONObject();
-                try {
-                    // TODO: make a whiteboard name chooser and use its input here
-                    String uuid = UUID.randomUUID().toString();
-                    createWbRequest.put("name", uuid);
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error making createWhiteboard request - this is bad...", Toast.LENGTH_LONG);
-                }
-                socketService.sendMessage(Messages.CREATE_WHITEBOARD, createWbRequest);
-
-                socketService.addListener(Messages.CREATE_WHITEBOARD, new Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        // TODO: Set up the whiteboard + join it here
-                        JSONObject recvd = (JSONObject) args[0];
-                        try {
-                            Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
-                        } catch (JSONException e) {
-                            Log.w("createWhiteboard", "error parsing received message");
-                        }
-                        socketService.clearListener(Messages.CREATE_WHITEBOARD);
-                    }
-                });
+                newBoardFragment = NewBoardFragment.newInstance();
+                newBoardFragment.show(getFragmentManager(), "AddBoardDialog");
                 break;
 
             // The client tries to join a whiteboard by sending the server the name of the whiteboard.

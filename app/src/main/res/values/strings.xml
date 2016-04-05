@@ -20,6 +20,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="dialog_new_whiteboard_title">Create New Whiteboard</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
 
     <string name="title_activity_drawing">Drawing</string>
     <string name="picture">Picture</string>
