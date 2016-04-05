@@ -76,6 +76,13 @@ public class LoadURLFragment extends Fragment {
 
     }
 
+    /**
+     * Used for initialization of View elements.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,6 +113,11 @@ public class LoadURLFragment extends Fragment {
 
         }
     }
+
+    /**
+     * Executes when any activity implements this fragment's interfaces.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

@@ -20,6 +20,10 @@ public class SplashActivity extends AppCompatActivity {
      */
     private final int DELAYTIME = 1000;
 
+    /**
+     * Executes when an instance of the activity is created. used for initialization.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
