@@ -23,6 +23,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.drive.Drive;
 import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
@@ -32,6 +44,7 @@ import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnFragmentInteractionListener;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnOkBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment;
+import com.umdcs4995.whiteboard.uiElements.LoginFragment.GoogleSignInActivityResult;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
@@ -51,8 +64,8 @@ import io.socket.emitter.Emitter.Listener;
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener,
         OnOkBtnClickedListener,
-        OnFragmentInteractionListener, OnLoginBtnClickedListener, LoginFragment.OnFragmentInteractionListener
-        /*ConnectionCallbacks, OnConnectionFailedListener */{
+        OnFragmentInteractionListener, OnLoginBtnClickedListener, LoginFragment.OnFragmentInteractionListener,
+        ConnectionCallbacks, OnConnectionFailedListener {
 
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
@@ -64,11 +77,13 @@ public class MainActivity extends AppCompatActivity
 
     private SocketService socketService = Globals.getInstance().getSocketService();
 
-    private LoginFragment.GoogleSignInActivityResult pendingGoogleSigninResult;
+    private GoogleSignInActivityResult pendingGoogleSigninResult;
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private boolean isSignedIn;
     private OnFragmentInteractionListener onFragmentInteractionListener;
+    private GoogleApiClient googleApiClient;
+    private GoogleSignInOptions gso;
 
 
 
@@ -112,6 +127,27 @@ public class MainActivity extends AppCompatActivity
 
         //SETUP THE DEFAULT FRAGMENT
         changeMainFragment(whiteboardDrawFragment);
+
+        //Create the Google Api Client
+        // Configure sign-in to request the user's ID, email address, and
+        // basic profile.
+        gso = new Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), Drive.SCOPE_FILE).build();
+
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
+                .build();
+   ;
+//        builder.addScope(SCOPE_FILE);
+
+
+        if (googleApiClient.isConnected() == false) {
+            googleApiClient.connect();
+        }
+
+        //credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+//        googleApiClient.connect();
+
     }
 
     /*
@@ -278,7 +314,7 @@ public class MainActivity extends AppCompatActivity
         // so the activity needs to proxy them through but only after the LoginFragment has
         // been registered with the event bus.
         if (requestCode == RC_SIGN_IN) {
-            pendingGoogleSigninResult = new LoginFragment.GoogleSignInActivityResult(requestCode,
+            pendingGoogleSigninResult = new GoogleSignInActivityResult(requestCode,
                     resultCode, data);
         }
     }
@@ -309,5 +345,60 @@ public class MainActivity extends AppCompatActivity
 
     public int getActivityid() {
         return 0;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        googleApiClient.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(googleApiClient, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(googleApiClient, viewAction);
+        googleApiClient.disconnect();
     }
 }

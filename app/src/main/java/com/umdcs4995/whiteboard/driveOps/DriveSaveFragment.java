@@ -147,15 +147,17 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         }
         // Build a GoogleAPIClient with access to the Google Drive api and
         // the other options specified by the scope
-        if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .enableAutoManage(getActivity(), this)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
+//        if (googleApiClient == null) {
+//            googleApiClient = new GoogleApiClient.Builder(getActivity())
+//                    .enableAutoManage(getActivity(), this)
+//                    .addApi(Drive.API)
+//                    .addScope(Drive.SCOPE_FILE)
+//                    .addConnectionCallbacks(this)
+//                    .addOnConnectionFailedListener(this)
+//                    .build();
+//
+//
+//        }
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
