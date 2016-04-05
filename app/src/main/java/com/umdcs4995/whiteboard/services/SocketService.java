@@ -26,7 +26,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketService extends Service {
     private final String TAG = "SocketService";
-    private final String TCP_ADDRESS = Globals.getInstance().getServerAddress();
+    private String TCP_ADDRESS = null;
 
     //Create binder to bind service with client
     private final IBinder ibinder = new SocketLocalBinder();
@@ -73,6 +73,7 @@ public class SocketService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        TCP_ADDRESS = Globals.getInstance().getServerAddress();
         connect();
 
         // TODO: Move listener code to other parts of the codebase
