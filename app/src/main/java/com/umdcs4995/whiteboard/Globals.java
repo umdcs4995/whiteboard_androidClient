@@ -63,6 +63,7 @@ public class Globals {
     private Globals(Context applicationContext) {
         //Setup the priortiy measurements for the queue.
         this.context = applicationContext;
+        serverAddress = getServerAddress();
         socketServiceIntent = new Intent(context, SocketService.class);
         whiteboardProtocol = new WhiteboardProtocol();
     }

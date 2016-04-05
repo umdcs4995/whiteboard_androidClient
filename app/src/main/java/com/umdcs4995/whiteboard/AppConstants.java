@@ -5,7 +5,6 @@ package com.umdcs4995.whiteboard;
  * Created by Rob on 2/2/2016.
  */
 public class AppConstants {
-
     public static final int PERMISSION_CAMERA = 0;
     public static final int DEViCE_STORAGE = 1;
 
