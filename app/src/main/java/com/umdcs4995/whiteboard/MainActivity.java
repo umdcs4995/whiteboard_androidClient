@@ -111,6 +111,12 @@ public class MainActivity extends AppCompatActivity
         changeMainFragment(whiteboardDrawFragment);
     }
 
+    @Override
+    public void onDestroy() {
+        Globals.getInstance().stopSocketService();
+        super.onDestroy();
+    }
+
     /*
      * This function handles the back button closing the navigation drawer and
      * then calling the parent back pressed function
