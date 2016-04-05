@@ -401,4 +401,12 @@ public class MainActivity extends AppCompatActivity
         AppIndex.AppIndexApi.end(googleApiClient, viewAction);
         googleApiClient.disconnect();
     }
+
+    public GoogleApiClient getGoogleApiClient() {
+        return this.googleApiClient;
+    }
+
+    public void setGoogleApiClient(GoogleApiClient googleClient) {
+        this.googleApiClient = googleClient;
+    }
 }

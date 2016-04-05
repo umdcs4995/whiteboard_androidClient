@@ -35,12 +35,14 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 
 import java.util.Arrays;
@@ -161,8 +163,17 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         }
         // Configure sign-in to request the user's ID, email address, and
         // basic profile.
-//        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER)).build();
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), Drive.SCOPE_FILE).build();
+
+//        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
+//                .build();
+        ;
+//        builder.addScope(SCOPE_FILE);
+
+
+
 
         // Build a GoogleAPIClient with access to the Google Sign-in api and
         // the other options specified above by the gso.
@@ -178,11 +189,20 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 //                .addConnectionCallbacks(this)
 //                .addOnConnectionFailedListener(this)
 //                .build();
+//        if (googleApiClient.isConnected() == false) {
+//            googleApiClient.connect();
+//        }
+        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+        credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+
+        googleApiClient = ((MainActivity)getActivity()).getGoogleApiClient();
+
+        googleApiClient.connect();
+
+
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
-        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
-        credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
     }
 
     @Override
@@ -337,18 +357,18 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             //this.finish();
             googleApiClient.connect();
             if (googleApiClient.isConnected()) {
-                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-                 if (currentPerson != null) {
+//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+//                 if (currentPerson != null) {
 //                   //Show signed-in user's name
 //                   String name = currentPerson.getDisplayName();
 //                   statusTextView.setText(getString(R.string.signed_in_fmt, name));
 
                      // Show users' email address (which requires GET_ACCOUNTS permission)
-                     if (checkAccountsPermission()) {
-//                      String currentAccount = Plus.AccountApi.getAccountName(googleApiClient);
-//                      ((TextView) loginView.findViewById(R.id.detail)).setText(currentAccount);
-                     }
-                 }
+//                     if (checkAccountsPermission()) {
+////                      String currentAccount = Plus.AccountApi.getAccountName(googleApiClient);
+////                      ((TextView) loginView.findViewById(R.id.detail)).setText(currentAccount);
+//                     }
+//                 }
             } else {
                 // If getCurrentPerson returns null there is most likely an error with the
                 // configuration of the application (Invalid Client ID, Api's not enabled, etc.)

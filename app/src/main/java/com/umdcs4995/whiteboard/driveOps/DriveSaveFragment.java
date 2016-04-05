@@ -39,6 +39,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
@@ -158,14 +159,28 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 //
 //
 //        }
-        if (googleApiClient.isConnected() == false) {
-            googleApiClient.connect();
-        }
+
+        credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
+
+        com.google.api.services.drive.Drive service = getDriveService(credential);
+//        googleApiClient = ;
+
+//        if (googleApiClient.isConnected() == false) {
+//            googleApiClient.connect();
+//        }
 
 
         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
         credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
 
+        googleApiClient = ((MainActivity)getActivity()).getGoogleApiClient();
+
+        googleApiClient.connect();
+
+
+        if (googleApiClient.isConnected() == false) {
+            googleApiClient.connect();
+        }
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
 //        //listView = (ListView) driveSaveView.findViewById(R.id.driveSaveListView);
 //        final Button driveSaveButton = (Button) driveSaveView.findViewById(R.id.driveSaveBtn);
@@ -308,7 +323,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         );
 //        Log.i(TAG, "Creating new contents.");
 //        try {
-//            saveToDrive();
+//            Drive();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

@@ -1,20 +1,14 @@
 package com.umdcs4995.whiteboard;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v7.util.SortedList;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
-
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Singleton class created for holding objects global to the application.
@@ -63,6 +57,7 @@ public class Globals {
     private Globals(Context applicationContext) {
         //Setup the priortiy measurements for the queue.
         this.context = applicationContext;
+        serverAddress = getServerAddress();
         socketServiceIntent = new Intent(context, SocketService.class);
         whiteboardProtocol = new WhiteboardProtocol();
     }

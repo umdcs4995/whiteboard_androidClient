@@ -44,14 +44,18 @@ public class WhiteboardProtocol {
         } catch (Exception e) {
             throw new WbProtocolException("Error, no command language found on String: " + s, e);
         }
+        try {
+            switch (tempString) {
+                case DrawProtocol.COMMANDLANGUAGE:
+                    DrawProtocol.execute(s);
+                    break;
+                default:
+                    throw new WbProtocolException("No valid command language found", null);
+            }
 
 
-        switch(tempString) {
-            case DrawProtocol.COMMANDLANGUAGE:
-                DrawProtocol.execute(s);
-                break;
-            default:
-                throw new WbProtocolException("No valid command language found", null);
+        } catch (StringIndexOutOfBoundsException ex) {
+            throw new WbProtocolException("Error: Malformed string processed: " + s, ex);
         }
     }
 

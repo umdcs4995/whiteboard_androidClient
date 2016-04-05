@@ -44,12 +44,12 @@ public class SocketService extends Service {
         public static final String MOTION_EVENT = "motionevent";
 
         // Uncomment the following 2 lines when the server has been fixed:
-        //public static final String CHAT_MESSAGE = "chat message";
-        //public static final String DRAW_EVENT = "drawevent";
+        public static final String CHAT_MESSAGE = "chat message";
+        public static final String DRAW_EVENT = "drawevent";
 
-        // The following 2 lines are a workaround while the server is being fixed:
-        public static final String CHAT_MESSAGE = "drawevent";
-        public static final String DRAW_EVENT = "chat message";
+//        // The following 2 lines are a workaround while the server is being fixed:
+//        public static final String CHAT_MESSAGE = "drawevent";
+//        public static final String DRAW_EVENT = "chat message";
 
         // TODO: put the rest of the messages in here
     }
