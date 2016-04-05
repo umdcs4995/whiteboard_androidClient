@@ -7,6 +7,9 @@ import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.Globals;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -153,6 +156,32 @@ public abstract class DrawProtocol {
 
 
         drawEventQueue.addFinishedQueue(tempQueue);
+    }
+
+    /**
+     * This function gets data from a DrawingEvent and puts it in a JSONObject.
+     * @param list
+     * @return the JSONObject representing the DrawingEvent
+     */
+    public static JSONObject generateJSON(LinkedList<DrawingEvent> list) {
+        JSONObject builder = new JSONObject();
+
+        for(int i = 0; i < list.size(); i++) {
+            DrawingEvent de = list.get(i);
+
+            try {
+                builder.put("Username", de.getUsername());
+                builder.put("X", de.getxValue());
+                builder.put("Y", de.getyValue());
+                builder.put("Action", de.getAction());
+                builder.put("Start Time", de.getStartTime());
+                builder.put("Event Time", de.getEventTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return builder;
     }
 
     /**
