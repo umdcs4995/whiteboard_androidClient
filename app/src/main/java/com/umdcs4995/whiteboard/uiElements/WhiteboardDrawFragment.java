@@ -89,6 +89,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         //set up the Drawing view
         drawView.setupDrawing();
         drawView.setBrushSize(smallBrush);//sets initial brush size
+        drawView.setDrawingCacheEnabled(true);
         }
 
     /**

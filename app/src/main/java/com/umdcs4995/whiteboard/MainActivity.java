@@ -1,6 +1,8 @@
 package com.umdcs4995.whiteboard;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -37,6 +39,7 @@ import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import io.socket.emitter.Emitter.Listener;
@@ -213,6 +216,14 @@ public class MainActivity extends AppCompatActivity
                 changeMainFragment(loginFragment);
                 break;
             case R.id.google_drive:
+                Bundle bundle = new Bundle();
+                //bundle.putParcelable("bitmap", findViewById(R.id.drawing).getDrawingCache());
+                Bitmap b = findViewById(R.id.drawing).getDrawingCache();
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                b.compress(CompressFormat.PNG, 50, bs);
+                bundle.putByteArray("byteArray", bs.toByteArray());
+//                bundle.putParcelable("byteArray", bs.toByteArray());
+                driveSaveFragment.setArguments(bundle);
                 changeMainFragment(driveSaveFragment);
                 break;
 
