@@ -167,13 +167,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
-            // The client tries to create new whiteboard by sending the server the name of the whiteboard.
-            // The server then replies with a error message or a create successful message.
-            case R.id.add_board:
-                newBoardFragment = NewBoardFragment.newInstance();
-                newBoardFragment.show(getFragmentManager(), "AddBoardDialog");
-                break;
-
+            // TODO: Change this to a generic "Whiteboards" button to create/join whiteboards
             // The client tries to join a whiteboard by sending the server the name of the whiteboard.
             // The server then replies with a error message or a join successful message.
             case R.id.join_board:

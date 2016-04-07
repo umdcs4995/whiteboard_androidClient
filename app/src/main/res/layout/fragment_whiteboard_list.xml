@@ -12,6 +12,12 @@
     tools:context="com.umdcs4995.whiteboard.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Create New Whiteboard"
+        android:id="@+id/create_button" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

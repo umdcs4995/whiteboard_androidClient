@@ -1,13 +1,16 @@
 package com.umdcs4995.whiteboard.uiElements;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -41,6 +44,7 @@ import io.socket.emitter.Emitter;
 public class JoinBoardFragment extends Fragment {
 
     ContactList whiteboardList = new ContactList();
+    DialogFragment newBoardFragment = new NewBoardFragment();
 
     /**
      * Called on creation of the fragment.
@@ -51,6 +55,13 @@ public class JoinBoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_whiteboard_list, container, false);
+        Button button = (Button) view.findViewById(R.id.create_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                newBoardFragment = NewBoardFragment.newInstance();
+                newBoardFragment.show(getActivity().getFragmentManager(), "AddBoardDialog");
+            }
+        });
         return view;
     }
 
