@@ -229,4 +229,40 @@ public abstract class DrawProtocol {
 
         return builder.toString();
     }
+
+    public static void execute(JSONArray ja) {
+        LinkedList<DrawingEvent> list = new LinkedList<>();
+        //Get the global instance for the drawing queue.
+        Globals g = Globals.getInstance();
+        DrawingEventQueue drawEventQueue = g.getDrawEventQueue();
+
+
+        for(int i = 0; i < ja.length(); i++) {
+            Integer action;
+            long startTime;
+            long eventTime;
+            float touchX;
+            float touchY;
+            String username;
+            DrawingEvent de = null;
+
+            try {
+                JSONObject jo = ja.getJSONObject(i);
+                touchX = (float) jo.getDouble("X");
+                touchY = (float) jo.getDouble("Y");
+                startTime = jo.getLong("Start Time");
+                eventTime = jo.getLong("Event Time");
+                action = jo.getInt("Action");
+                de = new DrawingEvent(action, startTime, eventTime, touchX, touchY);
+                de.setUsername("TODO CHANGE ME");
+
+                //Add the finished drawing event to the temporary queue.
+                list.add(de);
+            } catch (Exception e) {
+                Log.i("DrawProtocol", "JSON Error");
+            }
+
+        }
+        drawEventQueue.addFinishedQueue(list);
+    }
 }

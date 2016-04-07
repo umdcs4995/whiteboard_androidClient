@@ -63,7 +63,7 @@ public class WhiteboardProtocol {
     }
 
     public void inc(JSONArray s) throws WbProtocolException {
-
+        DrawProtocol.execute(s);
     }
 
     /**
