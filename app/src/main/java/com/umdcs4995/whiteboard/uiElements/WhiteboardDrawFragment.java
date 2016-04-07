@@ -38,6 +38,7 @@ import java.util.UUID;
  */
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
+    private static boolean drawMode = true;
     private static DrawingView drawView;
     private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
 
@@ -329,6 +330,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public static void fabHideMenu(View view){
         //set all the components to Visible or Gone
         if (newBtn.getVisibility() == View.GONE) {
+                setDrawMode(true);
                 undoBtn.setVisibility(View.VISIBLE);
                 newBtn.setVisibility(View.VISIBLE);
                 eraseBtn.setVisibility(View.VISIBLE);
@@ -347,6 +349,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 c11.setVisibility(View.VISIBLE);
                 c12.setVisibility(View.VISIBLE);
         } else {
+            setDrawMode(false);
             undoBtn.setVisibility(View.GONE);
             newBtn.setVisibility(View.GONE);
             eraseBtn.setVisibility(View.GONE);
@@ -426,5 +429,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             }
 
         }
+    }
+
+    public static boolean getDrawMode(){
+        return drawMode;
+    }
+
+    public static void setDrawMode(boolean mode){
+        drawMode = mode;
     }
 }
