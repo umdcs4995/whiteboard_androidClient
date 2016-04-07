@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 9001;
     private boolean isSignedIn;
     private OnFragmentInteractionListener onFragmentInteractionListener;
-
+    public FloatingActionButton fab;
 
 
 
@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity
         /**
          *Hides or makes visible the draw components and toolbar
          */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,11 +208,21 @@ public class MainActivity extends AppCompatActivity
      * @param fragment
      */
     private void changeMainFragment(Fragment fragment) {
+        checkFabVisability(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
         transaction.addToBackStack(fragment.toString());
         transaction.commit();
+    }
+
+    private void checkFabVisability(Fragment frag){
+        if(frag.equals(whiteboardDrawFragment)){
+            fab.setVisibility(View.VISIBLE);
+        }
+        else{
+            fab.setVisibility(View.GONE);
+        }
     }
 
     /*

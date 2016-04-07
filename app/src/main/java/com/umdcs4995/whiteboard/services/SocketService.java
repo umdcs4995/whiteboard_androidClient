@@ -11,6 +11,8 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.protocol.WbProtocolException;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -136,11 +138,14 @@ public class SocketService extends Service {
 
                 //After logging, process the message using the protocol.
                 try {
-                    protocol.inc((String) args[0]);
+                    JSONArray parsed = new JSONArray((String)args[0]);
+                    protocol.inc(parsed);
                 } catch (WbProtocolException e) {
                     Log.e(TAG, "Protocol Error, malformed string");
                 } catch (NullPointerException e) {
                     Log.e(TAG, "NullpointerError Error, malfromed string");
+                } catch (JSONException e) {
+                    Log.e(TAG, "Problem parsing JSON response from server");
                 }
             }
         });
@@ -172,6 +177,10 @@ public class SocketService extends Service {
      * @param message   JSON Object that is passed in with message data.
      */
     public void sendMessage(String id, JSONObject message) {
+        sendMessage(id, message.toString());
+    }
+    public void sendMessage(String id, JSONArray message) {
+
         sendMessage(id, message.toString());
     }
 
