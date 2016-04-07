@@ -39,6 +39,7 @@ public class WhiteboardProtocol {
      * and pass that string to the appropriate sub-protocol execute method.
      * @param s String received by listener
      */
+    @Deprecated
     public void inc(String s) throws WbProtocolException {
         String tempString;
 
