@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.protocol;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.services.SocketService;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
@@ -75,7 +76,7 @@ public class WhiteboardProtocol {
      * Send out a drawing event list to the server.
      */
     public void outDrawProtocol(LinkedList<DrawingEvent> deq) {
-        JSONObject output = DrawProtocol.generateJSON(deq);
+        JSONArray output = DrawProtocol.generateJSON(deq);
         socketService.sendMessage(SocketService.Messages.DRAW_EVENT, output);
     }
 
