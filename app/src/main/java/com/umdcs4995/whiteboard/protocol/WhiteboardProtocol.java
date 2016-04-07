@@ -62,7 +62,10 @@ public class WhiteboardProtocol {
         }
     }
 
-    public void inc(JSONArray s) throws WbProtocolException {
+    /**
+     * Takes in a JSONArray of DrawEvents encoded as JSON and sends them to the drawevent queue
+     */
+    public void inc(JSONArray s) {
         DrawProtocol.execute(s);
     }
 
