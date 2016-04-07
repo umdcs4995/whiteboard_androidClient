@@ -62,6 +62,10 @@ public class WhiteboardProtocol {
         }
     }
 
+    public void inc(JSONArray s) throws WbProtocolException {
+
+    }
+
     /**
      * Send out a drawing event to the server.  Deprecated when we decided to send whole strings
      * at a time.
