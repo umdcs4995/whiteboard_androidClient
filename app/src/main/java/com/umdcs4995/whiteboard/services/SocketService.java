@@ -140,8 +140,6 @@ public class SocketService extends Service {
                 try {
                     JSONArray parsed = new JSONArray((String)args[0]);
                     protocol.inc(parsed);
-                } catch (WbProtocolException e) {
-                    Log.e(TAG, "Protocol Error, malformed string");
                 } catch (NullPointerException e) {
                     Log.e(TAG, "NullpointerError Error, malfromed string");
                 } catch (JSONException e) {
