@@ -39,6 +39,7 @@ public class WhiteboardProtocol {
      * and pass that string to the appropriate sub-protocol execute method.
      * @param s String received by listener
      */
+    @Deprecated
     public void inc(String s) throws WbProtocolException {
         String tempString;
 
@@ -62,7 +63,10 @@ public class WhiteboardProtocol {
         }
     }
 
-    public void inc(JSONArray s) throws WbProtocolException {
+    /**
+     * Takes in a JSONArray of DrawEvents encoded as JSON and sends them to the drawevent queue
+     */
+    public void inc(JSONArray s) {
         DrawProtocol.execute(s);
     }
 

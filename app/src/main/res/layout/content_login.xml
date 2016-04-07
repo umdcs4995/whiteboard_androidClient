@@ -28,6 +28,10 @@
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="login"
         android:text="@string/Login"/>
+        <!--
+        this was present above but was removed because it caused an error.
+        android:onClick="login"
+        -->
+
 </RelativeLayout>

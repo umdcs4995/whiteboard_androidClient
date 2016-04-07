@@ -7,10 +7,6 @@
             android:icon="@drawable/login"
             android:title="Login" />
         <item
-            android:id="@+id/add_board"
-            android:icon="@drawable/plus_board"
-            android:title="New Whiteboard" />
-        <item
             android:id="@+id/join_board"
             android:icon="@drawable/handshake"
             android:title="Join Whiteboard" />
