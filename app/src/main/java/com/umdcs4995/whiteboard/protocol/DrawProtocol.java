@@ -7,6 +7,7 @@ import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.Globals;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -163,22 +164,25 @@ public abstract class DrawProtocol {
      * @param list
      * @return the JSONObject representing the DrawingEvent
      */
-    public static JSONObject generateJSON(LinkedList<DrawingEvent> list) {
-        JSONObject builder = new JSONObject();
+    public static JSONArray generateJSON(LinkedList<DrawingEvent> list) {
+        JSONArray builder = new JSONArray();
 
         for(int i = 0; i < list.size(); i++) {
+            JSONObject jObject = new JSONObject();
             DrawingEvent de = list.get(i);
 
             try {
-                builder.put("Username", de.getUsername());
-                builder.put("X", de.getxValue());
-                builder.put("Y", de.getyValue());
-                builder.put("Action", de.getAction());
-                builder.put("Start Time", de.getStartTime());
-                builder.put("Event Time", de.getEventTime());
+                jObject.put("Username", de.getUsername());
+                jObject.put("X", de.getxValue());
+                jObject.put("Y", de.getyValue());
+                jObject.put("Action", de.getAction());
+                jObject.put("Start Time", de.getStartTime());
+                jObject.put("Event Time", de.getEventTime());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            builder.put(jObject);
         }
 
         return builder;
