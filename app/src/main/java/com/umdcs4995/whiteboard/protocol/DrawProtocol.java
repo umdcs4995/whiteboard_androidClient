@@ -153,16 +153,13 @@ public abstract class DrawProtocol {
             tempQueue.add(de);
         }
 
-
-
-
         drawEventQueue.addFinishedQueue(tempQueue);
     }
 
     /**
-     * This function gets data from a DrawingEvent and puts it in a JSONObject.
-     * @param list
-     * @return the JSONObject representing the DrawingEvent
+     * Gets data from a DrawingEvent list and puts it in a JSONArray.
+     * @param list The list of DrawingEvents being parsed.
+     * @return The JSONArray representing the events being parsed.
      */
     public static JSONArray generateJSON(LinkedList<DrawingEvent> list) {
         JSONArray builder = new JSONArray();
@@ -230,6 +227,11 @@ public abstract class DrawProtocol {
         return builder.toString();
     }
 
+    /**
+     * Parses a JSONArray for DrawingEvent values and adds the list
+     * of DrawingEvents to a DrawingEventQueue.
+     * @param ja The JSONArray being parsed.
+     */
     public static void execute(JSONArray ja) {
         LinkedList<DrawingEvent> list = new LinkedList<>();
         //Get the global instance for the drawing queue.

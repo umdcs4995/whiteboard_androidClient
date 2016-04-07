@@ -4,7 +4,6 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,13 +47,15 @@ public class JoinBoardFragment extends Fragment {
 
     /**
      * Called on creation of the fragment.
-     * @param savedInstanceState
+     * @param savedInstanceState A previous instance to revert to.
      */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_whiteboard_list, container, false);
+
+        // Setup the Create New Whiteboard button
         Button button = (Button) view.findViewById(R.id.create_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -68,8 +69,8 @@ public class JoinBoardFragment extends Fragment {
     /**
      * Called after onCreateView.  Important because setupContactListView() requires that the
      * view has been created and set.
-     * @param view
-     * @param savedInstanceState
+     * @param view The view created in onCreateView.
+     * @param savedInstanceState A previous instance to revert to.
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
