@@ -93,8 +93,6 @@ public class DrawingEventQueue {
 
     public void addFinishedQueue(LinkedList<DrawingEvent> tempQueue) {
         DrawingEvent de = tempQueue.peek();
-        if(!de.getUsername().equals(username)) {
-            listOfFinishedQueues.add(tempQueue);
-        }
+        listOfFinishedQueues.add(tempQueue);
     }
 }
