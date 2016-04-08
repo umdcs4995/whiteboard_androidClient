@@ -19,6 +19,7 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 
 import java.util.LinkedList;
@@ -151,40 +152,47 @@ public class DrawingView extends View{
 
 
         DrawingEvent de;
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // When user touches the View, move to that
-                // position to start drawing.
-                de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
-                        eventTime, touchX, touchY);
-                currentLine = new LinkedList<>();
-                currentLine.add(de);
-                drawPath.moveTo(touchX, touchY);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                // When user moves finger, draw a path
-                // along with their touch.
-                de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
-                        eventTime, touchX, touchY);
-                currentLine.add(de);
-                drawPath.lineTo(touchX, touchY);
-                break;
-            case MotionEvent.ACTION_UP:
-                // When user lifts finger, draw the path
-                // and reset it for the next draw.
-                de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
-                        eventTime, touchX, touchY);
-                currentLine.add(de);
-                lineHistory.add(new LineSegment(-1, currentLine));
-                protocol.outDrawProtocol(currentLine);
-                drawCanvas.drawPath(drawPath, drawPaint);
-                drawPath.reset();
-                firstDrawEvent = true; //<- Added to reset the start time on the next stroke.
-                break;
-            default:
-                return false;
+        if(WhiteboardDrawFragment.getDrawMode() == true) {
+            //DrawMode handling
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // When user touches the View, move to that
+                    // position to start drawing.
+                    de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
+                            eventTime, touchX, touchY);
+                    currentLine = new LinkedList<>();
+                    currentLine.add(de);
+                    drawPath.moveTo(touchX, touchY);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    // When user moves finger, draw a path
+                    // along with their touch.
+                    de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
+                            eventTime, touchX, touchY);
+                    currentLine.add(de);
+                    drawPath.lineTo(touchX, touchY);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    // When user lifts finger, draw the path
+                    // and reset it for the next draw.
+                    de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
+                            eventTime, touchX, touchY);
+                    currentLine.add(de);
+                    lineHistory.add(new LineSegment(-1, currentLine));
+                    protocol.outDrawProtocol(currentLine);
+                    drawCanvas.drawPath(drawPath, drawPaint);
+                    drawPath.reset();
+                    firstDrawEvent = true; //<- Added to reset the start time on the next stroke.
+                    break;
+                default:
+                    return false;
+            }
+            invalidate(); // this allows the onDraw method to execute
+            return true;
+        } else {
+            // View Mode Handling
+            // TODO: Pinch to zoom / scroll & anything else in the view mode
         }
-        invalidate(); // this allows the onDraw method to execute
         return true;
     }
 
