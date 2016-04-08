@@ -1,5 +1,6 @@
 package com.umdcs4995.whiteboard.uiElements;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.services.SocketService;
 
@@ -53,6 +55,7 @@ public class JoinBoardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_whiteboard_list, container, false);
         return view;
     }
+
 
     /**
      * Called after onCreateView.  Important because setupContactListView() requires that the
@@ -96,7 +99,7 @@ public class JoinBoardFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //This is where the code goes for a click of an item of the list.
-                ContactWb person = (ContactWb) parent.getItemAtPosition(position);
+                final ContactWb person = (ContactWb) parent.getItemAtPosition(position);
                 JSONObject joinWbRequest = new JSONObject();
                 try {
                     joinWbRequest.put("name", person.getName());
@@ -109,9 +112,25 @@ public class JoinBoardFragment extends Fragment {
                 socket.addListener(SocketService.Messages.JOIN_WHITEBOARD, new Emitter.Listener() {
                     @Override
                     public void call(Object... args) {
-                        JSONObject recvd = (JSONObject)args[0];
+                        final JSONObject recvd = (JSONObject)args[0];
                         try {
                             Log.i("joinWhiteboard", "received message: " + recvd.getString("message"));
+                            //Set the toolbar text
+                            final MainActivity mainActivity = (MainActivity) getActivity();
+                            mainActivity.runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        mainActivity.setTitleBarText(person.getName());
+                                    } catch (Exception e) {
+
+                                    }
+                                }
+
+                            });
+                            //Fragment suicides here
+                            mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
                         } catch (JSONException e) {
                             Log.w("joinWhiteboard", "error parsing received message");
                         }
