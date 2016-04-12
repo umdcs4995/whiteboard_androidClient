@@ -48,7 +48,6 @@ import io.socket.emitter.Emitter.Listener;
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 
 
-
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener,
         OnOkBtnClickedListener,
@@ -70,8 +69,6 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 9001;
     private boolean isSignedIn;
     private OnFragmentInteractionListener onFragmentInteractionListener;
-    public FloatingActionButton fab;
-
 
 
     @Override
@@ -86,9 +83,7 @@ public class MainActivity extends AppCompatActivity
         /**
          *Hides or makes visible the draw components and toolbar
          */
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,13 +167,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
 
-            // The client tries to create new whiteboard by sending the server the name of the whiteboard.
-            // The server then replies with a error message or a create successful message.
-            case R.id.add_board:
-                newBoardFragment = NewBoardFragment.newInstance();
-                newBoardFragment.show(getFragmentManager(), "AddBoardDialog");
-                break;
-
+            // TODO: Change this to a generic "Whiteboards" button to create/join whiteboards
             // The client tries to join a whiteboard by sending the server the name of the whiteboard.
             // The server then replies with a error message or a join successful message.
             case R.id.join_board:
@@ -217,21 +206,11 @@ public class MainActivity extends AppCompatActivity
      * @param fragment
      */
     private void changeMainFragment(Fragment fragment) {
-        checkFabVisability(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
         transaction.addToBackStack(fragment.toString());
         transaction.commit();
-    }
-
-    private void checkFabVisability(Fragment frag){
-        if(frag.equals(whiteboardDrawFragment)){
-            fab.setVisibility(View.VISIBLE);
-        }
-        else{
-            fab.setVisibility(View.GONE);
-        }
     }
 
     /*
