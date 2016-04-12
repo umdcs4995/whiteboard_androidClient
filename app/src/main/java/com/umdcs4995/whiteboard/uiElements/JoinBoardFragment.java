@@ -158,7 +158,7 @@ public class JoinBoardFragment extends Fragment {
         try {
             ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
 
-            /git/Grab the list view and set the adapter.
+            //Grab the list view and set the adapter.
 
             ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
             listView.setAdapter(customAdapter);
