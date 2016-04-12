@@ -7,14 +7,20 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.util.SortedList;
+import android.util.Log;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import io.socket.emitter.Emitter;
 
 /**
  * Singleton class created for holding objects global to the application.
@@ -30,6 +36,8 @@ public class Globals {
     //The drawing event queue for the current whiteboard.
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol whiteboardProtocol;
+
+    private String currentWhiteboard = "";
 
     //Socket service stuff
     private boolean socketServiceRunning = false;
@@ -163,6 +171,27 @@ public class Globals {
             serverAddress = protocol + context.getString(R.string.hostname) + ":" + port;
         }
         return serverAddress;
+    }
+
+    public void refreshCurrentWhiteboard() {
+        socketService.addListener(SocketService.Messages.ME, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject recvd = (JSONObject)args[0];
+                try {
+                    currentWhiteboard = recvd.getString("whiteboard");
+                    Log.i("meMessage", "my whiteboard is: " + currentWhiteboard);
+                } catch (JSONException e) {
+                    Log.w("meMessage", "You are not in a whiteboard (or there was another problem)");
+                }
+                socketService.clearListener(SocketService.Messages.ME);
+            }
+        });
+        socketService.sendMessage(SocketService.Messages.ME, "");
+    }
+
+    public String getCurrentWhiteboard() {
+        return currentWhiteboard;
     }
 
 }

@@ -36,6 +36,7 @@ import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
 import io.socket.emitter.Emitter;
+import io.socket.global.Global;
 
 /**
  * Activity for handling the list of whiteboards that the user can join
@@ -190,6 +191,9 @@ public class JoinBoardFragment extends Fragment {
      * and parses it, adding each entry to the 'ContactList' object (that's really a whiteboard list)
      */
     private void fetchWhiteboardlist() {
+
+        Globals.getInstance().refreshCurrentWhiteboard();
+
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Globals.getInstance().getServerAddress() + "/whiteboards.json";
@@ -201,10 +205,16 @@ public class JoinBoardFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        // clear whiteboard list before adding them again
+                        whiteboardList = new ContactList();
                         for(int i = 0; i < response.length(); i++) {
                             try {
                                 String whiteboard = response.getString(i);
-                                whiteboardList.addContact(whiteboard, whiteboard, ContactList.STATUS_CONNECTED);
+                                if(whiteboard.equals(Globals.getInstance().getCurrentWhiteboard()))
+                                    whiteboardList.addContact(whiteboard, whiteboard, ContactList.STATUS_CONNECTED);
+                                else
+                                    whiteboardList.addContact(whiteboard, whiteboard, ContactList.STATUS_DISCONNECTED);
+
                             } catch (JSONException e) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
