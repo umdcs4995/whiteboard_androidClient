@@ -21,7 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-
+import android.widget.EditText;
+import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.umdcs4995.whiteboard.services.SocketService;
@@ -33,6 +34,7 @@ import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnOkBtnClickedListene
 import com.umdcs4995.whiteboard.uiElements.LoginFragment;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
+import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
@@ -41,7 +43,8 @@ import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener,
         OnOkBtnClickedListener,
-        OnFragmentInteractionListener, OnLoginBtnClickedListener, LoginFragment.OnFragmentInteractionListener
+        OnFragmentInteractionListener, OnLoginBtnClickedListener, LoginFragment.OnFragmentInteractionListener,
+        SuicidalFragment
         /*ConnectionCallbacks, OnConnectionFailedListener */{
 
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
@@ -276,4 +279,21 @@ public class MainActivity extends AppCompatActivity
     public int getActivityid() {
         return 0;
     }
+
+    /**
+     * Sets the title bar text of the activity
+     */
+    public void setTitleBarText(String s) {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(s);
+    }
+
+    @Override
+    public void onFragmentSuicide(int command) {
+        if(command == this.POP_ME) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
 }
+
+
