@@ -47,24 +47,25 @@ dependencies {
     }
     // the multidex library must be included to create more than one .dex file because the number
     // of methods in our app exceeds 65K
+    // libraries for oAuth login and Google Drive access
+    //    compile 'com.google.code.gson:gson:2.4'
+    //    compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.android.volley:volley:1.0.0'
-    // libraries for oAuth login and Google Drive access
     compile 'com.google.android.gms:play-services-drive:8.4.0'
     compile 'com.google.android.gms:play-services-plus:8.4.0'
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
-//    compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.http-client:google-http-client-gson:1.19.0'
     compile 'com.google.api-client:google-api-client-xml:1.18.0-rc'
-//    compile 'com.google.android.gms:play-services:8.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
+
 
 
 

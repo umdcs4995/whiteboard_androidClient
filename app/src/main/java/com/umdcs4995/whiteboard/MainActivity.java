@@ -1,6 +1,8 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
@@ -29,12 +31,15 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.plus.Plus;
+import com.umdcs4995.whiteboard.driveOps.DriveLoadFragment;
 import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.services.SocketService.Messages;
@@ -74,19 +79,24 @@ public class MainActivity extends AppCompatActivity
     Fragment loadURLFragment = new LoadURLFragment();
     Fragment loginFragment = new LoginFragment();
     Fragment driveSaveFragment = new DriveSaveFragment();
+    Fragment driveLoadFragment = new DriveLoadFragment();
 
     private SocketService socketService = Globals.getInstance().getSocketService();
-
     private GoogleSignInActivityResult pendingGoogleSigninResult;
-    private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
-    private boolean isSignedIn;
     private OnFragmentInteractionListener onFragmentInteractionListener;
     private GoogleApiClient googleApiClient;
     private GoogleSignInOptions gso;
+    private String TAG = "MainActivity";
+    /* Keys for persisting instance variables in savedInstanceState */
+    private static final String KEY_IS_RESOLVING = "is_resolving";
+    private static final String KEY_SHOULD_RESOLVE = "should_resolve";
 
+    /* Is there a ConnectionResult resolution in progress? */
+    private boolean mIsResolving = false;
 
-
+    /* Should we automatically resolve ConnectionResults when possible? */
+    private boolean mShouldResolve = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,18 +146,12 @@ public class MainActivity extends AppCompatActivity
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
                 .build();
-   ;
-//        builder.addScope(SCOPE_FILE);
-
 
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
-
-        //credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
-//        googleApiClient.connect();
-
     }
 
     /*
@@ -244,7 +248,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.add_url:
-                //loadURLFragment.startActivity(new Intent(this, LoadURLFragment.class));
                 changeMainFragment(loadURLFragment);
                 break;
 
@@ -253,18 +256,17 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.google_drive:
                 Bundle bundle = new Bundle();
-                //bundle.putParcelable("bitmap", findViewById(R.id.drawing).getDrawingCache());
                 Bitmap b = findViewById(R.id.drawing).getDrawingCache();
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 b.compress(CompressFormat.PNG, 50, bs);
                 bundle.putByteArray("byteArray", bs.toByteArray());
-//                bundle.putParcelable("byteArray", bs.toByteArray());
                 driveSaveFragment.setArguments(bundle);
                 changeMainFragment(driveSaveFragment);
                 break;
-
+            case R.id.addFile:
+                changeMainFragment(driveLoadFragment);
+                break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -319,47 +321,77 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    private void handleSignInResult(GoogleSignInResult result) {
-//        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-//        if (result.isSuccess()) {
-//            //Signed in successfully, show authenticated UI.
-//            GoogleSignInAccount acct = result.getSignInAccount();
-//            isSignedIn = true;
-//            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-//            //updateUI(true);
-//
-//        } else {
-//            //Signed Out, show unathenticated UI.
-//            isSignedIn = false;
-//        }
-//    }
 
-    public boolean openLoginDialogIfLoggedOut() {
-        if (!isSignedIn) {
-            //LoginFragment.newInstance().show(getSupportFragmentManager(), "LoginFragment");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public int getActivityid() {
-        return 0;
-    }
+    /**
+     * Support for GoogleApiClient.ConnectionCallbacks - After calling connect(), this method will
+     * be invoked asynchronously when the connect request has successfully completed. After this
+     * callback, the application can make requests on other methods provided by the client and
+     * expect that no user intervention is required to call methods that use account and scopes
+     * provided to the client constructor.
+     */
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        // onConnected indicates that an account was selected on the device, that the selected account
+        // has granted any requested permissions to our app and that we were able to establish a service
+        // connection to Google Play services
+        Log.d(TAG, "onConnected:" + bundle);
+        mShouldResolve = false;
     }
+
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // The connection to Google Play services was lost. The GoogleApiClient will automatically
+        // attempt to re-connect. Any UI elements that depend on connection to Google APIs should be
+        // hidden or disabled until onConnected is called again.
+        Log.w(TAG, "onConnectionSuspended: " + i);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.w(TAG, "onConnectionFailed: " + connectionResult);
+        if (!mIsResolving && mShouldResolve) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                    mIsResolving = true;
+                } catch (IntentSender.SendIntentException e) {
+                    Log.e(TAG, "Could not resolve ConnectionResult", e);
+                    mIsResolving = false;
+                    googleApiClient.connect();
+                }
+            } else {
+                // Could not resolve the connection result, show the user an error dialog
+                showErrorDialog(connectionResult);
+            }
+        } else {
+        }
+    }
 
+    private void showErrorDialog(ConnectionResult connectionResult) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this.getApplicationContext());
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, RC_SIGN_IN,
+                        new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                mShouldResolve = false;
+                            }
+                        }).show();
+            } else {
+                Log.w(TAG, "Google Play Services Error:" + connectionResult);
+                String errorString = apiAvailability.getErrorString(resultCode);
+                //Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
+
+                mShouldResolve = false;
+            }
+        }
     }
 
     @Override
@@ -406,7 +438,4 @@ public class MainActivity extends AppCompatActivity
         return this.googleApiClient;
     }
 
-    public void setGoogleApiClient(GoogleApiClient googleClient) {
-        this.googleApiClient = googleClient;
-    }
 }

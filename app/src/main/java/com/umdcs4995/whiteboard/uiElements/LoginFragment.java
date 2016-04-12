@@ -39,6 +39,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
@@ -48,12 +49,7 @@ import com.umdcs4995.whiteboard.R;
 import java.util.Arrays;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * LoginFragment uses the googleApiClient created in MainActivity to sign-in the user using OAuth2
  *
  * Created by Laura 3/29/16
  */
@@ -100,7 +96,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private ProgressDialog progressDialog;
     private View loginView;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -143,12 +138,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
      *
      * @return A new instance of fragment LoginFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -165,40 +157,13 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         // basic profile.
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), Drive.SCOPE_FILE).build();
-
-//        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-//                .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
-//                .build();
-        ;
-//        builder.addScope(SCOPE_FILE);
-
-
-
-
         // Build a GoogleAPIClient with access to the Google Sign-in api and
         // the other options specified above by the gso.
         Context context = getActivity();
-//        googleApiClient = new GoogleApiClient.Builder(getActivity())
-//            .enableAutoManage(getActivity(), this)
-//            .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(AppIndex.API)
-//                .addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(Plus.API).build();
-//        //loginView.findViewById(R.id.sign_in_button).setOnClickListener(this);
-//        .enableAutoManage(getActivity(), this)
-//                .addApi(Drive.API)
-//                .addScope(Drive.SCOPE_FILE)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .build();
-//        if (googleApiClient.isConnected() == false) {
-//            googleApiClient.connect();
-//        }
         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
         credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff()).setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
-
         googleApiClient = ((MainActivity)getActivity()).getGoogleApiClient();
-
         googleApiClient.connect();
-
 
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
@@ -233,8 +198,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         return loginView;
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
     public void onLoginButtonClicked(Uri uri) {
         if (listener != null) {
             listener.onFragmentInteraction(uri);
@@ -260,7 +223,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -300,12 +262,13 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 }
             });
         }
-//        if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
-//            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-//            String personName = currentPerson.getDisplayName();
-//            String personPhoto = currentPerson.getImage().getUrl();
-//            String personGooglePlusProfile = currentPerson.getUrl();
-//        }
+        if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
+            Log.d(TAG, "inside login plus people api if stmt");
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+            String personName = currentPerson.getDisplayName();
+            String personPhoto = currentPerson.getImage().getUrl();
+            String personGooglePlusProfile = currentPerson.getUrl();
+        }
     }
 
     public void onStop() {
@@ -339,7 +302,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             //Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             statusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            //personPhoto = acct.getPhotoUrl();
+            personPhoto = acct.getPhotoUrl();
 
             updateUI(true);
 
@@ -357,18 +320,19 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             //this.finish();
             googleApiClient.connect();
             if (googleApiClient.isConnected()) {
-//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-//                 if (currentPerson != null) {
-//                   //Show signed-in user's name
-//                   String name = currentPerson.getDisplayName();
-//                   statusTextView.setText(getString(R.string.signed_in_fmt, name));
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+                 if (currentPerson != null) {
+                     Log.d(TAG, "inside currentPerson != null");
+                   //Show signed-in user's name
+                   String name = currentPerson.getDisplayName();
+                   statusTextView.setText(getString(R.string.signed_in_fmt, name));
 
                      // Show users' email address (which requires GET_ACCOUNTS permission)
 //                     if (checkAccountsPermission()) {
 ////                      String currentAccount = Plus.AccountApi.getAccountName(googleApiClient);
 ////                      ((TextView) loginView.findViewById(R.id.detail)).setText(currentAccount);
 //                     }
-//                 }
+                 }
             } else {
                 // If getCurrentPerson returns null there is most likely an error with the
                 // configuration of the application (Invalid Client ID, Api's not enabled, etc.)
