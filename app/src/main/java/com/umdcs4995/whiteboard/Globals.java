@@ -12,6 +12,7 @@ import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +46,9 @@ public class Globals {
     private SocketService socketService;
     private boolean isSocketServiceBound = false;
 
+    //Instance of Whiteboard.
+    private Whiteboard whiteboard;
+
     /**
      * Private data member which binds the xmpp service to the client.
      */
@@ -74,6 +78,7 @@ public class Globals {
         serverAddress = getServerAddress();
         socketServiceIntent = new Intent(context, SocketService.class);
         whiteboardProtocol = new WhiteboardProtocol();
+        whiteboard = new Whiteboard();
     }
 
     /**
@@ -194,4 +199,11 @@ public class Globals {
         return currentWhiteboard;
     }
 
+    /**
+     * Returns a whiteboard instance.
+     * @return
+     */
+    public Whiteboard getWhiteboard() {
+        return whiteboard;
+    }
 }

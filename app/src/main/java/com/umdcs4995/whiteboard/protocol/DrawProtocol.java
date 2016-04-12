@@ -6,6 +6,8 @@ import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,6 +71,7 @@ public abstract class DrawProtocol {
     /**
      * Takes an incoming string and executes it.
      */
+    @Deprecated
     public static void execute(String s) {
         String TAG = "PARSER";
         final boolean logging = false;
@@ -153,7 +156,7 @@ public abstract class DrawProtocol {
             tempQueue.add(de);
         }
 
-        drawEventQueue.addFinishedQueue(tempQueue);
+        //drawEventQueue.addFinishedQueue(tempQueue);
     }
 
     /**
@@ -190,6 +193,7 @@ public abstract class DrawProtocol {
      * @param list DrawingEventList to generate a string for
      * @return A ready to send string.
      */
+    @Deprecated
     public static String generateOutputString(LinkedList<DrawingEvent> list) {
         StringBuilder builder = new StringBuilder();
 
@@ -265,6 +269,8 @@ public abstract class DrawProtocol {
             }
 
         }
-        drawEventQueue.addFinishedQueue(list);
+        LineSegment ls = new LineSegment(-1, list);
+        //drawEventQueue.addFinishedQueue(ls);
+        Globals.getInstance().getWhiteboard().addSegmentToList(ls);
     }
 }

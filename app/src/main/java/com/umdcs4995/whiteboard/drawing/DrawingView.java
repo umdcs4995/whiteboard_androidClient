@@ -44,27 +44,47 @@ public class DrawingView extends View{
     private LinkedList<DrawingEvent> currentLine = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
-    private LinkedList<LineSegment> lineHistory = new LinkedList<>();
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol protocol;
     private Thread pollingThread = new Thread(new Runnable() {
+        boolean newLineDetected = false;
+
         @Override
         public void run() {
             while (true) {
-                final LinkedList<DrawingEvent> drawQueue = drawingEventQueue.peekPriorityQueue();
+                final LineSegment drawQueue = drawingEventQueue.peekPriorityQueue();
                 if (drawQueue == null) {
                     //Sleep for half second if queue is empty.
                     try {
+                        if(newLineDetected) {
+                            Activity activity = (MainActivity) getContext();
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        //Clear the screen.
+                                        startNew();
+                                        //Redraw all the old ones.
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
+                                    } catch (NullPointerException ex) {
+                                        //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
+                                        Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
+                                    }
+                                }
+                            });
+                            newLineDetected = false;
+                        }
                         Thread.sleep(500);
                     } catch (InterruptedException ex) {
                         //Do nothing
                     }
                 } else {
+                    Log.v("NewLineDetected", "Detected Line" + drawQueue.getEventTime());
+                    newLineDetected = true;
                     Activity activity = (MainActivity) getContext();
                     activity.runOnUiThread(new PollingRunnable(drawQueue, getThis()));
-                    lineHistory.add(new LineSegment(-1, drawQueue));
                     drawingEventQueue.popPriorityQueue();
                 }
             }
@@ -81,6 +101,9 @@ public class DrawingView extends View{
         final DrawingView placeholder = this;
 
         setupDrawing();
+        if(!pollingThread.isAlive()) {
+            pollingThread.start();
+        }
     }
 
 
@@ -102,9 +125,7 @@ public class DrawingView extends View{
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
 
-        if(!pollingThread.isAlive()) {
-            pollingThread.start();
-        }
+
     }
 
 
@@ -168,7 +189,6 @@ public class DrawingView extends View{
                     de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
                             eventTime, touchX, touchY);
                     currentLine.add(de);
-                    lineHistory.add(new LineSegment(-1, currentLine));
                     protocol.outDrawProtocol(currentLine);
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
@@ -291,24 +311,26 @@ public class DrawingView extends View{
      * If the line is interrupted finishes where it was interrupted and does not finish the drawing
      */
     public void undoLastLine() {
-        if(lineHistory.size() > 0) {
-            lineHistory.removeLast();
-            startNew();
-            for (LineSegment ls : lineHistory) {
-                try {
-                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
-                } catch (InterruptedException e) {
-
-                }
-            }
-        }
+        //TODO: Fix this.
+//        if(lineHistory.size() > 0) {
+//            lineHistory.removeLast();
+//            startNew();
+//            for (LineSegment ls : lineHistory) {
+//                try {
+//                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
+//                } catch (InterruptedException e) {
+//
+//                }
+//            }
+//        }
     }
 
     /**
      * Clears the queue from drawing that are stored
      */
     public void clearQueue(){
-        lineHistory.clear();
+        //TODO: Fix this.
+//        lineHistory.clear();
     }
     /**
      * This class creates a runnable to parse through an incoming network line event.
@@ -317,17 +339,17 @@ public class DrawingView extends View{
         private LineSegment ls;
         private DrawingView view;
 
-        public PollingRunnable(LinkedList<DrawingEvent> dq, DrawingView view) {
-            ls = new LineSegment(-1, dq);
+        public PollingRunnable(LineSegment ls, DrawingView view) {
+            this.ls = ls;
             this.view = view;
         }
 
         @Override
         public void run() {
             try {
-                ls.drawLine(true, drawPath, drawPaint, drawCanvas, view);
-            } catch(InterruptedException e) {
-
+                ls.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+            } catch(Exception e) {
+                Log.e("POLLINGRUNNABLE", "Error drawing string");
             }
         }
     }
