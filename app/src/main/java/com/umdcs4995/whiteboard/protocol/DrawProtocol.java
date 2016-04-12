@@ -269,8 +269,12 @@ public abstract class DrawProtocol {
             }
 
         }
-        LineSegment ls = new LineSegment(-1, list);
+
+        Whiteboard wb = Globals.getInstance().getWhiteboard();
+        int lsCount = wb.getLineSegmentCount();
+        LineSegment ls = new LineSegment(lsCount, list);
+        wb.addSegmentToList(ls);
+
         //drawEventQueue.addFinishedQueue(ls);
-        Globals.getInstance().getWhiteboard().addSegmentToList(ls);
     }
 }

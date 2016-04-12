@@ -64,9 +64,6 @@ public class LineSegment {
 
             //This code attempts to respect real time.
             long delay = e.getDelay(TimeUnit.MILLISECONDS);
-            if(!inRealTime) {
-                delay = delay;
-            }
 
             if(inRealTime) {
                 t.schedule(new TimerTask() {

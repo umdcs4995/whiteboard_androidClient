@@ -54,4 +54,12 @@ public class Whiteboard {
         }
     }
 
+    /**
+     * Returns a count of the number of LineSegments in the list.  Used to set the ordinal for the
+     * next line segment.
+     */
+    public int getLineSegmentCount() {
+        return segments.size();
+    }
+
 }
