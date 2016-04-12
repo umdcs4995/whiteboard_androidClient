@@ -1,10 +1,14 @@
 package com.umdcs4995.whiteboard.whiteboarddata;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
 import java.util.LinkedList;
@@ -35,6 +39,7 @@ public class Whiteboard {
      */
     public void addSegmentToList(LineSegment segment) {
         segments.add(segment);
+        broadcastSegmentChange(Globals.getInstance().getGlobalContext());
     }
 
     /**
@@ -60,6 +65,15 @@ public class Whiteboard {
      */
     public int getLineSegmentCount() {
         return segments.size();
+    }
+
+    /**
+     * Broadcast to the app informing of changes to the list of line segments in the Whiteboard.
+     */
+    private void broadcastSegmentChange(Context context) {
+        Log.i("Whiteboard.java", "Broadcasting segment change message.");
+        Intent intent = new Intent("segmentChange");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
 }
