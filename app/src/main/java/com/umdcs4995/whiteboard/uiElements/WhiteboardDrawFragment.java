@@ -47,6 +47,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     // Test button that will load an image from a url
     private static final String TAG = "WhiteboardDrawFragment";
+
     //Test link to a connect the dots. good measure for it "working" would be to be
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
@@ -70,11 +71,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         View view = inflater.inflate(R.layout.fragment_whiteboard_draw, container, false);
         return view;
     }
-
-    /*
-     * This function sets up the activity with its necessary components
-     * including setting up the brush color and size
-     * also sets up the drawView, which retrieves the current drawing
 
     /**
      * Sets up the activity with its necessary components

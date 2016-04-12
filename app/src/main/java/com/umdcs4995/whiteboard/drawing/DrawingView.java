@@ -28,8 +28,6 @@ import java.util.LinkedList;
  * Creates a drawing on a canvas using user input.
  */
 public class DrawingView extends View{
-    //textfield to move
-    private TextView username;
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
@@ -134,12 +132,6 @@ public class DrawingView extends View{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //detect user touch
-        /**
-         * username =  (TextView) findViewById(R.id.usernameText);
-         * username.setX(touchX);
-         * username.setY(touchY);
-         */
-
 
         if (firstDrawEvent) {
             startTime = System.currentTimeMillis();
@@ -148,8 +140,6 @@ public class DrawingView extends View{
         float touchX = event.getX();
         float touchY = event.getY();
         Long eventTime = System.currentTimeMillis();
-
-
 
         DrawingEvent de;
         if(WhiteboardDrawFragment.getDrawMode() == true) {
@@ -213,7 +203,6 @@ public class DrawingView extends View{
             canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         else {
-
             Bitmap immutableBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
