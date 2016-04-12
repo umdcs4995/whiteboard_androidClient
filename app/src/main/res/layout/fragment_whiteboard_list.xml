@@ -17,10 +17,14 @@
         android:layout_width="match_parent"
         android:text="Create New Whiteboard"
         android:id="@+id/create_button" />
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/contact_listview"></ListView>
+        android:id="@+id/contact_listview"
+        android:layout_below="@+id/create_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    </ListView>
 
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.umdcs4995.whiteboard.uiElements;
 
 import android.content.Context;
 import android.app.DialogFragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,7 +33,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.Socket;
 import java.util.logging.Logger;
 
 import contacts.ContactList;
@@ -45,7 +47,7 @@ import io.socket.emitter.Emitter;
 public class JoinBoardFragment extends Fragment {
 
     ContactList whiteboardList = new ContactList();
-    DialogFragment newBoardFragment = new NewBoardFragment();
+    private SocketService socketService = Globals.getInstance().getSocketService();
 
     /**
      * Called on creation of the fragment.
@@ -61,8 +63,67 @@ public class JoinBoardFragment extends Fragment {
         Button button = (Button) view.findViewById(R.id.create_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newBoardFragment = NewBoardFragment.newInstance();
-                newBoardFragment.show(getActivity().getFragmentManager(), "AddBoardDialog");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.fragment_new_whiteboard, null);
+                builder.setView(dialogView);
+
+                final EditText whiteboardName = (EditText) dialogView.findViewById(R.id.txt_board_name);
+
+                builder.setTitle(R.string.dialog_new_whiteboard_title);
+                builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        JSONObject addWbRequest = new JSONObject();
+                        try {
+                            addWbRequest.put("name", whiteboardName.getText());
+                        } catch (JSONException e) {
+                            Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG).show();
+                        }
+
+                        socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+
+                        socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
+                            @Override
+                            public void call(Object... args) {
+                                JSONObject recvd = (JSONObject) args[0];
+                                try {
+                                    Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
+                                    final MainActivity mainActivity = (MainActivity) getActivity();
+                                    mainActivity.runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                mainActivity.setTitleBarText(whiteboardName.getText().toString());
+                                            } catch (Exception e) {
+
+                                            }
+                                        }
+
+                                    });
+                                    //Fragment suicides here
+                                    mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
+                                } catch (JSONException e) {
+                                    Log.e("createWhiteboard", "error parsing received message");
+                                }
+                                socketService.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
+                            }
+                        });
+
+                        fetchWhiteboardlist(); // refresh the list of whiteboards
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
             }
         });
         return view;
@@ -94,12 +155,17 @@ public class JoinBoardFragment extends Fragment {
             people[i] = whiteboardList.getContactOrdinal(i);
         }
 
-        ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
-        //Grab the list view and set the adapter.
+        try {
+            ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
 
-        ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
-        listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(makeWhiteboardListListener());
+            /git/Grab the list view and set the adapter.
+
+            ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
+            listView.setAdapter(customAdapter);
+            listView.setOnItemClickListener(makeWhiteboardListListener());
+        } catch (NullPointerException ex) {
+            Log.i("JOINBOARDFRAGMENT", ex.getMessage());
+        }
     }
 
     /**

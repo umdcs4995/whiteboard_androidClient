@@ -1,9 +1,8 @@
 package com.umdcs4995.whiteboard;
 
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,11 +23,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.umdcs4995.whiteboard.services.SocketService;
-import com.umdcs4995.whiteboard.services.SocketService.Messages;
 import com.umdcs4995.whiteboard.uiElements.ContactListFragment;
 import com.umdcs4995.whiteboard.uiElements.JoinBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment;
@@ -39,11 +36,6 @@ import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListen
 import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import io.socket.emitter.Emitter.Listener;
 
 //import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 
@@ -79,6 +71,7 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Whiteboard");
         setSupportActionBar(toolbar);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         /**
          *Hides or makes visible the draw components and toolbar
