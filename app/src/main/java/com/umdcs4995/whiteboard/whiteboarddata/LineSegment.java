@@ -25,12 +25,15 @@ public class LineSegment {
     private boolean LOGGING = false;
     LinkedList<DrawingEvent> drawEvents;
 
+    private boolean hasDrawnLive;
+
     /**
      * Constructor
      * @param events The list of events that represents a line segment.
      */
     public LineSegment(int ordianlID, LinkedList<DrawingEvent> events) {
         this.ordianlID = ordianlID;
+        hasDrawnLive = false;
         drawEvents = events;
     }
 
@@ -47,6 +50,8 @@ public class LineSegment {
     public void drawLine(boolean inRealTime, final Path drawPath, final Paint drawPaint, final Canvas drawCanvas,
                          final DrawingView view)
             throws InterruptedException {
+
+        inRealTime = !hasDrawnLive;
 
         DrawingEvent de = drawEvents.get(0);
         if(de != null) {
@@ -81,6 +86,7 @@ public class LineSegment {
                         handler.post(dmr);
                     }
                 }, delay);
+                hasDrawnLive = true;
             } else {
                 DrawMeRunnable dmr;
                 if (index == 0) {
