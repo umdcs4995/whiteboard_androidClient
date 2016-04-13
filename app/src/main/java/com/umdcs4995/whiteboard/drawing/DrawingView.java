@@ -25,6 +25,7 @@ import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import java.util.LinkedList;
 
@@ -38,6 +39,8 @@ public class DrawingView extends View{
     private Paint drawPaint, canvasPaint;
     //initial color
     private int paintColor = 0xFF660000;
+
+
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
@@ -54,12 +57,14 @@ public class DrawingView extends View{
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol protocol;
 
-    private BroadcastReceiver mSegmentsChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("DRAWINGVIEW", "Received broadcast");
-        }
-    };
+
+    public Paint getDrawPaint() {
+        return drawPaint;
+    }
+
+    public Path getDrawPath() {
+        return drawPath;
+    }
 
 
     private Thread pollingThread = new Thread(new Runnable() {
@@ -138,16 +143,7 @@ public class DrawingView extends View{
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    /**
-     * Registers the broadcast receiver.
-     */
-    public void registerBroadcastReceiver() {
-        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext());
 
-        //Register the intent receiver so that the view updates upon receiving.
-        lbm.registerReceiver(mSegmentsChangedReceiver,
-                new IntentFilter("segmentChange"));
-    }
 
 
     /**

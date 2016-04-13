@@ -71,8 +71,8 @@ public class Whiteboard {
      * Broadcast to the app informing of changes to the list of line segments in the Whiteboard.
      */
     private void broadcastSegmentChange(Context context) {
-        Log.i("Whiteboard.java", "Broadcasting segment change message.");
-        Intent intent = new Intent("segmentChange");
+        Log.i("Whiteboard.java", "Broadcasting repaint request message.");
+        Intent intent = new Intent("repaintRequest");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

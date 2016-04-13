@@ -22,6 +22,7 @@ public class LineSegment {
 
     private String TAG = "LINESEGMENT";
     private int ordianlID;
+    private boolean LOGGING = false;
     LinkedList<DrawingEvent> drawEvents;
 
     /**
@@ -162,7 +163,7 @@ public class LineSegment {
             oldTouchX = touchX;
             oldTouchY = touchY;
             view.invalidate(); // this allows the onDraw method to execute
-            Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
+            if(LOGGING) Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
             index++;
         }
     }
