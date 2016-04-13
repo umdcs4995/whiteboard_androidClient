@@ -48,7 +48,7 @@ public class DrawingView extends View{
     //brush size and previous size
     private float brushSize, lastBrushSize;
     //A placeholder representing the currently drawn line.
-    private LinkedList<DrawingEvent> currentLine = new LinkedList<>();
+    private LinkedList<DrawingEvent> currentLineList = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
 
@@ -188,8 +188,8 @@ public class DrawingView extends View{
                     // position to start drawing.
                     de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
                             eventTime, touchX, touchY);
-                    currentLine = new LinkedList<>();
-                    currentLine.add(de);
+                    currentLineList = new LinkedList<>();
+                    currentLineList.add(de);
                     drawPath.moveTo(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -197,7 +197,7 @@ public class DrawingView extends View{
                     // along with their touch.
                     de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
                             eventTime, touchX, touchY);
-                    currentLine.add(de);
+                    currentLineList.add(de);
                     drawPath.lineTo(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -205,8 +205,10 @@ public class DrawingView extends View{
                     // and reset it for the next draw.
                     de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
                             eventTime, touchX, touchY);
-                    currentLine.add(de);
-                    protocol.outDrawProtocol(currentLine);
+                    currentLineList.add(de);
+                    protocol.outDrawProtocol(currentLineList);
+                    Whiteboard wb = Globals.getInstance().getWhiteboard();
+                    wb.addSegmentToList(new LineSegment(wb.getLineSegmentCount(), currentLineList));
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
                     firstDrawEvent = true; //<- Added to reset the start time on the next stroke.
