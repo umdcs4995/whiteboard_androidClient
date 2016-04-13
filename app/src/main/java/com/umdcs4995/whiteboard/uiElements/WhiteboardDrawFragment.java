@@ -41,6 +41,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private static boolean drawMode = true;
     private static DrawingView drawView;
     private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
+    private boolean broadcastReceiverSetup = false;
 
     //Color Options
     private static ImageButton c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
@@ -52,6 +53,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
 
+    //Flag so that the DrawingView.setup() method is only called once.
+    private boolean drawingViewSetup = false;
 
     //initialize brush sizes
     //TODO grab from the resource file
@@ -82,12 +85,19 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
         super.onActivityCreated(savedInstanceState);
+
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
-        currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
-        //set up the Drawing view
-        drawView.setupDrawing();
-        drawView.setBrushSize(smallBrush);//sets initial brush size
+        if(!broadcastReceiverSetup) {
+            drawView.registerBroadcastReceiver();
+            broadcastReceiverSetup = true;
         }
+        drawView.setupDrawing();
+        currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
+        drawView.setBrushSize(smallBrush);//sets initial brush size
+
+    }
+
+
 
     /**
      * Sets a the brush color when a paint color is selected to the input view's

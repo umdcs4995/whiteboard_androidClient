@@ -1,13 +1,17 @@
 package com.umdcs4995.whiteboard.drawing;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -45,9 +49,19 @@ public class DrawingView extends View{
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
 
+
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol protocol;
+
+    private BroadcastReceiver mSegmentsChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("DRAWINGVIEW", "Received broadcast");
+        }
+    };
+
+
     private Thread pollingThread = new Thread(new Runnable() {
         boolean newLineDetected = false;
 
@@ -94,16 +108,14 @@ public class DrawingView extends View{
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
         Globals g = Globals.getInstance();
-        //TODO find out my this is throwing an NullPointerException
         protocol = g.getWhiteboardProtocol();
         drawingEventQueue = g.getDrawEventQueue();
 
-        final DrawingView placeholder = this;
-
-        setupDrawing();
         if(!pollingThread.isAlive()) {
-            pollingThread.start();
+            //pollingThread.start();
         }
+
+
     }
 
 
@@ -124,8 +136,17 @@ public class DrawingView extends View{
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+    }
 
+    /**
+     * Registers the broadcast receiver.
+     */
+    public void registerBroadcastReceiver() {
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext());
 
+        //Register the intent receiver so that the view updates upon receiving.
+        lbm.registerReceiver(mSegmentsChangedReceiver,
+                new IntentFilter("segmentChange"));
     }
 
 
