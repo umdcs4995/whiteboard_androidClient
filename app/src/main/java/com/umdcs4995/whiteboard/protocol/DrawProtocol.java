@@ -274,6 +274,7 @@ public abstract class DrawProtocol {
         int lsCount = wb.getLineSegmentCount();
         LineSegment ls = new LineSegment(lsCount, list);
         wb.addSegmentToList(ls);
+        wb.broadcastRepaintRequest(Globals.getInstance().getGlobalContext());
 
         //drawEventQueue.addFinishedQueue(ls);
     }

@@ -39,7 +39,6 @@ public class Whiteboard {
      */
     public void addSegmentToList(LineSegment segment) {
         segments.add(segment);
-        broadcastSegmentChange(Globals.getInstance().getGlobalContext());
     }
 
     /**
@@ -70,10 +69,17 @@ public class Whiteboard {
     /**
      * Broadcast to the app informing of changes to the list of line segments in the Whiteboard.
      */
-    private void broadcastSegmentChange(Context context) {
+    public void broadcastRepaintRequest(Context context) {
         Log.i("Whiteboard.java", "Broadcasting repaint request message.");
         Intent intent = new Intent("repaintRequest");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    /**
+     * Resets the Whiteboard instance.
+     */
+    public void initWhiteboard() {
+        segments.clear();
     }
 
 }
