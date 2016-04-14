@@ -23,7 +23,7 @@ The server is written in Javascript using [Nodejs](https://nodejs.org), and most
 
 ### Building messages
 
-Message data needs to be packaged in a JSONObject or JSONArray in order to be sent via socket.io. This is pretty easy to do:
+Message data needs to be packaged in a JSONObject or JSONArray in order to be sent via socketio. This is pretty easy to do:
 
     JSONObject jsonData = new JSONObject();
     jsonData.put("name", "testBoard");
