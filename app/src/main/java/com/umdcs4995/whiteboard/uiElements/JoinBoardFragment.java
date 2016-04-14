@@ -85,7 +85,11 @@ public class JoinBoardFragment extends Fragment {
                             Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG).show();
                         }
 
-                        socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+                        try {
+                            socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+                        } catch (Exception e) {
+                            Log.e("JoinBoard", "Not connected to server");
+                        }
 
                         socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
                             @Override
@@ -217,7 +221,11 @@ public class JoinBoardFragment extends Fragment {
                     }
                 });
 
-                socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+                try {
+                    socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+                } catch (Exception e) {
+                    Log.e("CreateBoard", "Not connected to server");
+                }
 
             }
         };

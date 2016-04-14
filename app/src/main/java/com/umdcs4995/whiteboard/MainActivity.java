@@ -1,6 +1,5 @@
 package com.umdcs4995.whiteboard;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -21,8 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.Toast;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.umdcs4995.whiteboard.services.SocketService;
@@ -33,7 +31,6 @@ import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnFragmentInteraction
 import com.umdcs4995.whiteboard.uiElements.LoadURLFragment.OnOkBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment;
 import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
-import com.umdcs4995.whiteboard.uiElements.NewBoardFragment;
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
-    DialogFragment newBoardFragment = new NewBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
     Fragment loginFragment = new LoginFragment();
 
