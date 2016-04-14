@@ -1,83 +1,91 @@
-# Whiteboard_InterfaceTeam
+# 4995 Industries Presents: Whiteboard
 
-# Node JS
+## What is it?
 
-## Java sending information
+"Whiteboard" is a real-time collaborative whiteboard application developed by CS 4995 students at the University of Minnesota-Duluth.
 
-When sending information via Java to the NODE JS server you must build a JSON object if you are sending multiple bits of informations. Otherwise you can send it as a string, but we will not parse that information.
+## Setup
 
-So your code in Java would look like:
+1. Download and set up the [NodeJS whiteboard server](https://github.umn.edu/umdcs4995/nodejs)
+2. Change the values in app/src/main/res/values/strings.xml to match your server address
+    - Change "hostname" to your server hostname
+    - Change rtc_port to your RTC signalling port (3001 by default)
+    - If your server is NOT running over HTTPS (most people):
+        - Change "secure" to false
+        - Change "port" to your server port (3000 by default)
+    - Otherwise, if you ARE running over HTTPS:
+        - Change "secure_port" to your HTTPS port
+3. Build and run the Android application (we use Android Studio)
 
-String action_id = "createWhiteboard";
-JSONObject jsonData = new JSONObject();
-jsonData.put("name", "testBoard");
-jsonData.put("access", "public");
+## Nodejs Development Information
 
-socket.emit(action_id, jsonData.toString());
+The server is written in Javascript using [Nodejs](https://nodejs.org), and most of the client-server communication uses [Socket.IO](http://socket.io/). This means that most of the communication is *asynchronous*, so you need to write your code in a way that can be executed asynchronously without problems. There are good examples of this in JoinBoardFragment.java.
 
-This allows us to parse the msg (aka the jsonData) in Javascript to grab the information such as "name" and "access"
+### Building messages
 
-So in summary:
-	action_id to apply the correct logic to the information
-	JSONData to send all information for logic 
-	
-## Java Listeners
+Message data needs to be packaged in a JSONObject or JSONArray in order to be sent via socket.io. This is pretty easy to do:
 
-For actions that require a response back from the server you will need to build a listener in order to interpret the information that is sent from server to client.
+    JSONObject jsonData = new JSONObject();
+    jsonData.put("name", "testBoard");
 
-For example in the SocketService you would add:
-	
+Sometimes it helps to think about JSONObjects is as HashMap<String,Object> and JSONArrays as List<Object> (though technically speaking, this isn't totally correct).
 
-	private void setupListeners(){
-		socket.on(action_id, new Emitter.Listener(){
-			public void call(Object ...args){
-				args can be parsed as one string.
-			}
-		}
-	}
+### Sending and receiving a message
 
-Mitch is adding a method called (SocketService.addListener(action_id, Emitter.Listener anonymous function)) which will add the listener from wherever this is called. You should use this wherever you will need to add a listener, this will make it easier to read through the code and understand the logic that is happening.
+In order to send or receive a message, your class needs to have access to the global SocketService. You can access this through the Globals singleton:
 
-This will allow you to handle all the incoming information from the server.
+    final SocketService socket = Globals.getInstance().getSocketService();
 
-## Node actions
-MSG: 'createWhiteboard',function(msg)
-    
-    Takes a whiteBoard JSON object and will return a confirmation message:
+Sending a message can be done through the sendMessage method, which takes a string and either a string, JSONObject, or JSONArray. Message types are stored in a "struct" called Messages within SocketService.
 
-    'status': 100, 'message': 'Successful creation'
+    socket.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, jsonData);
+
+SendMessage will throw an error if it does not have a connection to the server, so make sure to check for that.
+
+To receive a message, you need to set up a listener, which is usually an anonymous function that will get called when the server send s message back with the given message type (such as createWhiteboard).
+
+For example, to set up a listener to for a createWhiteboard message,
+
+    socket.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            
+            // args[0] is a string containing the server's response, which we parse into a JSONObject
+            JSONObject recvd = (JSONObject) args[0];
+            
+            try {
+                Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
+            } catch (JSONException e) {
+                Log.e("createWhiteboard", "error parsing received message");
+            }
+            
+            // After we have successfully processed the response, 
+            // remove the listener so it doesn't get called again.
+            socket.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
+        }
+    });
+
+### Debugging messages
+
+You can see a live log of the public server at https://lempo.d.umn.edu:4995/log.html
+
+Additionally, you can simulate a real client and test sending messages at https://lempo.d.umn.edu:4995/console.html
+
+### Server message types
+
+|       Name       |       Purpose         | Arguments | Returns |
+| ---------------- | --------------------- | --------- | ------- |
+| createWhiteboard | Creates a whiteboard. | name | A success or error message |
+| joinWhiteboard   | Joins a whiteboard.   | name | A success or error message |
+| deleteWhiteboard | Deleted a whiteboard. | name | A success or error message |
+| me               | Allows user to get information about themselves | none | A JSONObject with 'whiteboard' property containing user's current whiteboard |
+| chat message     | Blast a message to all users | message | The message |
+| drawevent        | Sends a drawevent to users in the current whiteboard | drawevent object generated by DrawProtocol | none |
 
 
-MSG: 'joinWhitebboard',function(clientSocket)
+## Contributors
 
-    Takes a JSON object containing the mandatory fields
+Put your name and email/website here! Leave a blank line between names.
 
-    object{
-        name (name of whiteBoard)
-        username (name of user)
-    }
+[Mitchell Rysavy](http://d.umn.edu/~rysau001) ([rysau001@d.umn.edu](mailto:rysau001@d.umn.edu))
 
-
-MSG: 'chat message',function(msg)
-
-    Takes a string message that will be echoed to all members of the whiteBoard.
-
-MSG: 'motionevent',function(msg)
-
-    Takes in a motionEvent JSON Object that will be emitted to all members of the whiteBoard as a motionevent message.
-
-MSG: 'disconnect',function()
-
-    Will disconnect the current client from the whiteboard on the server side.
-
-MSG: 'leave',function()
-
-    Will let the client leave from the whtiebaord on the server side.
-
-MSG: 'listAllClients',funcgion(msg)
-
-    Will return a string of clients in CSV format.
-
-MSG: 'listAllWhiteBoards',function(msg)
-
-    Will return a string of whiteboards in CSV format.
