@@ -22,7 +22,10 @@ public class LineSegment {
 
     private String TAG = "LINESEGMENT";
     private int ordianlID;
-    LinkedList<DrawingEvent> drawQueue;
+    private boolean LOGGING = false;
+    LinkedList<DrawingEvent> drawEvents;
+
+    private boolean hasDrawnLive;
 
     /**
      * Constructor
@@ -30,7 +33,8 @@ public class LineSegment {
      */
     public LineSegment(int ordianlID, LinkedList<DrawingEvent> events) {
         this.ordianlID = ordianlID;
-        drawQueue = events;
+        hasDrawnLive = false;
+        drawEvents = events;
     }
 
     /**
@@ -47,7 +51,9 @@ public class LineSegment {
                          final DrawingView view)
             throws InterruptedException {
 
-        DrawingEvent de = drawQueue.get(0);
+        inRealTime = !hasDrawnLive;
+
+        DrawingEvent de = drawEvents.get(0);
         if(de != null) {
             Log.v(TAG, "POPPING QUEUE: " + de.getStartTime());
         } else {
@@ -55,8 +61,8 @@ public class LineSegment {
         }
 
 
-        for(int i = 0; i < drawQueue.size(); i++) {
-            final DrawingEvent e = drawQueue.get(i);
+        for(int i = 0; i < drawEvents.size(); i++) {
+            final DrawingEvent e = drawEvents.get(i);
             final Handler handler = new Handler();
             final int index = i;
 
@@ -64,28 +70,47 @@ public class LineSegment {
 
             //This code attempts to respect real time.
             long delay = e.getDelay(TimeUnit.MILLISECONDS);
-            if(!inRealTime) {
-                delay = 0;
-            }
 
-            t.schedule(new TimerTask() {
-                public synchronized void run() {
-                    DrawMeRunnable dmr;
-                    if(index == 0) {
-                        dmr = new DrawMeRunnable(e, 0.0f, 0.0f, drawPath, drawPaint, drawCanvas,
-                                view);
-                    } else {
-                        dmr = new DrawMeRunnable(e, drawQueue.get(index-1).getxValue(),
-                                drawQueue.get(index-1).getyValue(), drawPath, drawPaint, drawCanvas,
-                                view);
+            if(inRealTime) {
+                t.schedule(new TimerTask() {
+                    public synchronized void run() {
+                        DrawMeRunnable dmr;
+                        if (index == 0) {
+                            dmr = new DrawMeRunnable(e, 0.0f, 0.0f, drawPath, drawPaint, drawCanvas,
+                                    view);
+                        } else {
+                            dmr = new DrawMeRunnable(e, drawEvents.get(index - 1).getxValue(),
+                                    drawEvents.get(index - 1).getyValue(), drawPath, drawPaint, drawCanvas,
+                                    view);
+                        }
+                        handler.post(dmr);
                     }
-                    handler.post(dmr);
+                }, delay);
+                hasDrawnLive = true;
+            } else {
+                DrawMeRunnable dmr;
+                if (index == 0) {
+                    dmr = new DrawMeRunnable(e, 0.0f, 0.0f, drawPath, drawPaint, drawCanvas,
+                            view);
+                    dmr.run();
+                } else {
+                    dmr = new DrawMeRunnable(e, drawEvents.get(index - 1).getxValue(),
+                            drawEvents.get(index - 1).getyValue(), drawPath, drawPaint, drawCanvas,
+                            view);
+                    dmr.run();
                 }
-            }, delay);
+            }
         }
 
     }
 
+    /**
+     * Returns the event time for the LineSegment.  Note the event time is the EventTime for the
+     * FIRST DrawEvent in the segment.
+     */
+    public long getEventTime() {
+        return drawEvents.get(0).getEventTime();
+    }
 
     /**
      * This threadable private class allows the individual points to be drawn in real time,
@@ -144,7 +169,7 @@ public class LineSegment {
             oldTouchX = touchX;
             oldTouchY = touchY;
             view.invalidate(); // this allows the onDraw method to execute
-            Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
+            if(LOGGING) Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
             index++;
         }
     }

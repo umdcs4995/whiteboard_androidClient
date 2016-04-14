@@ -1,14 +1,18 @@
 package com.umdcs4995.whiteboard.drawing;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.gesture.GestureOverlayView;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +26,7 @@ import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import java.util.LinkedList;
 
@@ -35,6 +40,8 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     private Paint drawPaint, canvasPaint;
     //initial color
     private int paintColor = 0xFF660000;
+
+
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
@@ -42,10 +49,10 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     //brush size and previous size
     private float brushSize, lastBrushSize;
     //A placeholder representing the currently drawn line.
-    private LinkedList<DrawingEvent> currentLine = new LinkedList<>();
+    private LinkedList<DrawingEvent> currentLineList = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
-    private LinkedList<LineSegment> lineHistory = new LinkedList<>();
+
 
     //Width and the height of the canvas
     int canvasW = -1;
@@ -56,22 +63,54 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
     private WhiteboardProtocol protocol;
+
+
+    public Paint getDrawPaint() {
+        return drawPaint;
+    }
+
+    public Path getDrawPath() {
+        return drawPath;
+    }
+
+
     private Thread pollingThread = new Thread(new Runnable() {
+        boolean newLineDetected = false;
+
         @Override
         public void run() {
             while (true) {
-                final LinkedList<DrawingEvent> drawQueue = drawingEventQueue.peekPriorityQueue();
+                final LineSegment drawQueue = drawingEventQueue.peekPriorityQueue();
                 if (drawQueue == null) {
                     //Sleep for half second if queue is empty.
                     try {
+                        if(newLineDetected) {
+                            Activity activity = (MainActivity) getContext();
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        //Clear the screen.
+                                        startNew();
+                                        //Redraw all the old ones.
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
+                                    } catch (NullPointerException ex) {
+                                        //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
+                                        Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
+                                    }
+                                }
+                            });
+                            newLineDetected = false;
+                        }
                         Thread.sleep(500);
                     } catch (InterruptedException ex) {
                         //Do nothing
                     }
                 } else {
+                    Log.v("NewLineDetected", "Detected Line" + drawQueue.getEventTime());
+                    newLineDetected = true;
                     Activity activity = (MainActivity) getContext();
                     activity.runOnUiThread(new PollingRunnable(drawQueue, getThis()));
-                    lineHistory.add(new LineSegment(-1, drawQueue));
                     drawingEventQueue.popPriorityQueue();
                 }
             }
@@ -81,13 +120,14 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     public DrawingView(Context con, AttributeSet att) {
         super(con, att);
         Globals g = Globals.getInstance();
-        //TODO find out my this is throwing an NullPointerException
         protocol = g.getWhiteboardProtocol();
         drawingEventQueue = g.getDrawEventQueue();
 
-        final DrawingView placeholder = this;
+        if(!pollingThread.isAlive()) {
+            //pollingThread.start();
+        }
 
-        setupDrawing();
+
     }
 
     /**
@@ -106,10 +146,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
-
-        if(!pollingThread.isAlive()) {
-            pollingThread.start();
-        }
     }
 
     /**
@@ -154,8 +190,8 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     // position to start drawing.
                     de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
                             eventTime, touchX, touchY);
-                    currentLine = new LinkedList<>();
-                    currentLine.add(de);
+                    currentLineList = new LinkedList<>();
+                    currentLineList.add(de);
                     drawPath.moveTo(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -163,7 +199,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     // along with their touch.
                     de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
                             eventTime, touchX, touchY);
-                    currentLine.add(de);
+                    currentLineList.add(de);
                     drawPath.lineTo(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -171,9 +207,10 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     // and reset it for the next draw.
                     de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
                             eventTime, touchX, touchY);
-                    currentLine.add(de);
-                    lineHistory.add(new LineSegment(-1, currentLine));
-                    protocol.outDrawProtocol(currentLine);
+                    currentLineList.add(de);
+                    protocol.outDrawProtocol(currentLineList);
+                    Whiteboard wb = Globals.getInstance().getWhiteboard();
+                    wb.addSegmentToList(new LineSegment(wb.getLineSegmentCount(), currentLineList));
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
                     firstDrawEvent = true; //<- Added to reset the start time on the next stroke.
@@ -297,24 +334,26 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      * If the line is interrupted finishes where it was interrupted and does not finish the drawing
      */
     public void undoLastLine() {
-        if(lineHistory.size() > 0) {
-            lineHistory.removeLast();
-            startNew();
-            for (LineSegment ls : lineHistory) {
-                try {
-                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
-                } catch (InterruptedException e) {
-
-                }
-            }
-        }
+        //TODO: Fix this.
+//        if(lineHistory.size() > 0) {
+//            lineHistory.removeLast();
+//            startNew();
+//            for (LineSegment ls : lineHistory) {
+//                try {
+//                    ls.drawLine(false, drawPath, drawPaint, drawCanvas, getThis());
+//                } catch (InterruptedException e) {
+//
+//                }
+//            }
+//        }
     }
 
     /**
      * Clears the queue from drawing that are stored
      */
     public void clearQueue(){
-        lineHistory.clear();
+        //TODO: Fix this.
+//        lineHistory.clear();
     }
 
 
@@ -325,17 +364,17 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         private LineSegment ls;
         private DrawingView view;
 
-        public PollingRunnable(LinkedList<DrawingEvent> dq, DrawingView view) {
-            ls = new LineSegment(-1, dq);
+        public PollingRunnable(LineSegment ls, DrawingView view) {
+            this.ls = ls;
             this.view = view;
         }
 
         @Override
         public void run() {
             try {
-                ls.drawLine(true, drawPath, drawPaint, drawCanvas, view);
-            } catch(InterruptedException e) {
-
+                ls.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+            } catch(Exception e) {
+                Log.e("POLLINGRUNNABLE", "Error drawing string");
             }
         }
     }

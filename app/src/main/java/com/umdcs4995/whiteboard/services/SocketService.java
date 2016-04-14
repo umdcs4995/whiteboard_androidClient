@@ -42,18 +42,10 @@ public class SocketService extends Service {
     public class Messages {
         public static final String CREATE_WHITEBOARD = "createWhiteboard";
         public static final String JOIN_WHITEBOARD = "joinWhiteboard";
-
-        public static final String MOTION_EVENT = "motionevent";
-
-        // Uncomment the following 2 lines when the server has been fixed:
         public static final String CHAT_MESSAGE = "chat message";
         public static final String DRAW_EVENT = "drawevent";
-
-        // The following 2 lines are a workaround while the server is being fixed:
-        //public static final String CHAT_MESSAGE = "drawevent";
-        //public static final String DRAW_EVENT = "chat message";
-
-        // TODO: put the rest of the messages in here
+        public static final String ME = "me";
+        public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
     }
 
     /**
@@ -141,7 +133,7 @@ public class SocketService extends Service {
                     JSONArray parsed = new JSONArray((String)args[0]);
                     protocol.inc(parsed);
                 } catch (NullPointerException e) {
-                    Log.e(TAG, "NullpointerError Error, malfromed string");
+                    Log.e(TAG, "NullpointerError Error, malformed string");
                 } catch (JSONException e) {
                     Log.e(TAG, "Problem parsing JSON response from server");
                 }

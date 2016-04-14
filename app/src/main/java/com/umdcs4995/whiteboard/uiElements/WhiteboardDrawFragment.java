@@ -2,8 +2,16 @@ package com.umdcs4995.whiteboard.uiElements;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,6 +20,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +32,10 @@ import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.CameraWb;
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -41,6 +52,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private static boolean drawMode = true;
     private static DrawingView drawView;
     private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
+    private boolean broadcastReceiverSetup = false;
 
     //Color Options
     private static ImageButton c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
@@ -52,6 +64,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
 
+    //Flag so that the DrawingView.setup() method is only called once.
+    private boolean drawingViewSetup = false;
 
     //initialize brush sizes
     //TODO grab from the resource file
@@ -60,6 +74,35 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     //Camera Window
     private FrameLayout cameraWindow;
+
+
+//    //drawing path
+//    private Path drawPath;
+//    //drawing and canvas paint
+//    private Paint drawPaint;
+//    //canvas
+//    private Canvas drawCanvas;
+//    //canvas bitmap
+//    private Bitmap canvasBitmap;
+
+    /**
+     * Receiver for segment changed broadcasts.
+     */
+    private BroadcastReceiver bRepaintRequestReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("DRAWINGVIEW", "Received repaint request broadcast");
+            Whiteboard wb = Globals.getInstance().getWhiteboard();
+            try {
+                wb.repaintLineSegments(drawView.getDrawPath(),
+                        drawView.getDrawPaint(), drawView.getDrawCanvas(), drawView);
+            } catch(NullPointerException e) {
+                Log.e("DRAWINGVIEW", "Catch Nullpointer processing Whiteboard.repaintLineSegments()");
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     @Nullable
     @Override
@@ -82,12 +125,25 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         setupOnClickListeners();
         super.onActivityCreated(savedInstanceState);
+
         drawView = (DrawingView) getActivity().findViewById(R.id.drawing);
-        currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
-        //set up the Drawing view
-        drawView.setupDrawing();
-        drawView.setBrushSize(smallBrush);//sets initial brush size
+
+        if(!broadcastReceiverSetup) {
+            registerBroadcastReceiver();
+            broadcastReceiverSetup = true;
         }
+        drawView.setupDrawing();
+
+        currPaint = (ImageButton) getActivity().findViewById(R.id.btn_drawfrag_color1);
+        drawView.setBrushSize(smallBrush);//sets initial brush size
+
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     /**
      * Sets a the brush color when a paint color is selected to the input view's
@@ -106,6 +162,17 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             currPaint=(ImageButton)view;
         }
 
+    }
+
+    /**
+     * Registers the broadcast receiver.
+     */
+    private void registerBroadcastReceiver() {
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext());
+
+        //Register the intent receiver so that the view updates upon receiving.
+        lbm.registerReceiver(bRepaintRequestReceiver,
+                new IntentFilter("repaintRequest"));
     }
 
     /**
