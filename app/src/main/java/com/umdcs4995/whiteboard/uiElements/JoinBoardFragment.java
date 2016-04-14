@@ -85,7 +85,11 @@ public class JoinBoardFragment extends Fragment {
                             Toast.makeText(Globals.getInstance().getGlobalContext(), "Error creating whiteboard", Toast.LENGTH_LONG).show();
                         }
 
-                        socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+                        try {
+                            socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
+                        } catch (Exception e) {
+                            Log.e("JoinBoard", "Not connected to server");
+                        }
 
                         socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
                             @Override
@@ -217,7 +221,11 @@ public class JoinBoardFragment extends Fragment {
                     }
                 });
 
-                socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+                try {
+                    socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+                } catch (Exception e) {
+                    Log.e("CreateBoard", "Not connected to server");
+                }
 
             }
         };
@@ -237,8 +245,6 @@ public class JoinBoardFragment extends Fragment {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Globals.getInstance().getServerAddress() + "/whiteboards.json";
-        Logger.getAnonymousLogger().info(url);
-
 
         // Request a string response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,

@@ -210,7 +210,9 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     currentLineList.add(de);
                     protocol.outDrawProtocol(currentLineList);
                     Whiteboard wb = Globals.getInstance().getWhiteboard();
-                    wb.addSegmentToList(new LineSegment(wb.getLineSegmentCount(), currentLineList));
+                    LineSegment ls = new LineSegment(wb.getLineSegmentCount(), currentLineList);
+                    wb.addSegmentToList(ls);
+                    ls.lineIsOnScreen();
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
                     firstDrawEvent = true; //<- Added to reset the start time on the next stroke.

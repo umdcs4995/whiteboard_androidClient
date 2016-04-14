@@ -166,10 +166,10 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   JSON Object that is passed in with message data.
      */
-    public void sendMessage(String id, JSONObject message) {
+    public void sendMessage(String id, JSONObject message) throws Exception {
         sendMessage(id, message.toString());
     }
-    public void sendMessage(String id, JSONArray message) {
+    public void sendMessage(String id, JSONArray message) throws Exception {
 
         sendMessage(id, message.toString());
     }
@@ -179,7 +179,10 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   String that contains the message data.
      */
-    public void sendMessage(String id, String message){
+    public void sendMessage(String id, String message) throws Exception {
+        if(!Globals.getInstance().isConnectedToServer()) {
+            throw(new Exception("Attempted to send a message without an internet connection"));
+        }
         Log.v(TAG, "SENT: " + id + ": " + message);
         socket.emit(id, message);
     }

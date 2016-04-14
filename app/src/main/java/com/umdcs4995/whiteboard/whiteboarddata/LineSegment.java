@@ -26,6 +26,7 @@ public class LineSegment {
     LinkedList<DrawingEvent> drawEvents;
 
     private boolean hasDrawnLive;
+    private boolean boolOnscreen;
 
     /**
      * Constructor
@@ -102,6 +103,8 @@ public class LineSegment {
             }
         }
 
+        boolOnscreen = true;
+
     }
 
     /**
@@ -174,5 +177,29 @@ public class LineSegment {
         }
     }
 
+    /**
+     * Returns true if the line is on the screen and false otherwise.  Note this variable needs to
+     * be flipped off by the client if the screen is cleared.
+     * @return
+     */
+    public boolean isOnscreen() {
+        return boolOnscreen;
+    }
+
+    /**
+     * Call this when the lines are cleared from the screen forever reason.  Note this needs to
+     * be called from the client.
+     */
+    public void lineClearedFromScreen() {
+        this.boolOnscreen = false;
+    }
+
+    /**
+     * Sets the onscreen status to true.  Called by user generated lines so they aren't drawn a
+     * second time on the next repaint request.
+     */
+    public void lineIsOnScreen() {
+        this.boolOnscreen = true;
+    }
 }
 

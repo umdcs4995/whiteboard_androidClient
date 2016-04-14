@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v7.util.SortedList;
 import android.util.Log;
@@ -17,7 +19,10 @@ import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -192,7 +197,11 @@ public class Globals {
                 socketService.clearListener(SocketService.Messages.ME);
             }
         });
-        socketService.sendMessage(SocketService.Messages.ME, "");
+        try {
+            socketService.sendMessage(SocketService.Messages.ME, "");
+        } catch (Exception e) {
+            Log.e("Globals", "Not connected to server");
+        }
     }
 
     public String getCurrentWhiteboard() {
@@ -205,5 +214,48 @@ public class Globals {
      */
     public Whiteboard getWhiteboard() {
         return whiteboard;
+    }
+
+    public boolean isConnectedToInternet() {
+
+        if(context == null)
+            return false;
+
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    private long lastSuccessfulUpdate = 0;
+    private boolean lastCheckSuccessful = false;
+    // check server connectivity every 60 seconds
+    private static long checkInterval = 1000 * 60;
+
+    public boolean isConnectedToServer() {
+        if(!isConnectedToInternet())
+            return false;
+
+        // if it has not been enough time, don't check again
+        long currentTime = new Date().getTime();
+        if(lastCheckSuccessful && currentTime < lastSuccessfulUpdate + checkInterval)
+            return true;
+
+        try{
+            Log.i("Globals", "Checking server connectivity");
+            URL server = new URL(getServerAddress());
+            URLConnection connection = server.openConnection();
+            //TODO: this might not be long enough...
+            connection.setConnectTimeout(1);
+            connection.connect();
+            lastSuccessfulUpdate = new Date().getTime();
+            lastCheckSuccessful = true;
+        } catch (Exception e) {
+            lastCheckSuccessful = false;
+        }
+
+        return lastCheckSuccessful;
     }
 }
