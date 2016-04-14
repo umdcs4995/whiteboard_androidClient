@@ -2,6 +2,7 @@ package com.umdcs4995.whiteboard.drawing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,7 +28,7 @@ import java.util.LinkedList;
 /**
  * Creates a drawing on a canvas using user input.
  */
-public class DrawingView extends View{
+public class DrawingView extends View implements GestureOverlayView.OnGestureListener{
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
@@ -45,6 +46,12 @@ public class DrawingView extends View{
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
     private LinkedList<LineSegment> lineHistory = new LinkedList<>();
+
+    //Width and the height of the canvas
+    int canvasW = -1;
+    int canvasH = -1;
+
+
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
@@ -83,8 +90,6 @@ public class DrawingView extends View{
         setupDrawing();
     }
 
-
-
     /**
      * Initializes the drawing canvas.
      */
@@ -106,7 +111,6 @@ public class DrawingView extends View{
             pollingThread.start();
         }
     }
-
 
     /**
      * Executes when the user touches to draw on the screen. Draws path to the screen using current
@@ -187,7 +191,7 @@ public class DrawingView extends View{
     }
 
 
-    /**Used to deal with a user rotating the screen. Uses a bitmap to map the screen from its old
+    /** Used to deal with a user rotating the screen. Uses a bitmap to map the screen from its old
      * orientation to the new one.
      * @param w
      * @param h
@@ -197,7 +201,6 @@ public class DrawingView extends View{
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
-        //TODO if resized make a clone of the current bit map to make sure that it is still there when copied otherwise all will be lost
         super.onSizeChanged(w, h, oldw, oldh);
         if(canvasBitmap != null) {
             canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -206,6 +209,9 @@ public class DrawingView extends View{
             Bitmap immutableBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
+        canvasW = w;
+        canvasH = h;
+
         drawCanvas = new Canvas(canvasBitmap);
     }
 
@@ -310,6 +316,8 @@ public class DrawingView extends View{
     public void clearQueue(){
         lineHistory.clear();
     }
+
+
     /**
      * This class creates a runnable to parse through an incoming network line event.
      */
@@ -330,6 +338,27 @@ public class DrawingView extends View{
 
             }
         }
+    }
+
+
+    @Override
+    public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
+
+    }
+
+    @Override
+    public void onGesture(GestureOverlayView overlay, MotionEvent event) {
+
+    }
+
+    @Override
+    public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
+
+    }
+
+    @Override
+    public void onGestureCancelled(GestureOverlayView overlay, MotionEvent event) {
+
     }
 
 
