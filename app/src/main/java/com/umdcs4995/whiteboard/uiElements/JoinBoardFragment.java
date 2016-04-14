@@ -245,8 +245,6 @@ public class JoinBoardFragment extends Fragment {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Globals.getInstance().getServerAddress() + "/whiteboards.json";
-        Logger.getAnonymousLogger().info(url);
-
 
         // Request a string response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
