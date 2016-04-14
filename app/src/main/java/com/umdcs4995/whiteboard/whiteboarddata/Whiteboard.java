@@ -8,7 +8,6 @@ import android.graphics.Path;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
 import java.util.LinkedList;
@@ -42,20 +41,39 @@ public class Whiteboard {
     }
 
     /**
-     * Repaint a set of line segments.
+     * Repaint a set of line segments.  The line segments repainted are only the ones that haven't
+     * been repainted yet.
      */
     public void repaintLineSegments(final Path drawPath, final Paint drawPaint, final Canvas drawCanvas,
                                     final DrawingView view) {
+
+        for (int i = 0; i < segments.size(); i++) {
+            try {
+                LineSegment segment = segments.get(i);
+                if(!segment.isOnscreen()) segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+            } catch (InterruptedException e) {
+                Log.e("WHITEBOARD.java", "Error drawing line");
+            }
+        }
+
+    }
+
+    /**
+     * Clears the view and then repaints all the line segments in the list.
+     */
+    public void forceRepaintSegments(final Path drawPath, final Paint drawPaint, final Canvas drawCanvas,
+                                    final DrawingView view) {
+
         view.startNew();
         for (int i = 0; i < segments.size(); i++) {
             try {
                 LineSegment segment = segments.get(i);
-                segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+                if(!segment.isOnscreen()) segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
             } catch (InterruptedException e) {
                 Log.e("WHITEBOARD.java", "Error drawing line");
             }
-
         }
+
     }
 
     /**
