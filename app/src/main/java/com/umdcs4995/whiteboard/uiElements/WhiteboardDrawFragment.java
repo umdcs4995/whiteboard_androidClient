@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.CameraWb;
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
@@ -112,6 +113,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_whiteboard_draw, container, false);
+
+        //Toggle on the fab.
+        MainActivity activity = (MainActivity)getActivity();
+        activity.toggleFABVisibility(true);
+
         return view;
     }
 

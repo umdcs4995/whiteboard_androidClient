@@ -202,19 +202,11 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
 
-        //If the fragment we're switching to is the DrawFragment, we need the FAB, otherwise
-        //hide the FAB.
-        if(fragment.getClass() != WhiteboardDrawFragment.class) {
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.hide();
-        } else {
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.show();
-        }
 
         //Check if Fragment is a different type than the current one and if so, add it to the
         //back stack.
-        if(fragment.getClass() != currentFragment.getClass()) {
+        Class c = currentFragment.getClass();
+        if(fragment.getClass() != c || c == WhiteboardDrawFragment.class ) {
             transaction.addToBackStack(fragment.toString());
         }
 
@@ -308,6 +300,17 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentSuicide(int command) {
         if(command == this.POP_ME) {
             getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    public void toggleFABVisibility(boolean isVisible) {
+
+        if(isVisible) {
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.show();
+        } else {
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.hide();
         }
     }
 }

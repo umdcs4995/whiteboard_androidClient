@@ -133,6 +133,10 @@ public class JoinBoardFragment extends Fragment {
                 builder.show();
             }
         });
+
+        //Toggle off the fab.
+        MainActivity activity = (MainActivity)getActivity();
+        activity.toggleFABVisibility(false);
         return view;
     }
 
