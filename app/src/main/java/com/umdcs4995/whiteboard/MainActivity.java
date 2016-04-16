@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     Fragment loadURLFragment = new LoadURLFragment();
     Fragment loginFragment = new LoginFragment();
 
+    Fragment currentFragment = whiteboardDrawFragment;
+
     private SocketService socketService = Globals.getInstance().getSocketService();
 
     private LoginFragment.GoogleSignInActivityResult pendingGoogleSigninResult;
@@ -195,10 +197,28 @@ public class MainActivity extends AppCompatActivity
      * @param fragment
      */
     private void changeMainFragment(Fragment fragment) {
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
-        transaction.addToBackStack(fragment.toString());
+
+        //If the fragment we're switching to is the DrawFragment, we need the FAB, otherwise
+        //hide the FAB.
+        if(fragment.getClass() != WhiteboardDrawFragment.class) {
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.hide();
+        } else {
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.show();
+        }
+
+        //Check if Fragment is a different type than the current one and if so, add it to the
+        //back stack.
+        if(fragment.getClass() != currentFragment.getClass()) {
+            transaction.addToBackStack(fragment.toString());
+        }
+
+        currentFragment = fragment;
         transaction.commit();
     }
 
