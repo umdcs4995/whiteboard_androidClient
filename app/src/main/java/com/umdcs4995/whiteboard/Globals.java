@@ -209,11 +209,19 @@ public class Globals {
     }
 
     /**
-     * Returns a whiteboard instance.
+     * Returns the current whiteboard instance.
      * @return
      */
     public Whiteboard getWhiteboard() {
         return whiteboard;
+    }
+
+    /**
+     * Sets the active instance of a Whiteboard to a different Whiteboard.
+     * @param wb
+     */
+    public void setWhiteboard(Whiteboard wb) {
+        whiteboard = wb;
     }
 
     public boolean isConnectedToInternet() {

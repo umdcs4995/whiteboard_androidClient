@@ -14,14 +14,15 @@ import java.util.LinkedList;
 
 /**
  * The Whiteboard class represents a physical whiteboard.  It contains a unique identifier along
- * with a list of associated users and lines.
+ * with a list of associated users and lines.  A new Whiteboard should be created each time a user
+ * joins a new Whiteboard.
  * Created by Rob on 3/21/2016.
  */
 public class Whiteboard {
 
     //Private variables
 
-    String whiteboardID;
+    String whiteboardName;
     //List of users.
     LinkedList<LineSegment> segments;
 
@@ -30,6 +31,15 @@ public class Whiteboard {
      * Default constructor for the whiteboard.
      */
     public Whiteboard() {
+        whiteboardName = null;
+        segments = new LinkedList<>();
+    }
+
+    /**
+     * Constructor which takes in a name.  Should be called after joining a whiteboard.
+     */
+    public Whiteboard(String whiteboardName) {
+        this.whiteboardName = whiteboardName;
         segments = new LinkedList<>();
     }
 
@@ -91,13 +101,6 @@ public class Whiteboard {
         Log.i("Whiteboard.java", "Broadcasting repaint request message.");
         Intent intent = new Intent("repaintRequest");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
-
-    /**
-     * Resets the Whiteboard instance.
-     */
-    public void initWhiteboard() {
-        segments.clear();
     }
 
 }
