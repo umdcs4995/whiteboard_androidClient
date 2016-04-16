@@ -163,9 +163,9 @@ public class MainActivity extends AppCompatActivity
                 changeMainFragment(joinBoardFragment);
                 break;
 
-            case R.id.nav_contacts://Navigates to list of contacts
-                changeMainFragment(contactListFragment);
-                break;
+//            case R.id.nav_contacts://Navigates to list of contacts
+//                changeMainFragment(contactListFragment);
+//                break;
 
             case R.id.nav_settings://Navigates to Settings Activity
                 Intent i = new Intent(this, SettingsActivity.class);
