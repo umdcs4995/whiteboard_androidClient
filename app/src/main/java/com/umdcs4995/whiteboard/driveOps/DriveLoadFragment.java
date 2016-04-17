@@ -225,6 +225,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
 
         // Let the user pick an mp4 or a jpeg file if there are
         // no files selected by the user.
+        Log.d(TAG, "made it to on connected");
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
                 .setMimeType(new String[]{"video/mp4", "image/jpeg", "image/png", "image/gif", "application/vnd.google-apps.document",
@@ -317,7 +318,28 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "In onactivityResult");
-        
+///
+        Log.d(TAG, "API client connected");
+        if (mSelectedFileDriveId != null) {
+            open();
+            Log.i(TAG, "In onConnected about to finish");
+            //finish();
+        }
+
+        // Let the user pick an mp4 or a jpeg file if there are
+        // no files selected by the user.
+        Log.d(TAG, "made it to on connected");
+        IntentSender intentSender = Drive.DriveApi
+                .newOpenFileActivityBuilder()
+                .setMimeType(new String[]{"video/mp4", "image/jpeg", "image/png", "image/gif", "application/vnd.google-apps.document",
+                        "application/vnd.google-apps.drawing", "application"})
+                .build(client);
+        try {
+            getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+        } catch (SendIntentException e) {
+            Log.w(TAG, "Unable to send intent", e);
+        }
+///
         if (requestCode == REQUEST_CODE_OPENER && resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "in onactivityResult result ok");
             mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
