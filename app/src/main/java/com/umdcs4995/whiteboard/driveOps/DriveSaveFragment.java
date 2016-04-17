@@ -330,31 +330,8 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 //        final Bitmap image = Bitmap.createBitmap(drawView.getDrawingCache());
 //        Drive.DriveApi.newDriveContents(googleApiClient)
 //                .setResultCallback(new ResultCallback<DriveContentsResult>() {
-//                    @Override
-//                    public void onResult(DriveContentsResult result) {
-//                        // if the operation was not successful, we cannot do anything
-//                        // and must fail
-//                        if (!result.getStatus().isSuccess()) {
-//                            Log.i(TAG, "Failed to create new contents.");
-//                            return;
-//                        }
-//                        // Otherwise we can write our data to the new contents.
-//                        Log.i(TAG, "New contents created.");
-//                        // Get an output stream for the result
-//                        OutputStream outputStream = result.getDriveContents().getOutputStream();
-//                        // Write the bitmap data from it
-//                        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-//                        image.compress(CompressFormat.PNG, 100, bitmapStream);
-//                        try {
-//                            outputStream.write(bitmapStream.toByteArray());
-//                            Log.i(TAG, "wrote file contents");
-//                        } catch (IOException e) {
-//                            Log.i(TAG, "Unable to write file contents");
-//                        }
-//                        // Create the initial metadata - MIME type and title
-//                        // Note that the user will be able to change the title later, this is
 
-//
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

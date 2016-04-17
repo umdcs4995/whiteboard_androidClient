@@ -1,5 +1,6 @@
 package com.umdcs4995.whiteboard.driveOps;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +64,8 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private static com.google.api.services.drive.Drive service;
+
 
     /**
      * Request code to handle the result from file opening activity.
@@ -142,6 +145,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         super.onCreateView(inflater, container, savedInstanceState);
         driveLoadView = inflater.inflate(R.layout.fragment_drive_load, container, false);
         if (client == null) {
+            Log.d(TAG, "Creating client");
             client = new GoogleApiClient.Builder(this.getContext())
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
@@ -318,37 +322,66 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "In onactivityResult");
 ///
-        Log.d(TAG, "API client connected");
-        if (mSelectedFileDriveId != null) {
-            open();
-            Log.i(TAG, "In onConnected about to finish");
-            //finish();
-        }
+//        Log.d(TAG, "API client connected");
+//        if (mSelectedFileDriveId != null) {
+//            open();
+//            Log.i(TAG, "In onActivityResult about to finish");
+//            //finish();
+//        }
 
-        // Let the user pick an mp4 or a jpeg file if there are
-        // no files selected by the user.
-        IntentSender intentSender = Drive.DriveApi
-                .newOpenFileActivityBuilder()
-                .setMimeType(new String[]{"video/mp4", "image/jpeg", "image/png", "image/gif", "application/vnd.google-apps.document",
-                        "application/vnd.google-apps.drawing", "application"})
-                .build(client);
-        try {
-            getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-        } catch (SendIntentException e) {
-            Log.w(TAG, "Unable to send intent", e);
-        } catch (Exception e) {
-            Log.d(TAG, "Some exception with sending intentsender");
-        }
 ///
-        if (/*requestCode == REQUEST_CODE_OPENER &&*/ resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "in onactivityResult result ok");
-            mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
-                    OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-            open();
-        } else {
-            Log.d(TAG, "in onActivityResult, result failed");
-            super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ACCOUNT_PICKER:
+                if (resultCode == Activity.RESULT_OK && data != null && data.getExtras() != null) {
+                    String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
+                    Log.d(TAG, "in onActivityResult; data != null");
+
+                    if (accountName != null) {
+                        Log.d(TAG, "in onActivityResult: got account name");
+
+                        googleAccountCredential.setSelectedAccountName(accountName);
+                        service = getDriveService(googleAccountCredential);
+                    }
+                    // Let the user pick an mp4 or a jpeg file if there are
+                    // no files selected by the user.
+                    Log.d(TAG, "About to send intentsender");
+                    IntentSender intentSender = Drive.DriveApi
+                            .newOpenFileActivityBuilder()
+                            .setMimeType(new String[]{"video/mp4", "image/jpeg", "image/png", "image/gif", "application/vnd.google-apps.document",
+                                    "application/vnd.google-apps.drawing", "application"})
+                            .build(client);
+                    try {
+                        getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+                    } catch (SendIntentException e) {
+                        Log.w(TAG, "Unable to send intent", e);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Some exception with sending intentsender");
+                    }
+                    Log.d(TAG, "in onActivityResult");
+                }
+                break;
+            case REQUEST_CODE_OPENER:
+                if (resultCode == getActivity().RESULT_OK) {
+                    Log.d(TAG, "in onactivityResult inside request code opener ok");
+                    mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+
+                    open();
+                } else {
+                    Log.d(TAG, "result not ok ");
+                }
+                break;
         }
+//        if (/*requestCode == REQUEST_CODE_OPENER &&*/ resultCode == Activity.RESULT_OK) {
+//            Log.d(TAG, "in onactivityResult result ok");
+//            mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
+//                    OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+//
+//            open();
+//        } else {
+//            Log.d(TAG, "in onActivityResult, result failed");
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
     }
     /**
      * Called when {@code mGoogleApiClient} is trying to connect but failed.
