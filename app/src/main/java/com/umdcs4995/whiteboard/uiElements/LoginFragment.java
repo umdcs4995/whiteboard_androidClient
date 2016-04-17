@@ -459,10 +459,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             case R.id.sign_out_button:
                 onSignOutClicked();
                 break;
-            case R.id.disconnect_button:
-                onDisconnectClicked();
-                revokeAccess();
-                break;
         }
     }
 
