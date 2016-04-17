@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/signed_out"
             android:textSize="14sp"
+            android:textColor="#ffffff"
             android:theme="@style/WhiteboardMainTheme" />
 
         <TextView
@@ -68,12 +69,5 @@
             android:text="@string/sign_out"
             android:theme="@style/WhiteboardMainTheme" />
 
-        <Button
-            android:id="@+id/disconnect_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/disconnect"
-            android:theme="@style/WhiteboardMainTheme" />
     </LinearLayout>
 </FrameLayout>
