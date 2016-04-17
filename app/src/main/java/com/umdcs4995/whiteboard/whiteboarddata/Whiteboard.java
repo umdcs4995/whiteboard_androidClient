@@ -44,6 +44,13 @@ public class Whiteboard {
     }
 
     /**
+     * Returns the name of the Whiteboard.
+     */
+    public String getWhiteboardName() {
+        return whiteboardName;
+    }
+
+    /**
      * Add a segment to the list.
      */
     public void addSegmentToList(LineSegment segment) {

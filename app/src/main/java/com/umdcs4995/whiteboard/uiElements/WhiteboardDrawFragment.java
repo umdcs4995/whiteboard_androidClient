@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
@@ -50,7 +51,7 @@ import java.util.UUID;
  */
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
-    private static boolean drawMode = true;
+    private static boolean drawMode = false;
     private static DrawingView drawView;
     private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
     private boolean broadcastReceiverSetup = false;
@@ -114,11 +115,32 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_whiteboard_draw, container, false);
 
-        //Toggle on the fab.
-        MainActivity activity = (MainActivity)getActivity();
-        activity.toggleFABVisibility(true);
 
         return view;
+    }
+
+    /**
+     * This method is the last method called prior to the fragment being displayed.  It is called
+     * each time the app is restored and each time the fragment is set to appear.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Check to see if a Whiteboard is loaded and toggle UI elements accordingly.
+        MainActivity activity = (MainActivity)getActivity();
+        TextView tv = (TextView) getActivity().findViewById(R.id.textView_join_whiteboard_warning);
+        Whiteboard wb = Globals.getInstance().getWhiteboard();
+
+        if(wb != null) {
+            activity.toggleFABVisibility(true);
+            tv.setVisibility(View.GONE);
+            setDrawMode(true);
+        } else {
+            activity.toggleFABVisibility(false);
+            tv.setVisibility(View.VISIBLE);
+            setDrawMode(false);
+        }
     }
 
     /**
@@ -396,7 +418,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      * Both the top / side drawing menus are shown or hidden when this function is called
      * @param view Function intakes a view
      */
-    public static void fabHideMenu(View view){
+    public void fabHideMenu(){
         //set all the components to Visible or Gone
         if (newBtn.getVisibility() == View.GONE) {
                 setDrawMode(true);
@@ -500,11 +522,12 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
     }
 
-    public static boolean getDrawMode(){
+    public boolean getDrawMode(){
         return drawMode;
     }
 
-    public static void setDrawMode(boolean mode){
+    public void setDrawMode(boolean mode){
         drawMode = mode;
     }
+
 }

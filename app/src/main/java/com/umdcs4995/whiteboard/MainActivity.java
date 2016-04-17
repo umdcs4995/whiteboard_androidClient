@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         SuicidalFragment
         /*ConnectionCallbacks, OnConnectionFailedListener */{
 
-    Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
+    WhiteboardDrawFragment whiteboardDrawFragment = new WhiteboardDrawFragment();
     Fragment contactListFragment = new ContactListFragment();
     Fragment joinBoardFragment = new JoinBoardFragment();
     Fragment loadURLFragment = new LoadURLFragment();
@@ -67,9 +67,19 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Whiteboard");
+
+        //Check for an active Whiteboard and set the toolbar text to that Whiteboard.
+        if(Globals.getInstance().getWhiteboard() != null) {
+            toolbar.setTitle(Globals.getInstance().getWhiteboard().getWhiteboardName());
+        } else {
+            toolbar.setTitle("Whiteboard");
+        }
+
+
+
         setSupportActionBar(toolbar);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 
         /**
          *Hides or makes visible the draw components and toolbar
@@ -78,13 +88,12 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                WhiteboardDrawFragment.fabHideMenu(view);//Function used to set draw components visibility
+                //whiteboardDrawFragment.fabHideMenu();
                 //Statement used to set toolbars visibility
-                if(toolbar.getVisibility()==view.GONE){
-                    toolbar.setVisibility(view.VISIBLE);
-                }
-                else{
-                    toolbar.setVisibility(view.GONE);
+                if (toolbar.getVisibility() == View.GONE) {
+                    toolbar.setVisibility(View.VISIBLE);
+                } else {
+                    toolbar.setVisibility(View.GONE);
                 }
             }
         });
@@ -303,6 +312,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Toggles the visibility in the FAB button.  Can be called by fragments to toggle on or off
+     * the FAB depending on their preferences.
+     * @param isVisible
+     */
     public void toggleFABVisibility(boolean isVisible) {
 
         if(isVisible) {
@@ -312,6 +326,13 @@ public class MainActivity extends AppCompatActivity
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.hide();
         }
+    }
+
+    /**
+     * Gets the current draw mode from the WhiteboardDrawFragment
+     */
+    public boolean isDrawModeEnabled() {
+        return whiteboardDrawFragment.getDrawMode();
     }
 }
 

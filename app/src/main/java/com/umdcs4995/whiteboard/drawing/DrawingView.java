@@ -182,7 +182,10 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
-        if(WhiteboardDrawFragment.getDrawMode() == true) {
+
+        MainActivity ma = (MainActivity) getContext();
+
+        if(ma.isDrawModeEnabled()) {
             //DrawMode handling
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:

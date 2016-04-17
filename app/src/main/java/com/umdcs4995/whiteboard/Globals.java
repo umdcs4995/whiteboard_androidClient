@@ -83,7 +83,6 @@ public class Globals {
         serverAddress = getServerAddress();
         socketServiceIntent = new Intent(context, SocketService.class);
         whiteboardProtocol = new WhiteboardProtocol();
-        whiteboard = new Whiteboard();
     }
 
     /**
@@ -266,4 +265,5 @@ public class Globals {
 
         return lastCheckSuccessful;
     }
+
 }
