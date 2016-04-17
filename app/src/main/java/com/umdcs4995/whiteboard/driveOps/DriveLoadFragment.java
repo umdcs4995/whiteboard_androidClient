@@ -128,7 +128,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         client = ((MainActivity)getActivity()).getGoogleApiClient();
         client.connect();
 
-
         if (client.isConnected() == false) {
             client.connect();
         }
@@ -242,7 +241,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     private void open() {
         // Reset progress dialog back to zero as we're
         // initiating an opening request.
-        mProgressBar.setProgress(0);
+//        mProgressBar.setProgress(0);
 //        DownloadProgressListener listener = new DownloadProgressListener() {
 //            @Override
 //            public void onProgress(long bytesDownloaded, long bytesExpected) {
@@ -261,7 +260,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                 // Update progress dialog with the latest progress.
                 int progress = (int) (bytesDownloaded * 100 / bytesExpected);
                 Log.d(TAG, String.format("Loading progress: %d percent", progress));
-                mProgressBar.setProgress(progress);
+                //mProgressBar.setProgress(progress);
             }
         })
                 .setResultCallback(driveContentsCallback);
@@ -328,7 +327,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
 
         // Let the user pick an mp4 or a jpeg file if there are
         // no files selected by the user.
-        Log.d(TAG, "made it to on connected");
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
                 .setMimeType(new String[]{"video/mp4", "image/jpeg", "image/png", "image/gif", "application/vnd.google-apps.document",
@@ -338,9 +336,11 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
             getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
         } catch (SendIntentException e) {
             Log.w(TAG, "Unable to send intent", e);
+        } catch (Exception e) {
+            Log.d(TAG, "Some exception with sending intentsender");
         }
 ///
-        if (requestCode == REQUEST_CODE_OPENER && resultCode == Activity.RESULT_OK) {
+        if (/*requestCode == REQUEST_CODE_OPENER &&*/ resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "in onactivityResult result ok");
             mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
                     OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);

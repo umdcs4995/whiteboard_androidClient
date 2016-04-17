@@ -262,13 +262,13 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 }
             });
         }
-        if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
-            Log.d(TAG, "inside login plus people api if stmt");
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-            String personName = currentPerson.getDisplayName();
-            String personPhoto = currentPerson.getImage().getUrl();
-            String personGooglePlusProfile = currentPerson.getUrl();
-        }
+//        if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
+//            Log.d(TAG, "inside login plus people api if stmt");
+//            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+//            String personName = currentPerson.getDisplayName();
+//            String personPhoto = currentPerson.getImage().getUrl();
+//            String personGooglePlusProfile = currentPerson.getUrl();
+//        }
     }
 
     public void onStop() {
