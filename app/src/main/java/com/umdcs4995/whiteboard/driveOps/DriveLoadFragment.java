@@ -245,20 +245,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     }
 
     private void open() {
-        // Reset progress dialog back to zero as we're
-        // initiating an opening request.
-//        mProgressBar.setProgress(0);
-//        DownloadProgressListener listener = new DownloadProgressListener() {
-//            @Override
-//            public void onProgress(long bytesDownloaded, long bytesExpected) {
-//                // Update progress dialog with the latest progress.
-//                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
-//                Log.d(TAG, String.format("Loading progress: %d percent", progress));
-//                mProgressBar.setProgress(progress);
-//                Intent in = new Intent(OpenFileActivity.this, EditContentsActivity.class);
-//                startActivity(in);
-//            }
-//        };
         Log.d(TAG, "inside open");
         DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
         driveFile.open(client, DriveFile.MODE_READ_ONLY, new DownloadProgressListener() {
@@ -272,7 +258,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         })
                 .setResultCallback(driveContentsCallback);
         mSelectedFileDriveId = null;
-        //finish();
     }
 
     private ResultCallback<DriveContentsResult>
@@ -303,15 +288,10 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
             getActivity().setResult(Activity.RESULT_OK, resultIntent);
             Log.d(TAG, "made it to just before finish");
             startActivity(resultIntent);
-
-
-            //finish();
-            //Log.d(TAG, "somehow after finish");
         }
 
         ;
     };
-    //finish();
     /**
      * Called when {@code mGoogleApiClient} is disconnected.
      */
@@ -324,15 +304,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "In onactivityResult");
-///
-//        Log.d(TAG, "API client connected");
-//        if (mSelectedFileDriveId != null) {
-//            open();
-//            Log.i(TAG, "In onActivityResult about to finish");
-//            //finish();
-//        }
-
-///
         switch (requestCode) {
             case REQUEST_ACCOUNT_PICKER:
                 if (resultCode == Activity.RESULT_OK && data != null && data.getExtras() != null) {
@@ -374,16 +345,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                 }
                 break;
         }
-//        if (/*requestCode == REQUEST_CODE_OPENER &&*/ resultCode == Activity.RESULT_OK) {
-//            Log.d(TAG, "in onactivityResult result ok");
-//            mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
-//                    OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-//
-//            open();
-//        } else {
-//            Log.d(TAG, "in onActivityResult, result failed");
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
     }
 
     /**
@@ -406,11 +367,5 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    /**
-     * Shows a toast message.
-     */
-//    public void showMessage(String message) {
-//        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-//    }
 
 }
