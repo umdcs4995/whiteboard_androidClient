@@ -51,9 +51,6 @@ import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 
 /**
@@ -579,72 +576,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             mData = data;
         }
     }
-
-
-    private void processUserInfoAndUpdateUI() {
-        Person signedInUser = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-        if (signedInUser != null) {
-
-            if (signedInUser.hasDisplayName()) {
-                String userName = signedInUser.getDisplayName();
-                this.username.equals(username);
-            }
-
-
-            String userEmail = Plus.AccountApi.getAccountName(googleApiClient);
-            this.email.equals(email);
-
-            if (signedInUser.hasImage()) {
-                String userProfilePicUrl = signedInUser.getImage().getUrl();
-                // default size is 50x50 in pixels.changes it to desired size
-                int profilePicRequestSize = 250;
-
-                userProfilePicUrl = userProfilePicUrl.substring(0,
-                        userProfilePicUrl.length() - 2) + profilePicRequestSize;
-                new UpdateProfilePicTask(profileImg)
-                        .execute(userProfilePicUrl);
-            }
-
-        }
-    }
-
-    private class UpdateProfilePicTask extends AsyncTask<String, Void, Bitmap> {
-
-        WeakReference profileView;
-
-        public UpdateProfilePicTask(ImageView img) {
-            profileView = new WeakReference(img);
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            Bitmap profilePic = null;
-            try {
-                URL downloadURL = new URL(params[0]);
-                HttpURLConnection conn = (HttpURLConnection) downloadURL
-                        .openConnection();
-                int responseCode = conn.getResponseCode();
-                if (responseCode != 200)
-                    throw new Exception("Error in connection");
-                InputStream is = conn.getInputStream();
-                profilePic = BitmapFactory.decodeStream(is);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return profilePic;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null && profileView != null) {
-                ImageView view = (ImageView) profileView.get();
-                if (view != null)
-                    view.setImageBitmap(result);
-            }
-        }
-
-
-    }
+    
     /**
      * Background Async task to load user profile picture from url
      * */
