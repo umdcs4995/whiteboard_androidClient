@@ -78,5 +78,5 @@
     <string name="rtc_port">3001</string>
     <string name="try_again"/>
     <string name="error_confirm"/>
-    <string name="signed_in_fmt"/>
+    <string name="signed_in_fmt">Signed in as </string>
 </resources>

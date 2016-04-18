@@ -78,6 +78,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     /* Client for accessing Google APIs */
     private GoogleApiClient googleApiClient = null;
     private GoogleSignInOptions gso;
+    private GoogleSignInAccount acct;
 
     private SignInButton signInButton;
 
@@ -193,7 +194,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
         // Adding rest of the listeners
         loginView.findViewById(R.id.sign_out_button).setOnClickListener(this);
-        loginView.findViewById(R.id.sign_out_and_disconnect).setOnClickListener(this);
 
         return loginView;
     }
@@ -271,21 +271,22 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 //        }
     }
 
-    public void onStop() {
-        super.onStop();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Login Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(googleApiClient, viewAction);
-        googleApiClient.disconnect();
-    }
+//    public void onStop() {
+//        super.onStop();
+//        Action viewAction = Action.newAction(
+//                Action.TYPE_VIEW, // TODO: choose an action type.
+//                "Login Page", // TODO: Define a title for the content shown.
+//                // TODO: If you have web page content that matches this app activity's content,
+//                // make sure this auto-generated web page URL is correct.
+//                // Otherwise, set the URL to null.
+//                Uri.parse("http://host/path"),
+//                // TODO: Make sure this auto-generated app deep link URI is correct.
+//                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
+//        );
+//        AppIndex.AppIndexApi.end(googleApiClient, viewAction);
+//        Log.d(TAG, "about to disconnect");
+//        googleApiClient.disconnect();
+//    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -301,7 +302,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         if (result.isSuccess()) {
             Log.d(TAG, "Sign in success" + result);
             //Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
+            acct = result.getSignInAccount();
             statusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             personPhoto = acct.getPhotoUrl();
 
@@ -314,45 +315,51 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     }
 
     private void updateUI(boolean signedIn) {
-        if (googleApiClient.isConnected()) {
+        if (signedIn) {
+            //signInButton.setEnabled(false);
 
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            //loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             //this.finish();
             googleApiClient.connect();
+            statusTextView.setText("Signed in as: " + acct.getDisplayName());
+            Log.d(TAG, "in updateUI: signedIN");
             if (googleApiClient.isConnected()) {
-                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-                 if (currentPerson != null) {
-                     Log.d(TAG, "inside currentPerson != null");
-                   //Show signed-in user's name
-                   String name = currentPerson.getDisplayName();
-                   statusTextView.setText(getString(R.string.signed_in_fmt, name));
+                Log.d(TAG, "inside updateUI: apiclient is connected");
 
-                     // Show users' email address (which requires GET_ACCOUNTS permission)
+                Log.d(TAG, "email " + acct.getEmail());
+                Log.d(TAG, "id " + acct.getId());
+                Log.d(TAG, "display " + acct.getDisplayName());
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+                if (currentPerson != null) {
+                    Log.d(TAG, "inside currentPerson != null");
+                    //Show signed-in user's name
+                    String name = currentPerson.getDisplayName();
+                    statusTextView.setText("Signed in as: " + acct.getDisplayName());
+
+                    // Show users' email address (which requires GET_ACCOUNTS permission)
 //                     if (checkAccountsPermission()) {
 ////                      String currentAccount = Plus.AccountApi.getAccountName(googleApiClient);
 ////                      ((TextView) loginView.findViewById(R.id.detail)).setText(currentAccount);
 //                     }
-                 }
-            } else {
-                // If getCurrentPerson returns null there is most likely an error with the
-                // configuration of the application (Invalid Client ID, Api's not enabled, etc.)
-                statusTextView.setText(R.string.signed_out);
-                loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-                loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+                }
             }
+//            } else {
+//                // If getCurrentPerson returns null there is most likely an error with the
+//                // configuration of the application (Invalid Client ID, Api's not enabled, etc.)
+//                statusTextView.setText(R.string.signed_out);
+//                loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+//            }
             // Set button visibility
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-            loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             // Show signed-out message
+            Log.d(TAG, "In updateUI signedout");
             statusTextView.setText(R.string.signed_out);
 
             // Set button visibility
             loginView.findViewById(R.id.sign_in_button).setEnabled(true);
             loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            loginView.findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
@@ -385,6 +392,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                         }
                     });
         } if (googleApiClient.isConnected()) {
+            Log.d(TAG, "In on sign out clicked about to disconnect");
             googleApiClient.disconnect();
         }
         updateUI(false);
@@ -453,10 +461,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             case R.id.sign_out_button:
                 onSignOutClicked();
                 break;
-            case R.id.disconnect_button:
-                onDisconnectClicked();
-                revokeAccess();
-                break;
+
         }
     }
 
