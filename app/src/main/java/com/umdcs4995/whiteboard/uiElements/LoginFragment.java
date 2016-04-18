@@ -299,6 +299,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
+            Log.d(TAG, "Sign in success" + result);
             //Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             statusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));

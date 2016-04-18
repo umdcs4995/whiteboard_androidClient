@@ -257,6 +257,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
 //                startActivity(in);
 //            }
 //        };
+        Log.d(TAG, "inside open");
         DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
         driveFile.open(client, DriveFile.MODE_READ_ONLY, new DownloadProgressListener() {
             @Override
@@ -357,11 +358,10 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                     } catch (Exception e) {
                         Log.d(TAG, "Some exception with sending intentsender");
                     }
-                    Log.d(TAG, "in onActivityResult");
                 }
                 break;
             case REQUEST_CODE_OPENER:
-                if (resultCode == getActivity().RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     Log.d(TAG, "in onactivityResult inside request code opener ok");
                     mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
                             OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
