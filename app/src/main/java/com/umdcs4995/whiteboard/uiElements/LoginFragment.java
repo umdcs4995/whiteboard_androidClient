@@ -323,6 +323,10 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             editor.putString("googleDisplayName", acct.getDisplayName());
             editor.commit();
 
+            //Save the shared preferences for the email
+            editor.putString("googleUserEmail", acct.getEmail());
+            editor.commit();
+
 
             updateUI(true);
 

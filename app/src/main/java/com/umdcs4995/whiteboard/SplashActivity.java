@@ -43,8 +43,9 @@ public class SplashActivity extends AppCompatActivity {
         //Start the socket service.
         g.startSocketService();
 
-
+        //Create a GooglecUser to represent the current client
         GoogleUser gu = new GoogleUser();
+        g.setClientUser(gu);
 
         //Edit Welcome text to reflect the name of the client.
         if (gu.isLoggedIn()) {
@@ -52,6 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             tv.setText("Welcome!");
         }
+
 
 
         /**

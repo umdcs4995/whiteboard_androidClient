@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -61,6 +62,7 @@ import com.umdcs4995.whiteboard.uiElements.LoginFragment.GoogleSignInActivityRes
 import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,6 +107,12 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private boolean mShouldResolve = false;
 
     private DriveId mSelectedFileDriveId;
+
+
+    //Data members for the navigation view textboxes.  These need to be classwide to prevent
+    //multiple inflations of the navbar header.
+    private TextView tvNavHeaderName;
+    private TextView tvNavHeaderEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +179,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
+
+
+        //Setup the textviews for manipulation whenever the user logs into a new account.
+        //Need to be global to prevent multiple inflations.
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+        tvNavHeaderName = (TextView) headerView.findViewById(R.id.navbar_username);
+        tvNavHeaderEmail = (TextView) headerView.findViewById(R.id.navbar_email);
+
     }
 
     @Override
@@ -192,6 +208,23 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        GoogleUser gu = Globals.getInstance().getClientUser();
+
+        if(gu.isLoggedIn()) {
+            tvNavHeaderName.setText(gu.getFullname());
+            tvNavHeaderEmail.setText(gu.getEmail());
+        } else {
+            tvNavHeaderName.setText("Whiteboard");
+            tvNavHeaderEmail.setText("Please Login");
+        }
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

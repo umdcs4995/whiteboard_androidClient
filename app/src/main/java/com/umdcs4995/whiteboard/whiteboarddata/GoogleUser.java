@@ -14,6 +14,7 @@ public class GoogleUser {
     private String fullname;
     private String firstname;
     private String lastname;
+    private String email;
     private Image face;
     private String faceBase64;
     private boolean googleUser;
@@ -55,6 +56,9 @@ public class GoogleUser {
         lastname = fullname.substring(fullname.indexOf(" "), fullname.length());
 
 
+        //Get the email from the preferences
+        email = sp.getString("googleUserEmail", "");
+
         //Set the flag.
         loggedIn = true;
     }
@@ -82,5 +86,9 @@ public class GoogleUser {
 
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
