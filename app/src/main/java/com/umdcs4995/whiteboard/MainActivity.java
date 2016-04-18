@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -36,8 +37,15 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveFile.DownloadProgressListener;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.android.gms.plus.Plus;
 import com.umdcs4995.whiteboard.driveOps.DriveLoadFragment;
 import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
@@ -58,6 +66,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
 import io.socket.emitter.Emitter.Listener;
@@ -97,6 +106,9 @@ public class MainActivity extends AppCompatActivity
 
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
+
+    private DriveId mSelectedFileDriveId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,7 +331,15 @@ public class MainActivity extends AppCompatActivity
             pendingGoogleSigninResult = new GoogleSignInActivityResult(requestCode,
                     resultCode, data);
         }
+        if (requestCode == 3) {
+            Log.d(TAG, "received intent sender from drive load?");
+            mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
+                    OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+
+            open();
+        }
     }
+
 
 
     /**
@@ -437,5 +457,91 @@ public class MainActivity extends AppCompatActivity
     public GoogleApiClient getGoogleApiClient() {
         return this.googleApiClient;
     }
+
+    private void open() {
+        // Reset progress dialog back to zero as we're
+        // initiating an opening request.
+//        mProgressBar.setProgress(0);
+//        DownloadProgressListener listener = new DownloadProgressListener() {
+//            @Override
+//            public void onProgress(long bytesDownloaded, long bytesExpected) {
+//                // Update progress dialog with the latest progress.
+//                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
+//                Log.d(TAG, String.format("Loading progress: %d percent", progress));
+//                mProgressBar.setProgress(progress);
+//                Intent in = new Intent(OpenFileActivity.this, EditContentsActivity.class);
+//                startActivity(in);
+//            }
+//        };
+        Log.d(TAG, "inside open");
+        DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
+        driveFile.open(googleApiClient, DriveFile.MODE_READ_ONLY, new DownloadProgressListener() {
+            @Override
+            public void onProgress(long bytesDownloaded, long bytesExpected) {
+                // Update progress dialog with the latest progress.
+                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
+                Log.d(TAG, String.format("Loading progress: %d percent", progress));
+                //mProgressBar.setProgress(progress);
+            }
+        })
+                .setResultCallback(driveContentsCallback);
+        mSelectedFileDriveId = null;
+        //finish();
+    }
+
+    private ResultCallback<DriveContentsResult>
+            driveContentsCallback = new ResultCallback<DriveContentsResult>() {
+        public void onResult(DriveContentsResult result) {
+            if (!result.getStatus().isSuccess()) {
+                Log.d(TAG, "In result callback but can't open file");
+                return;
+            }
+            //showMessage("Open File: file contents open");
+            Log.d(TAG, "Open File: file contents open");
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .detach(driveLoadFragment)
+                    .remove(driveLoadFragment)
+                    .commit();
+
+
+            // DriveContents object contains pointers to actual byte stream
+            DriveContents contents = result.getDriveContents();
+            Bitmap bitmap = null;
+            InputStream is = contents.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(CompressFormat.PNG, 100, stream);
+            // new here
+            byte[] bytes = stream.toByteArray();
+            //Need to find the stuff that used to be in main that would handle the data and
+            //put it instead into an onFinish() listener of some type that we initalize here
+            //as an interface.
+//            Intent resultIntent = new Intent(MainActivity.this, WhiteboardDrawFragment.class);
+//            resultIntent.putExtra("image", bytes);
+//            setResult(Activity.RESULT_OK, resultIntent);
+//            Log.d(TAG, "made it to just before finish");
+//            startActivity(resultIntent);
+            Bundle bundle = new Bundle();
+            bundle.putByteArray("image", bytes);
+            whiteboardDrawFragment = new WhiteboardDrawFragment();
+//            whiteboardDrawFragment.getArguments().putAll(bundle);
+            whiteboardDrawFragment.setArguments(bundle);
+            changeMainFragment(whiteboardDrawFragment);
+
+//            DrawingView drawingView = (DrawingView) findViewById(R.id.drawing);
+//            drawingView.setCanvasBitmap(bitmap);
+//            Drawable drawBitMap = new BitmapDrawable(bitmap);
+            //drawingView.setBackground(drawBitMap);
+//            changeMainFragment(whiteboardDrawFragment);
+
+
+            //finish();
+            //Log.d(TAG, "somehow after finish");
+        }
+
+        ;
+    };
 
 }

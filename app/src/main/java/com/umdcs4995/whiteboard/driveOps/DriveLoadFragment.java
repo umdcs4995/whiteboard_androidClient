@@ -57,6 +57,8 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "DriveLoadFragment";
     private static final int REQUEST_ACCOUNT_PICKER = 2; // new
+    private static final int REQUEST_CODE_CREATOR = 3;
+
 
 
     // TODO: Rename and change types of parameters
@@ -235,7 +237,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                         "application/vnd.google-apps.drawing", "application"})
                 .build(client);
         try {
-            getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+            getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
         } catch (SendIntentException e) {
             Log.w(TAG, "Unable to send intent", e);
         }
@@ -343,8 +345,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                         googleAccountCredential.setSelectedAccountName(accountName);
                         service = getDriveService(googleAccountCredential);
                     }
-                    // Let the user pick an mp4 or a jpeg file if there are
-                    // no files selected by the user.
+
                     Log.d(TAG, "About to send intentsender");
                     IntentSender intentSender = Drive.DriveApi
                             .newOpenFileActivityBuilder()
@@ -352,7 +353,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                                     "application/vnd.google-apps.drawing", "application"})
                             .build(client);
                     try {
-                        getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+                        getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
                     } catch (SendIntentException e) {
                         Log.w(TAG, "Unable to send intent", e);
                     } catch (Exception e) {
@@ -360,7 +361,8 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                     }
                 }
                 break;
-            case REQUEST_CODE_OPENER:
+            case REQUEST_CODE_CREATOR:
+                Log.d(TAG, "in onactivity result about to check resultOK");
                 if (resultCode == Activity.RESULT_OK) {
                     Log.d(TAG, "in onactivityResult inside request code opener ok");
                     mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
@@ -383,6 +385,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
 //            super.onActivityResult(requestCode, resultCode, data);
 //        }
     }
+
     /**
      * Called when {@code mGoogleApiClient} is trying to connect but failed.
      * Handle {@code result.getResolution()} if there is a resolution is

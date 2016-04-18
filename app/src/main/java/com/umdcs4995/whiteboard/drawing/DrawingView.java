@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.drawing;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -335,6 +336,19 @@ public class DrawingView extends View{
 
     public Bitmap getCanvasBitmap() {
         return canvasBitmap;
+    }
+
+    public void setCanvasBitmap(Bitmap bitmap) {
+//        Log.d(TAG, "in setCanvasBitmap");
+        Bitmap bm = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
+        canvasBitmap = bitmap.copy(Config.ARGB_8888, true);
+        drawCanvas = new Canvas(canvasBitmap);
+
+        drawCanvas.drawBitmap(canvasBitmap, 0, 0, new Paint(Color.RED));
+
+        super.draw(drawCanvas);
+        this.postInvalidate();
+        //drawCanvas.setBitmap(Bitmap.createBitmap(bitmap, 0, 0, drawCanvas.getWidth(), drawCanvas.getHeight()));
     }
 
 }

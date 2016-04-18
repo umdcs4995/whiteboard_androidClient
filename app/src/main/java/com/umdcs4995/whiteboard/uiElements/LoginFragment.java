@@ -194,6 +194,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
         // Adding rest of the listeners
         loginView.findViewById(R.id.sign_out_button).setOnClickListener(this);
+        profileImg = (ImageView) loginView.findViewById(R.id.profile_pic);
 
         return loginView;
     }
@@ -323,13 +324,13 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             //this.finish();
             googleApiClient.connect();
             statusTextView.setText("Signed in as: " + acct.getDisplayName());
+            personPhoto = acct.getPhotoUrl();
+            profileImg.setImageURI(personPhoto);
+            Log.d(TAG, "person photo " + personPhoto);
             Log.d(TAG, "in updateUI: signedIN");
             if (googleApiClient.isConnected()) {
                 Log.d(TAG, "inside updateUI: apiclient is connected");
 
-                Log.d(TAG, "email " + acct.getEmail());
-                Log.d(TAG, "id " + acct.getId());
-                Log.d(TAG, "display " + acct.getDisplayName());
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
                 if (currentPerson != null) {
                     Log.d(TAG, "inside currentPerson != null");

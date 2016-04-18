@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -90,6 +92,22 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         drawView.setupDrawing();
         drawView.setBrushSize(smallBrush);//sets initial brush size
         drawView.setDrawingCacheEnabled(true);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            byte[] bytes = bundle.getByteArray("image");
+            Log.d(TAG, "got the byte array exra");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            Log.d(TAG, "decoded the byte array");
+            drawView.setCanvasBitmap(bitmap);
+            if(bitmap != null) {
+                Drawable drawBitMap = new BitmapDrawable(getResources(), bitmap);
+                drawView.setBackground(drawBitMap);
+            }
+
+        }
+
+
         }
 
     /**
