@@ -9,16 +9,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -141,6 +143,23 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             tv.setVisibility(View.VISIBLE);
             setDrawMode(false);
         }
+
+
+        drawView.setDrawingCacheEnabled(true);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            byte[] bytes = bundle.getByteArray("image");
+            Log.d(TAG, "got the byte array exra");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            Log.d(TAG, "decoded the byte array");
+            drawView.setCanvasBitmap(bitmap);
+            if (bitmap != null) {
+                Drawable drawBitMap = new BitmapDrawable(getResources(), bitmap);
+                drawView.setBackground(drawBitMap);
+            }
+
+        }
     }
 
     /**
@@ -171,6 +190,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     /**
@@ -416,7 +437,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     /**
      * Currently tied to the fab button this function hides or un-hides the toolbar
      * Both the top / side drawing menus are shown or hidden when this function is called
-     * @param view Function intakes a view
      */
     public void fabHideMenu(){
         //set all the components to Visible or Gone
@@ -528,6 +548,12 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     public void setDrawMode(boolean mode){
         drawMode = mode;
+    }
+
+
+
+    public Bitmap getMyBitmap() {
+        return drawView.getCanvasBitmap();
     }
 
 }

@@ -1,6 +1,5 @@
 package com.umdcs4995.whiteboard;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +9,10 @@ import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v7.util.SortedList;
 import android.util.Log;
-
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +24,7 @@ import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import io.socket.emitter.Emitter;
+
 
 /**
  * Singleton class created for holding objects global to the application.

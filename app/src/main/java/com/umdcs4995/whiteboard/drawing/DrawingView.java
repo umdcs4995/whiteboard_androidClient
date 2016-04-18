@@ -7,6 +7,7 @@ import android.gesture.GestureOverlayView;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -22,7 +23,6 @@ import android.widget.TextView;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
-import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
@@ -384,6 +384,22 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         }
     }
 
+    public Bitmap getCanvasBitmap() {
+        return canvasBitmap;
+    }
+
+    public void setCanvasBitmap(Bitmap bitmap) {
+//        Log.d(TAG, "in setCanvasBitmap");
+        Bitmap bm = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
+        canvasBitmap = bitmap.copy(Config.ARGB_8888, true);
+        drawCanvas = new Canvas(canvasBitmap);
+
+        drawCanvas.drawBitmap(canvasBitmap, 0, 0, new Paint(Color.RED));
+
+        super.draw(drawCanvas);
+        this.postInvalidate();
+        //drawCanvas.setBitmap(Bitmap.createBitmap(bitmap, 0, 0, drawCanvas.getWidth(), drawCanvas.getHeight()));
+    }
 
     @Override
     public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {

@@ -40,6 +40,39 @@ public class WhiteboardProtocol {
      */
     public void inc(JSONArray s) {
         DrawProtocol.execute(s);
+
+    }
+
+    public void inc(String s) throws WbProtocolException {
+        String tempString;
+
+        try {
+            tempString = s.substring(0, s.indexOf('/'));
+        } catch (Exception e) {
+            throw new WbProtocolException("Error, no command language found on String: " + s, e);
+        }
+        try {
+            switch (tempString) {
+                case DrawProtocol.COMMANDLANGUAGE:
+                    DrawProtocol.execute(s);
+                    break;
+                default:
+                    throw new WbProtocolException("No valid command language found", null);
+            }
+
+
+        } catch (StringIndexOutOfBoundsException ex) {
+            throw new WbProtocolException("Error: Malformed string processed: " + s, ex);
+        }
+    }
+
+    /**
+     * Send out a drawing event to the server.  Deprecated when we decided to send whole strings
+     * at a time.
+     */
+    @Deprecated
+    public void outDrawProtocol(DrawingEvent de) {
+        String output = DrawProtocol.generateOutputString(de);
     }
 
     /**
