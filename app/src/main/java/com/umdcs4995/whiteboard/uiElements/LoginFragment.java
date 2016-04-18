@@ -60,10 +60,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "LoginFragment";
 
-    private static final int REQUEST_SIGNUP = 0;
     static final int REQUEST_ACCOUNT_PICKER = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
 
     /* RequestCode for resolutions to get GET_ACCOUNTS permission on M */
     private static final int RC_PERM_GET_ACCOUNTS = 2;
@@ -272,22 +269,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 //        }
     }
 
-//    public void onStop() {
-//        super.onStop();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Login Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.umdcs4995.whiteboard/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(googleApiClient, viewAction);
-//        Log.d(TAG, "about to disconnect");
-//        googleApiClient.disconnect();
-//    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -317,11 +298,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-            //signInButton.setEnabled(false);
 
-            //loginView.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-            //this.finish();
             googleApiClient.connect();
             statusTextView.setText("Signed in as: " + acct.getDisplayName());
             personPhoto = acct.getPhotoUrl();
@@ -337,20 +315,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                     //Show signed-in user's name
                     String name = currentPerson.getDisplayName();
                     statusTextView.setText("Signed in as: " + acct.getDisplayName());
-
-                    // Show users' email address (which requires GET_ACCOUNTS permission)
-//                     if (checkAccountsPermission()) {
-////                      String currentAccount = Plus.AccountApi.getAccountName(googleApiClient);
-////                      ((TextView) loginView.findViewById(R.id.detail)).setText(currentAccount);
-//                     }
                 }
             }
-//            } else {
-//                // If getCurrentPerson returns null there is most likely an error with the
-//                // configuration of the application (Invalid Client ID, Api's not enabled, etc.)
-//                statusTextView.setText(R.string.signed_out);
-//                loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-//            }
             // Set button visibility
             loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         } else {

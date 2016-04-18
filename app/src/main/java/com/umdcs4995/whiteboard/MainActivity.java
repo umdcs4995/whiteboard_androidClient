@@ -71,9 +71,6 @@ import java.util.UUID;
 
 import io.socket.emitter.Emitter.Listener;
 
-//import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListener;
-
-
 
 public class MainActivity extends AppCompatActivity
         implements OnNavigationItemSelectedListener,
@@ -331,8 +328,11 @@ public class MainActivity extends AppCompatActivity
             pendingGoogleSigninResult = new GoogleSignInActivityResult(requestCode,
                     resultCode, data);
         }
+        /**
+         * A returned request code of 3 indicates that the intentSender has returned from the
+         * DriveLoadFragment
+         */
         if (requestCode == 3) {
-            Log.d(TAG, "received intent sender from drive load?");
             mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
                     OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
 
@@ -406,9 +406,6 @@ public class MainActivity extends AppCompatActivity
                         }).show();
             } else {
                 Log.w(TAG, "Google Play Services Error:" + connectionResult);
-                String errorString = apiAvailability.getErrorString(resultCode);
-                //Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
-
                 mShouldResolve = false;
             }
         }
@@ -481,12 +478,10 @@ public class MainActivity extends AppCompatActivity
                 // Update progress dialog with the latest progress.
                 int progress = (int) (bytesDownloaded * 100 / bytesExpected);
                 Log.d(TAG, String.format("Loading progress: %d percent", progress));
-                //mProgressBar.setProgress(progress);
             }
         })
                 .setResultCallback(driveContentsCallback);
         mSelectedFileDriveId = null;
-        //finish();
     }
 
     private ResultCallback<DriveContentsResult>
@@ -496,7 +491,6 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "In result callback but can't open file");
                 return;
             }
-            //showMessage("Open File: file contents open");
             Log.d(TAG, "Open File: file contents open");
 
             getSupportFragmentManager()
@@ -513,32 +507,14 @@ public class MainActivity extends AppCompatActivity
             bitmap = BitmapFactory.decodeStream(is);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(CompressFormat.PNG, 100, stream);
-            // new here
             byte[] bytes = stream.toByteArray();
-            //Need to find the stuff that used to be in main that would handle the data and
-            //put it instead into an onFinish() listener of some type that we initalize here
-            //as an interface.
-//            Intent resultIntent = new Intent(MainActivity.this, WhiteboardDrawFragment.class);
-//            resultIntent.putExtra("image", bytes);
-//            setResult(Activity.RESULT_OK, resultIntent);
-//            Log.d(TAG, "made it to just before finish");
-//            startActivity(resultIntent);
+
             Bundle bundle = new Bundle();
             bundle.putByteArray("image", bytes);
             whiteboardDrawFragment = new WhiteboardDrawFragment();
 //            whiteboardDrawFragment.getArguments().putAll(bundle);
             whiteboardDrawFragment.setArguments(bundle);
             changeMainFragment(whiteboardDrawFragment);
-
-//            DrawingView drawingView = (DrawingView) findViewById(R.id.drawing);
-//            drawingView.setCanvasBitmap(bitmap);
-//            Drawable drawBitMap = new BitmapDrawable(bitmap);
-            //drawingView.setBackground(drawBitMap);
-//            changeMainFragment(whiteboardDrawFragment);
-
-
-            //finish();
-            //Log.d(TAG, "somehow after finish");
         }
 
         ;
