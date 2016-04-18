@@ -47,6 +47,7 @@ import com.google.android.gms.drive.DriveFile.DownloadProgressListener;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.Plus.PlusOptions;
 import com.umdcs4995.whiteboard.driveOps.DriveLoadFragment;
 import com.umdcs4995.whiteboard.driveOps.DriveSaveFragment;
 import com.umdcs4995.whiteboard.services.SocketService;
@@ -151,11 +152,12 @@ public class MainActivity extends AppCompatActivity
         // Configure sign-in to request the user's ID, email address, and
         // basic profile.
         gso = new Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), Drive.SCOPE_FILE).build();
+                .requestEmail().requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), new Scope(Scopes.DRIVE_FILE), Drive.SCOPE_FILE, Plus.SCOPE_PLUS_LOGIN, Plus.SCOPE_PLUS_PROFILE).build();
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
+                .addApi(Plus.API, PlusOptions.builder().build())
+                //.addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
 
         if (googleApiClient.isConnected() == false) {
@@ -368,6 +370,9 @@ public class MainActivity extends AppCompatActivity
         Log.w(TAG, "onConnectionSuspended: " + i);
     }
 
+    /**
+     * Callback for GoogleApiClient connection failure
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
@@ -414,9 +419,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        // make sure to initiate a connection
         googleApiClient.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.

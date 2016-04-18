@@ -244,6 +244,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         mListener = null;
     }
 
+    /**
+     * Callback for GoogleApiClient connection success
+     */
     @Override
     public void onConnected(Bundle bundle) {
         // onConnected indicates that an account was selected on the device, that the selected account
@@ -253,6 +256,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         mShouldResolve = false;
     }
 
+    /**
+     * Callback for suspension of current connection
+     */
     @Override
     public void onConnectionSuspended(int cause) {
         // The connection to Google Play services was lost. The GoogleApiClient will automatically
@@ -401,6 +407,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 
     }
 
+    /**
+     * Callback for GoogleApiClient connection failure
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not

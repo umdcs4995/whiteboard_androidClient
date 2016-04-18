@@ -9,12 +9,16 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +50,10 @@ import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 /**
@@ -59,6 +67,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "LoginFragment";
+
+    // Profile pic image size in pixels
+    private static final int PROFILE_PIC_SIZE = 400;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
 
@@ -102,12 +113,17 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
     private Uri personPhoto;
     private ImageView profileImg;
+    private String username;
+    private String email;
 
 
     public LoginFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Callback for GoogleApiClient connection success
+     */
     @Override
     public void onConnected(Bundle bundle) {
         // onConnected indicates that an account was selected on the device, that the selected account
@@ -118,6 +134,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         updateUI(true);
     }
 
+    /**
+     * Callback for suspension of current connection
+     */
     @Override
     public void onConnectionSuspended(int i) {
         // The connection to Google Play services was lost. The GoogleApiClient will automatically
@@ -166,6 +185,15 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
+
+        // Fetch screen height and width, to use as our max size when loading images as this
+        // activity runs full screen
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        final int height = displayMetrics.heightPixels;
+        final int width = displayMetrics.widthPixels;
+
+
     }
 
     @Override
@@ -298,11 +326,32 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
+            Person signedInUser = Plus.PeopleApi.getCurrentPerson(googleApiClient);
 
             loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             googleApiClient.connect();
             statusTextView.setText("Signed in as: " + acct.getDisplayName());
             personPhoto = acct.getPhotoUrl();
+            if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+                String personName = currentPerson.getDisplayName();
+                String personPhotoUrl = currentPerson.getImage().getUrl();
+                String personGooglePlusProfile = currentPerson.getUrl();
+                String email = Plus.AccountApi.getAccountName(googleApiClient);
+
+                Log.e(TAG, "Name: " + personName + ", plusProfile: "
+                        + personGooglePlusProfile + ", email: " + email
+                        + ", Image: " + personPhotoUrl);
+
+                // by default the profile url gives 50x50 px image only
+                // we can replace the value with whatever dimension we want by
+                // replacing sz=X
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + PROFILE_PIC_SIZE;
+
+                new LoadProfileImage(profileImg).execute(personPhotoUrl);
+            }
             profileImg.setImageURI(personPhoto);
             Log.d(TAG, "person photo " + personPhoto);
             Log.d(TAG, "in updateUI: signedIN");
@@ -310,6 +359,12 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 Log.d(TAG, "inside updateUI: apiclient is connected");
 
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+                if (currentPerson.hasImage()) {
+                    int profilePicRequestSize = 250;
+                    String usrProfile = currentPerson.getImage().getUrl();
+
+                    //srProfile = usrProfile.subString(0, usrProfile.length() - 1) + profilePicRequestSize
+                }
                 if (currentPerson != null) {
                     Log.d(TAG, "inside currentPerson != null");
                     //Show signed-in user's name
@@ -447,6 +502,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         }
     }
 
+    /**
+     * Callback for GoogleApiClient connection failure
+     */
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
@@ -522,4 +580,99 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         }
     }
 
+
+    private void processUserInfoAndUpdateUI() {
+        Person signedInUser = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+        if (signedInUser != null) {
+
+            if (signedInUser.hasDisplayName()) {
+                String userName = signedInUser.getDisplayName();
+                this.username.equals(username);
+            }
+
+
+            String userEmail = Plus.AccountApi.getAccountName(googleApiClient);
+            this.email.equals(email);
+
+            if (signedInUser.hasImage()) {
+                String userProfilePicUrl = signedInUser.getImage().getUrl();
+                // default size is 50x50 in pixels.changes it to desired size
+                int profilePicRequestSize = 250;
+
+                userProfilePicUrl = userProfilePicUrl.substring(0,
+                        userProfilePicUrl.length() - 2) + profilePicRequestSize;
+                new UpdateProfilePicTask(profileImg)
+                        .execute(userProfilePicUrl);
+            }
+
+        }
+    }
+
+    private class UpdateProfilePicTask extends AsyncTask<String, Void, Bitmap> {
+
+        WeakReference profileView;
+
+        public UpdateProfilePicTask(ImageView img) {
+            profileView = new WeakReference(img);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Bitmap profilePic = null;
+            try {
+                URL downloadURL = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) downloadURL
+                        .openConnection();
+                int responseCode = conn.getResponseCode();
+                if (responseCode != 200)
+                    throw new Exception("Error in connection");
+                InputStream is = conn.getInputStream();
+                profilePic = BitmapFactory.decodeStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return profilePic;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null && profileView != null) {
+                ImageView view = (ImageView) profileView.get();
+                if (view != null)
+                    view.setImageBitmap(result);
+            }
+        }
+
+
+    }
+    /**
+     * Background Async task to load user profile picture from url
+     * */
+    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public LoadProfileImage(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
 }
+
+
+

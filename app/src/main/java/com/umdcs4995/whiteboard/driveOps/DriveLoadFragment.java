@@ -216,6 +216,9 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     }
 
 
+    /**
+     * Callback for GoogleApiClient connection success
+     */
     @Override
     public void onConnected(Bundle bundle) {
         // onConnected indicates that an account was selected on the device, that the selected account
@@ -293,7 +296,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         ;
     };
     /**
-     * Called when {@code mGoogleApiClient} is disconnected.
+     * Called when {@code mGoogleApiClient} is suspended.
      */
     @Override
     public void onConnectionSuspended(int cause) {
