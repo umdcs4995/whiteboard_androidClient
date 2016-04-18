@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -47,6 +48,7 @@ import com.google.android.gms.plus.model.people.Person;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 
@@ -313,6 +315,15 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             statusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             personPhoto = acct.getPhotoUrl();
 
+
+            //Save the shared preferences for the users name.
+            SharedPreferences sp = PreferenceManager.
+                    getDefaultSharedPreferences(Globals.getInstance().getGlobalContext());
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("googleDisplayName", acct.getDisplayName());
+            editor.commit();
+
+
             updateUI(true);
 
         } else {
@@ -322,7 +333,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     }
 
     private void updateUI(boolean signedIn) {
-        if (signedIn) {
+        if (signedIn && googleApiClient.isConnected()) {
             Person signedInUser = Plus.PeopleApi.getCurrentPerson(googleApiClient);
 
             loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);

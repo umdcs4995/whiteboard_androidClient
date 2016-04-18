@@ -12,6 +12,7 @@ import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +52,9 @@ public class Globals {
 
     //Instance of Whiteboard.
     private Whiteboard whiteboard;
+
+    //Instance of the GoogleUser for the client.
+    private GoogleUser clientUser;
 
     /**
      * Private data member which binds the xmpp service to the client.
@@ -262,6 +266,16 @@ public class Globals {
         }
 
         return lastCheckSuccessful;
+    }
+
+
+    //=============Getters and Setters====================
+    public GoogleUser getClientUser() {
+        return clientUser;
+    }
+
+    public void setClientUser(GoogleUser gu) {
+        clientUser = gu;
     }
 
 }
