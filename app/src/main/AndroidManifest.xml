@@ -8,6 +8,7 @@
     <!-- -This line is used to make sure the phone can download stuff from the internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+
     <!-- used in handling google signin -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
