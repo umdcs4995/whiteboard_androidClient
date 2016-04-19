@@ -19,8 +19,6 @@ public class DrawingEvent implements Delayed {
 
     private int action;
 
-
-
     private String username;
 
     private int actionOrder;
@@ -28,13 +26,24 @@ public class DrawingEvent implements Delayed {
     private long eventTime;
     private float xValue;
     private float yValue;
+    private int color;
+    private float thickness;
 
-    public DrawingEvent(int action, long startTime, long eventTime, float xValue, float yValue) {
+    public DrawingEvent(
+            int action,
+            long startTime,
+            long eventTime,
+            float xValue,
+            float yValue,
+            int color,
+            float thickness) {
         this.action = action;
         this.startTime = startTime; // time where drawing started
         this.eventTime = eventTime; // time where draw event happened
         this.xValue = xValue;
         this.yValue = yValue;
+        this.color = color;
+        this.thickness = thickness;
 
         Globals g = Globals.getInstance();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(g.getGlobalContext());
@@ -94,6 +103,22 @@ public class DrawingEvent implements Delayed {
 
     public long getEventTime() {
         return eventTime;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public float getThickness() {
+        return thickness;
+    }
+
+    public void setThickness(float thickness) {
+        this.thickness = thickness;
     }
 
     public int getActionOrder() {

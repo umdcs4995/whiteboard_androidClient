@@ -48,9 +48,12 @@ public class LineSegment {
      * @param view
      * @throws InterruptedException
      */
-    public void drawLine(boolean inRealTime, final Path drawPath, final Paint drawPaint, final Canvas drawCanvas,
-                         final DrawingView view)
-            throws InterruptedException {
+    public void drawLine(
+            boolean inRealTime,
+            final Path drawPath,
+            final Paint drawPaint,
+            final Canvas drawCanvas,
+            final DrawingView view) throws InterruptedException {
 
         inRealTime = !hasDrawnLive;
 
@@ -146,19 +149,28 @@ public class LineSegment {
         public void run() {
             float touchX = e.getxValue();
             float touchY = e.getyValue();
+            Paint tempPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            tempPaint.setColor(e.getColor());
+            tempPaint.setAntiAlias(true);
+            tempPaint.setStrokeWidth(e.getThickness());
+            tempPaint.setStyle(Paint.Style.STROKE);
+            tempPaint.setStrokeJoin(Paint.Join.ROUND);
+            tempPaint.setStrokeCap(Paint.Cap.ROUND);
+            drawPaint = tempPaint;
             switch (e.getAction()) {
                 case DrawingEvent.ACTION_DOWN:
                     // When user touches the View, move to that point from the old point.
                     // position to start drawing.
-                    //Log.i("test", timestamp + "   ACTION_DOWN   " + touchX + "   " + touchY + "\n");
                     drawPath.moveTo(oldTouchX, oldTouchY);
                     drawPath.moveTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case DrawingEvent.ACTION_MOVE:
                     // When user moves finger, draw a path from the old point to the new point
                     // along with their touch.
                     drawPath.moveTo(oldTouchX, oldTouchY);
                     drawPath.lineTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case DrawingEvent.ACTION_UP:
                     // When user lifts finger, draw the path
@@ -171,8 +183,8 @@ public class LineSegment {
             }
             oldTouchX = touchX;
             oldTouchY = touchY;
-            view.invalidate(); // this allows the onDraw method to execute
-            if(LOGGING) Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
+            view.invalidate();
+            //if(LOGGING) Log.v("DRAWMERUNNABLE", "Popped out " + e.getAction() + "//" + e.getEventTime() + "//" + index);
             index++;
         }
     }

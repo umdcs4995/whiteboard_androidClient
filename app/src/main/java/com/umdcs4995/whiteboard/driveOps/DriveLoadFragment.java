@@ -42,19 +42,14 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DriveLoadFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DriveLoadFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by Laura J. Krebs
+ *
  */
 public class DriveLoadFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private static final String TAG = "DriveLoadFragment";
     private static final int REQUEST_ACCOUNT_PICKER = 2; // new
     private static final int REQUEST_CODE_CREATOR = 3;
@@ -122,8 +117,8 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Made it to drive load fragment");
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
         }
         googleAccountCredential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
         com.google.api.services.drive.Drive service = getDriveService(googleAccountCredential);
@@ -138,7 +133,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         }
         startActivityForResult(googleAccountCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,8 +154,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         return driveLoadView;
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -171,12 +163,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -256,7 +242,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                 // Update progress dialog with the latest progress.
                 int progress = (int) (bytesDownloaded * 100 / bytesExpected);
                 Log.d(TAG, String.format("Loading progress: %d percent", progress));
-                //mProgressBar.setProgress(progress);
             }
         })
                 .setResultCallback(driveContentsCallback);
