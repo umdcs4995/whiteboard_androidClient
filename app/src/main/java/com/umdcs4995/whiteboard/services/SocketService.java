@@ -42,10 +42,16 @@ public class SocketService extends Service {
     public class Messages {
         public static final String CREATE_WHITEBOARD = "createWhiteboard";
         public static final String JOIN_WHITEBOARD = "joinWhiteboard";
+
         public static final String CHAT_MESSAGE = "chat message";
         public static final String DRAW_EVENT = "drawevent";
         public static final String ME = "me";
         public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
+
+        public static final String MOTION_EVENT = "motionevent";
+
+
+        // TODO: put the rest of the messages in here
     }
 
     /**

@@ -28,6 +28,7 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,6 +112,7 @@ public class JoinBoardFragment extends Fragment {
 
                                     });
                                     //Fragment suicides here
+                                    Globals.getInstance().setWhiteboard(new Whiteboard(whiteboardName.getText().toString()));
                                     mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
                                 } catch (JSONException e) {
                                     Log.e("createWhiteboard", "error parsing received message");
@@ -131,6 +133,10 @@ public class JoinBoardFragment extends Fragment {
                 builder.show();
             }
         });
+
+        //Toggle off the fab.
+        MainActivity activity = (MainActivity)getActivity();
+        activity.toggleFABVisibility(false);
         return view;
     }
 
@@ -213,6 +219,7 @@ public class JoinBoardFragment extends Fragment {
 
                             });
                             //Fragment suicides here
+                            Globals.getInstance().setWhiteboard(new Whiteboard(person.getName()));
                             mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
                         } catch (JSONException e) {
                             Log.w("joinWhiteboard", "error parsing received message");

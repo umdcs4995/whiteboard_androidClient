@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 /**
  * Activity handling the opening splash screen.
@@ -32,18 +33,6 @@ public class SplashActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.txtWelcome);
 
 
-        //Code to read from shared preferences!
-        //Read from a key value pair.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        //Extract the resource
-        String username = sp.getString("pref_name","");
-
-        if (username.length() > 0) {
-            tv.setText("Welcome, " + username);
-        } else {
-            tv.setText("Welcome!");
-        }
-
         //Initiatie the singleton.
         Globals.init(this.getApplicationContext());
         Globals g = Globals.getInstance();
@@ -53,6 +42,18 @@ public class SplashActivity extends AppCompatActivity {
 
         //Start the socket service.
         g.startSocketService();
+
+        //Create a GooglecUser to represent the current client
+        GoogleUser gu = new GoogleUser();
+        g.setClientUser(gu);
+
+        //Edit Welcome text to reflect the name of the client.
+        if (gu.isLoggedIn()) {
+            tv.setText("Welcome, " + gu.getFirstname());
+        } else {
+            tv.setText("Welcome!");
+        }
+
 
 
         /**

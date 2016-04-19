@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -46,7 +47,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     private long startTime = -1;
     Whiteboard wb = Globals.getInstance().getWhiteboard();
 
-
+//TODO delete
     //Width and the height of the canvas
     int canvasW = -1;
     int canvasH = -1;
@@ -184,7 +185,10 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
-        if(WhiteboardDrawFragment.getDrawMode() == true) {
+
+        MainActivity ma = (MainActivity) getContext();
+
+        if(ma.isDrawModeEnabled()) {
             //DrawMode handling
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -399,6 +403,22 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         }
     }
 
+    public Bitmap getCanvasBitmap() {
+        return canvasBitmap;
+    }
+
+    public void setCanvasBitmap(Bitmap bitmap) {
+//        Log.d(TAG, "in setCanvasBitmap");
+        Bitmap bm = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
+        canvasBitmap = bitmap.copy(Config.ARGB_8888, true);
+        drawCanvas = new Canvas(canvasBitmap);
+
+        drawCanvas.drawBitmap(canvasBitmap, 0, 0, new Paint(Color.RED));
+
+        super.draw(drawCanvas);
+        this.postInvalidate();
+        //drawCanvas.setBitmap(Bitmap.createBitmap(bitmap, 0, 0, drawCanvas.getWidth(), drawCanvas.getHeight()));
+    }
 
     @Override
     public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {

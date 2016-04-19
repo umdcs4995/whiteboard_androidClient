@@ -9,6 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,11 +30,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.CameraWb;
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
@@ -44,7 +54,7 @@ import java.util.UUID;
  */
 public class WhiteboardDrawFragment extends Fragment implements View.OnClickListener{
 
-    private static boolean drawMode = true;
+    private static boolean drawMode = false;
     private static DrawingView drawView;
     private static ImageButton currPaint, drawBtn, undoBtn, newBtn, saveBtn, eraseBtn;
     private boolean broadcastReceiverSetup = false;
@@ -64,7 +74,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     //initialize brush sizes
     //TODO grab from the resource file
-    public float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
+    private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
 
 
     //Camera Window
@@ -107,7 +117,50 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_whiteboard_draw, container, false);
+
+
         return view;
+    }
+
+    /**
+     * This method is the last method called prior to the fragment being displayed.  It is called
+     * each time the app is restored and each time the fragment is set to appear.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Check to see if a Whiteboard is loaded and toggle UI elements accordingly.
+        MainActivity activity = (MainActivity)getActivity();
+        TextView tv = (TextView) getActivity().findViewById(R.id.textView_join_whiteboard_warning);
+        Whiteboard wb = Globals.getInstance().getWhiteboard();
+
+        if(wb != null) {
+            activity.toggleFABVisibility(true);
+            tv.setVisibility(View.GONE);
+            setDrawMode(true);
+        } else {
+            activity.toggleFABVisibility(false);
+            tv.setVisibility(View.VISIBLE);
+            setDrawMode(false);
+        }
+
+
+        drawView.setDrawingCacheEnabled(true);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            byte[] bytes = bundle.getByteArray("image");
+            Log.d(TAG, "got the byte array exra");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            Log.d(TAG, "decoded the byte array");
+            drawView.setCanvasBitmap(bitmap);
+            if (bitmap != null) {
+                Drawable drawBitMap = new BitmapDrawable(getResources(), bitmap);
+                drawView.setBackground(drawBitMap);
+            }
+
+        }
     }
 
     /**
@@ -289,6 +342,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(smallBrush);
+                    drawView.setLastBrushSize(smallBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
@@ -300,6 +354,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(mediumBrush);
+                    drawView.setLastBrushSize(mediumBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
@@ -311,6 +366,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(largeBrush);
+                    drawView.setLastBrushSize(largeBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
@@ -380,9 +436,8 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     /**
      * Currently tied to the fab button this function hides or un-hides the toolbar
      * Both the top / side drawing menus are shown or hidden when this function is called
-     * @param view Function intakes a view
      */
-    public static void fabHideMenu(View view){
+    public void fabHideMenu(){
         //set all the components to Visible or Gone
         if (newBtn.getVisibility() == View.GONE) {
                 setDrawMode(true);
@@ -486,11 +541,18 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
     }
 
-    public static boolean getDrawMode(){
+    public boolean getDrawMode(){
         return drawMode;
     }
 
-    public static void setDrawMode(boolean mode){
+    public void setDrawMode(boolean mode){
         drawMode = mode;
     }
+
+
+
+    public Bitmap getMyBitmap() {
+        return drawView.getCanvasBitmap();
+    }
+
 }

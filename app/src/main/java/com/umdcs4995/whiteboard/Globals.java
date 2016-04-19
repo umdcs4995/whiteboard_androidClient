@@ -1,6 +1,5 @@
 package com.umdcs4995.whiteboard;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +9,11 @@ import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v7.util.SortedList;
 import android.util.Log;
-
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +25,7 @@ import java.util.PriorityQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import io.socket.emitter.Emitter;
+
 
 /**
  * Singleton class created for holding objects global to the application.
@@ -53,6 +52,9 @@ public class Globals {
 
     //Instance of Whiteboard.
     private Whiteboard whiteboard;
+
+    //Instance of the GoogleUser for the client.
+    private GoogleUser clientUser;
 
     /**
      * Private data member which binds the xmpp service to the client.
@@ -83,7 +85,6 @@ public class Globals {
         serverAddress = getServerAddress();
         socketServiceIntent = new Intent(context, SocketService.class);
         whiteboardProtocol = new WhiteboardProtocol();
-        whiteboard = new Whiteboard();
     }
 
     /**
@@ -209,11 +210,19 @@ public class Globals {
     }
 
     /**
-     * Returns a whiteboard instance.
+     * Returns the current whiteboard instance.
      * @return
      */
     public Whiteboard getWhiteboard() {
         return whiteboard;
+    }
+
+    /**
+     * Sets the active instance of a Whiteboard to a different Whiteboard.
+     * @param wb
+     */
+    public void setWhiteboard(Whiteboard wb) {
+        whiteboard = wb;
     }
 
     public boolean isConnectedToInternet() {
@@ -258,4 +267,15 @@ public class Globals {
 
         return lastCheckSuccessful;
     }
+
+
+    //=============Getters and Setters====================
+    public GoogleUser getClientUser() {
+        return clientUser;
+    }
+
+    public void setClientUser(GoogleUser gu) {
+        clientUser = gu;
+    }
+
 }
