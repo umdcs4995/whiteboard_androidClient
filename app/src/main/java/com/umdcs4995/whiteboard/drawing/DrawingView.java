@@ -44,6 +44,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     private LinkedList<DrawingEvent> currentLineList = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
+    Whiteboard wb = Globals.getInstance().getWhiteboard();
 
 
     //Width and the height of the canvas
@@ -85,7 +86,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                                         //Clear the screen.
                                         startNew();
                                         //Redraw all the old ones.
-                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(guestPath, guestPaint, drawCanvas, getThis());
                                     } catch (NullPointerException ex) {
                                         //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
                                         Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
@@ -159,8 +160,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     protected void onDraw(Canvas canvas) {
         //draw view
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
-        //canvas.drawPath(guestPath, guestPaint);
     }
 
     /**
@@ -201,6 +200,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     currentLineList = new LinkedList<>();
                     currentLineList.add(de);
                     drawPath.moveTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     // When user moves finger, draw a path
@@ -214,6 +214,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     );
                     currentLineList.add(de);
                     drawPath.lineTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case MotionEvent.ACTION_UP:
                     // When user lifts finger, draw the path
@@ -227,7 +228,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                     );
                     currentLineList.add(de);
                     protocol.outDrawProtocol(currentLineList);
-                    Whiteboard wb = Globals.getInstance().getWhiteboard();
                     LineSegment ls = new LineSegment(wb.getLineSegmentCount(), currentLineList);
                     wb.addSegmentToList(ls);
                     ls.lineIsOnScreen();
