@@ -8,17 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -27,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
@@ -69,7 +64,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
     //initialize brush sizes
     //TODO grab from the resource file
-    private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
+    public float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
 
 
     //Camera Window
@@ -152,10 +147,10 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      */
     public void paintClicked(View view) {
         drawView.setErase(false);
-        drawView.setBrushSize(drawView.getLastBrushSize());
+        //drawView.setBrushSize(drawView.getLastBrushSize());
         if(view!=currPaint){
             ImageButton imgView = (ImageButton)view;
-            String color = view.getTag().toString();
+            int color = Color.parseColor(view.getTag().toString());
             drawView.setColor(color);
             imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
             currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
@@ -294,7 +289,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(smallBrush);
-                    drawView.setLastBrushSize(smallBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
@@ -306,7 +300,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(mediumBrush);
-                    drawView.setLastBrushSize(mediumBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
@@ -318,7 +311,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 @Override
                 public void onClick(View v) {
                     drawView.setBrushSize(largeBrush);
-                    drawView.setLastBrushSize(largeBrush);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
