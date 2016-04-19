@@ -400,8 +400,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             statusTextView.setText(R.string.signed_out);
 
             // Set button visibility
-            loginView.findViewById(R.id.sign_in_button).setEnabled(true);
-            loginView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            loginView.findViewById(R.id.sign_out_button).setEnabled(true);
+            loginView.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         }
     }
 

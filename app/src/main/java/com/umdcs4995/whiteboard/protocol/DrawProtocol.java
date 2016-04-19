@@ -1,11 +1,10 @@
 package com.umdcs4995.whiteboard.protocol;
 
-import android.renderscript.RenderScript;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
-import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
@@ -14,8 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This class creates a string given a draw event and processes a string into a draw event.
@@ -61,6 +58,15 @@ public abstract class DrawProtocol {
         builder.append(de.getEventTime());
         builder.append("/");
 
+        builder.append("COLOR:");
+        builder.append(de.getColor());
+        builder.append("/");
+
+        builder.append("THICKNESS:");
+        builder.append(de.getThickness());
+        builder.append("/");
+
+
         builder.append("USER:");
         builder.append(de.getUsername());
         builder.append("/");
@@ -87,6 +93,8 @@ public abstract class DrawProtocol {
         long eventTime;
         float touchX;
         float touchY;
+        int color;
+        float thickness;
         String username;
 
         int parameterStart;
@@ -142,6 +150,22 @@ public abstract class DrawProtocol {
 
             if (logging) Log.i(TAG, tempString);
 
+            //color Value
+            parameterStart = tempString.indexOf(':');
+            parameterEnd = tempString.indexOf('/');
+            color = Integer.parseInt(tempString.substring(parameterStart + 1, parameterEnd));
+            tempString = tempString.substring(parameterEnd + 1);
+
+            if (logging) Log.i(TAG, tempString);
+
+            //thickness Value
+            parameterStart = tempString.indexOf(':');
+            parameterEnd = tempString.indexOf('/');
+            thickness = Float.parseFloat(tempString.substring(parameterStart + 1, parameterEnd));
+            tempString = tempString.substring(parameterEnd + 1);
+
+            if (logging) Log.i(TAG, tempString);
+
             //username Value
             parameterStart = tempString.indexOf(':');
             parameterEnd = tempString.indexOf('/');
@@ -149,7 +173,7 @@ public abstract class DrawProtocol {
             tempString = tempString.substring(parameterEnd + 1);
 
             if (logging) Log.i(TAG, tempString);
-            de = new DrawingEvent(action, startTime, eventTime, touchX, touchY);
+            de = new DrawingEvent(action, startTime, eventTime, touchX, touchY, color, thickness);
             de.setUsername(username);
 
             //Add the finished drawing event to the temporary queue.
@@ -178,6 +202,8 @@ public abstract class DrawProtocol {
                 jObject.put("Action", de.getAction());
                 jObject.put("Start Time", de.getStartTime());
                 jObject.put("Event Time", de.getEventTime());
+                jObject.put("Color", de.getColor());
+                jObject.put("Thickness", de.getThickness());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -223,6 +249,14 @@ public abstract class DrawProtocol {
             builder.append(de.getEventTime());
             builder.append("/");
 
+            builder.append("COLOR:");
+            builder.append(de.getColor());
+            builder.append("/");
+
+            builder.append("THICKNESS:");
+            builder.append(de.getThickness());
+            builder.append("/");
+
             builder.append("USER:");
             builder.append(de.getUsername());
             builder.append("/");
@@ -249,6 +283,8 @@ public abstract class DrawProtocol {
             long eventTime;
             float touchX;
             float touchY;
+            int color;
+            float thickness;
             String username;
             DrawingEvent de = null;
 
@@ -259,7 +295,9 @@ public abstract class DrawProtocol {
                 startTime = jo.getLong("Start Time");
                 eventTime = jo.getLong("Event Time");
                 action = jo.getInt("Action");
-                de = new DrawingEvent(action, startTime, eventTime, touchX, touchY);
+                color = jo.getInt("Color");
+                thickness = jo.getLong("Thickness");
+                de = new DrawingEvent(action, startTime, eventTime, touchX, touchY, color, thickness);
                 de.setUsername("TODO CHANGE ME");
 
                 //Add the finished drawing event to the temporary queue.

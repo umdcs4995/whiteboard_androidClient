@@ -1,11 +1,7 @@
 package com.umdcs4995.whiteboard.drawing;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.gesture.GestureOverlayView;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -13,18 +9,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.TextView;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
-import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
@@ -33,31 +26,40 @@ import java.util.LinkedList;
 /**
  * Creates a drawing on a canvas using user input.
  */
-public class DrawingView extends View implements GestureOverlayView.OnGestureListener{
+public class DrawingView extends View {
     //drawing path
-    private Path drawPath;
+    private Path drawPath, guestPath;
     //drawing and canvas paint
-    private Paint drawPaint, canvasPaint;
+    private Paint drawPaint, guestPaint, canvasPaint;
     //initial color
-    private int paintColor = 0xFF660000;
-
-
+    private int paintColor = 0x00000000; // black
+    private int lastColor;
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
     //brush size and previous size
-    private float brushSize, lastBrushSize;
+    private float brushSize;
     //A placeholder representing the currently drawn line.
     private LinkedList<DrawingEvent> currentLineList = new LinkedList<>();
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
+    Whiteboard wb = Globals.getInstance().getWhiteboard();
 
-
+//TODO delete if not used
     //Width and the height of the canvas
     int canvasW = -1;
     int canvasH = -1;
 
+//Gesture devices
+    //handles all the scaling actions
+    private ScaleGestureDetector detector;
+    //the initial scaleFactor
+    private float scaleFactor = 1.f;
+
+    //the MAX and MIN zooms of the canvas
+    private static float MIN_ZOOM = .5f;
+    private static float MAX_ZOOM = 5f;
 
 
     //Network interaction member items.
@@ -93,7 +95,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                                         //Clear the screen.
                                         startNew();
                                         //Redraw all the old ones.
-                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(guestPath, guestPaint, drawCanvas, getThis());
                                     } catch (NullPointerException ex) {
                                         //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
                                         Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
@@ -122,12 +124,21 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         Globals g = Globals.getInstance();
         protocol = g.getWhiteboardProtocol();
         drawingEventQueue = g.getDrawEventQueue();
+        //Set up the pinch to zoom gesture controls
+        detector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                scaleFactor *= detector.getScaleFactor();
+                scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
+                invalidate();
+                return true;
+            }
+        });
 
         if(!pollingThread.isAlive()) {
             //pollingThread.start();
         }
-
-
+        brushSize = 5;
     }
 
     /**
@@ -135,16 +146,26 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      */
     public void setupDrawing(){
         brushSize = 5;
-        lastBrushSize = brushSize;
 
         drawPath = new Path();
-        drawPaint = new Paint();
+        guestPath = new Path();
+
+        drawPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(brushSize);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        guestPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        guestPaint.setColor(paintColor);
+        guestPaint.setAntiAlias(true);
+        guestPaint.setStrokeWidth(brushSize);
+        guestPaint.setStyle(Paint.Style.STROKE);
+        guestPaint.setStrokeJoin(Paint.Join.ROUND);
+        guestPaint.setStrokeCap(Paint.Cap.ROUND);
+
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
@@ -156,8 +177,13 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     @Override
     protected void onDraw(Canvas canvas) {
         //draw view
+        canvas.save();
+        //set the scale of the canvas based on the scale factor
+        canvas.scale(scaleFactor, scaleFactor);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+        canvas.restore();
+
     }
 
     /**
@@ -171,14 +197,14 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //detect user touch
 
         if (firstDrawEvent) {
             startTime = System.currentTimeMillis();
             firstDrawEvent = false;
         }
-        float touchX = event.getX();
-        float touchY = event.getY();
+        float touchX = event.getX() / scaleFactor;
+        float touchY = event.getY() / scaleFactor;
+
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
@@ -191,28 +217,44 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
                 case MotionEvent.ACTION_DOWN:
                     // When user touches the View, move to that
                     // position to start drawing.
-                    de = new DrawingEvent(DrawingEvent.ACTION_DOWN, startTime,
-                            eventTime, touchX, touchY);
+                    de = new DrawingEvent(
+                            DrawingEvent.ACTION_DOWN,
+                            startTime, eventTime,
+                            touchX, touchY,
+                            paintColor,
+                            brushSize
+                    );
                     currentLineList = new LinkedList<>();
                     currentLineList.add(de);
                     drawPath.moveTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     // When user moves finger, draw a path
                     // along with their touch.
-                    de = new DrawingEvent(DrawingEvent.ACTION_MOVE, startTime,
-                            eventTime, touchX, touchY);
+                    de = new DrawingEvent(
+                            DrawingEvent.ACTION_MOVE,
+                            startTime, eventTime,
+                            touchX, touchY,
+                            paintColor,
+                            brushSize
+                    );
                     currentLineList.add(de);
                     drawPath.lineTo(touchX, touchY);
+                    drawCanvas.drawPath(drawPath, drawPaint);
                     break;
                 case MotionEvent.ACTION_UP:
                     // When user lifts finger, draw the path
                     // and reset it for the next draw.
-                    de = new DrawingEvent(DrawingEvent.ACTION_UP, startTime,
-                            eventTime, touchX, touchY);
+                    de = new DrawingEvent(
+                            DrawingEvent.ACTION_UP,
+                            startTime, eventTime,
+                            touchX, touchY,
+                            paintColor,
+                            brushSize
+                    );
                     currentLineList.add(de);
                     protocol.outDrawProtocol(currentLineList);
-                    Whiteboard wb = Globals.getInstance().getWhiteboard();
                     LineSegment ls = new LineSegment(wb.getLineSegmentCount(), currentLineList);
                     wb.addSegmentToList(ls);
                     ls.lineIsOnScreen();
@@ -227,7 +269,8 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
             return true;
         } else {
             // View Mode Handling
-            // TODO: Pinch to zoom / scroll & anything else in the view mode
+            //hand the event off to the gesture detector
+            detector.onTouchEvent(event);
         }
         return true;
     }
@@ -248,7 +291,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
             canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         else {
-            Bitmap immutableBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Bitmap immutableBitmap = Bitmap.createBitmap((int)(w/MIN_ZOOM), (int)(h/MIN_ZOOM), Bitmap.Config.ARGB_8888);
             canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         canvasW = w;
@@ -261,11 +304,19 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      * Changes the color of the "pen" being used.
      * @param newColor
      */
-    public void setColor(String newColor){
+    public void setColor(int newColor){
         //set color
         invalidate();
-        paintColor = Color.parseColor(newColor);
+        paintColor = newColor;
         drawPaint.setColor(paintColor);
+    }
+
+    /**
+     * Returns the color currently being used
+     * @return current color as integer representation of hex format
+     */
+    public int getColor() {
+        return paintColor;
     }
 
     /**
@@ -274,26 +325,18 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      */
     public void setBrushSize(float newSize){
         //update size
-        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                newSize, getResources().getDisplayMetrics());
-        brushSize=pixelAmount;
+        //float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        //        newSize, getResources().getDisplayMetrics());
+        //brushSize = pixelAmount;
+        brushSize = newSize;
         drawPaint.setStrokeWidth(brushSize);
     }
 
     /**
      * Sets the "brush" size to the last known brush size (when changing colors).
-     * @param lastSize
      */
-    public void setLastBrushSize(float lastSize){
-        lastBrushSize=lastSize;
-    }
-
-    /**
-     * Gets the last known "brush" size (for changing colors).
-     * @return
-     */
-    public float getLastBrushSize(){
-        return lastBrushSize;
+    public float getBrushSize() {
+        return brushSize;
     }
 
     /**
@@ -377,7 +420,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         @Override
         public void run() {
             try {
-                ls.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+                ls.drawLine(false, guestPath, guestPaint, drawCanvas, view);
             } catch(Exception e) {
                 Log.e("POLLINGRUNNABLE", "Error drawing string");
             }
@@ -389,7 +432,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     }
 
     public void setCanvasBitmap(Bitmap bitmap) {
-//        Log.d(TAG, "in setCanvasBitmap");
         Bitmap bm = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
         canvasBitmap = bitmap.copy(Config.ARGB_8888, true);
         drawCanvas = new Canvas(canvasBitmap);
@@ -399,26 +441,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         super.draw(drawCanvas);
         this.postInvalidate();
         //drawCanvas.setBitmap(Bitmap.createBitmap(bitmap, 0, 0, drawCanvas.getWidth(), drawCanvas.getHeight()));
-    }
-
-    @Override
-    public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGesture(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGestureCancelled(GestureOverlayView overlay, MotionEvent event) {
-
     }
 
 
