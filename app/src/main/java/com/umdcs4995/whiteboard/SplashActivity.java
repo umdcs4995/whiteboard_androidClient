@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
+
 /**
  * Activity handling the opening splash screen.
  */
@@ -16,8 +19,12 @@ public class SplashActivity extends AppCompatActivity {
     /**
      * Value for the time to show the splash screen (in milliseconds).
      */
-    private final int DELAYTIME = 2000;
+    private final int DELAYTIME = 1000;
 
+    /**
+     * Executes when an instance of the activity is created. used for initialization.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,17 +33,27 @@ public class SplashActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.txtWelcome);
 
 
-        //Code to read from shared preferences!
-        //Read from a key value pair.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        //Extract the resource
-        String username = sp.getString("pref_name","");
+        //Initiatie the singleton.
+        Globals.init(this.getApplicationContext());
+        Globals g = Globals.getInstance();
 
-        if (username.length() > 0) {
-            tv.setText("Welcome, " + username);
+        //Create the DrawingEventQueue
+        g.setDrawEventQueue(new DrawingEventQueue());
+
+        //Start the socket service.
+        g.startSocketService();
+
+        //Create a GooglecUser to represent the current client
+        GoogleUser gu = new GoogleUser();
+        g.setClientUser(gu);
+
+        //Edit Welcome text to reflect the name of the client.
+        if (gu.isLoggedIn()) {
+            tv.setText("Welcome, " + gu.getFirstname());
         } else {
             tv.setText("Welcome!");
         }
+
 
 
         /**
@@ -55,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
      * @return Intent to execute the IntroActivity.
      */
     private Intent makeMainIntent() {
-        return new Intent(this, IntroActivity.class);
+        return new Intent(this, MainActivity.class);
     }
 
 

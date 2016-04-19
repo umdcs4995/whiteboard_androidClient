@@ -12,7 +12,7 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 
-import uiFragments.ErrorToast;
+import com.umdcs4995.whiteboard.uiElements.ErrorToast;
 
 /**
  * This class will handle interfacing the camera with the app.
@@ -102,6 +102,7 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
      */
     public void surfaceDestroyed(SurfaceHolder holder) {
         // Called when the activity is destroyed.
+        if(!cameraAvailable || camera == null) return; //Camera isn't working / on this device, so bail.
 
         camera.stopPreview();
         camera.release();
@@ -173,8 +174,11 @@ public class CameraWb extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    //Method here rotates the camera based on the rotation of the screen.
-    public void setCameraOritentation(int degrees) {
+    /**
+     * Coordinates the camera orientation with the display orientation.
+     * @param degrees
+     */
+    public void setCameraOrientation(int degrees) {
         if(camera != null) {camera.setDisplayOrientation(degrees);}
         else {return;}
     }

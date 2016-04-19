@@ -11,6 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Class used to signup users with email and password combinations.
+ */
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
@@ -19,6 +22,11 @@ public class SignupActivity extends AppCompatActivity {
     Button _signupButton;
     TextView _loginLink;
 
+    /**
+     * Executes when an instance of this activity is created. Used for initialization of UI elements etc.
+     * Also where onclicklisteners should be implemented.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +41,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //handle signup button clicks
                 signup();
             }
         });
@@ -46,9 +55,13 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attempts to sign up a user with their specified credentials.
+     */
     public void signup() {
         Log.d(TAG, "Signup");
 
+        //make sure user submitted valid usernames/passwords/etc
         if (!validate()) {
             onSignupFailed();
             return;
@@ -58,6 +71,7 @@ public class SignupActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.WhiteboardMainTheme);
+        //show signup progress
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
@@ -66,8 +80,8 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
 
+        //TODO: all the tie-ins with oauth
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -81,18 +95,29 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Executes when sign up has completed successfully. Sets the result code and turns the sign
+     * up button back on.
+     */
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         finish();
     }
 
+    /**
+     * Executes when sign up has failed. Re-enables the signup button and dislays an error message.
+     */
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
 
+    /**
+     * Checks if email, username, and password entered are valid.
+     * Displays a message depending on what was wrong if the credentials are not valid.
+     */
     public boolean validate() {
         boolean valid = true;
 
@@ -100,6 +125,7 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
+        //validate name
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("at least 3 characters");
             valid = false;
@@ -107,6 +133,7 @@ public class SignupActivity extends AppCompatActivity {
             _nameText.setError(null);
         }
 
+        //validate email
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
             valid = false;
@@ -114,6 +141,7 @@ public class SignupActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
+        //validate password
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;

@@ -1,106 +1,91 @@
-# Whiteboard_InterfaceTeam
+# 4995 Industries Presents: Whiteboard
 
-#Important for SMACK
-When building with Smack I wrongly assumed that we had to download the jars and attach them to the project in our finder. However since we are using GRADLE we can add GRADLE packaages to the build path like so:
+## What is it?
 
-  - // Optional for XMPPTCPConnection
+"Whiteboard" is a real-time collaborative whiteboard application developed by CS 4995 students at the University of Minnesota-Duluth.
 
-	 compile "org.igniterealtime.smack:smack-tcp:4.1.0" 
-	 
-  - // Optional for XMPP-IM (RFC 6121) support (Roster, Threaded Chats, …)
-  
-	 compile "org.igniterealtime.smack:smack-im:4.1.0"
+## Setup
 
-  - // Optional for XMPP extensions support
-  
-	 compile "org.igniterealtime.smack:smack-extensions:4.1.0"
+1. Download and set up the [NodeJS whiteboard server](https://github.umn.edu/umdcs4995/nodejs)
+2. Change the values in app/src/main/res/values/strings.xml to match your server address
+    - Change "hostname" to your server hostname
+    - Change rtc_port to your RTC signalling port (3001 by default)
+    - If your server is NOT running over HTTPS (most people):
+        - Change "secure" to false
+        - Change "port" to your server port (3000 by default)
+    - Otherwise, if you ARE running over HTTPS:
+        - Change "secure_port" to your HTTPS port
+3. Build and run the Android application (we use Android Studio)
 
-Note that you should not include the smack-java7:4.1.0 package as this will cause your project to not build as I have found out. 
+## Nodejs Development Information
 
-Another thing to note is that with our project we can also do it via the application's gradle.build file as well by including:
-	
-```
-	
-	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots'
-	}
-	mavenCentral()
-	
-```
-under the repository area in the gradle.build
+The server is written in Javascript using [Nodejs](https://nodejs.org), and most of the client-server communication uses [Socket.IO](http://socket.io/). This means that most of the communication is *asynchronous*, so you need to write your code in a way that can be executed asynchronously without problems. There are good examples of this in JoinBoardFragment.java.
 
+### Building messages
 
-You can find all this information here:
+Message data needs to be packaged in a JSONObject or JSONArray in order to be sent via socketio. This is pretty easy to do:
 
-[Smack README] (https://github.com/igniterealtime/Smack/wiki/Smack-4.1-Readme-and-Upgrade-Guide)
+    JSONObject jsonData = new JSONObject();
+    jsonData.put("name", "testBoard");
 
+Sometimes it helps to think about JSONObjects is as HashMap<String,Object> and JSONArrays as List<Object> (though technically speaking, this isn't totally correct).
 
-#Important for creating an XMPPTCPConnectionConfiguration 
-	
-This took me a while to figure out and it shouldn't've but in most tutorials you will see a settup where it asks you to do something like:
+### Sending and receiving a message
 
-```
-		ConnectionConfiguration config = new ConnectionConfiguration
-```
+In order to send or receive a message, your class needs to have access to the global SocketService. You can access this through the Globals singleton:
 
-But now this gives us a "Cannot instantiate Abstract Class" error so digging through the source code you can find the real way to do it in their comments which is:
+    final SocketService socket = Globals.getInstance().getSocketService();
 
-```
-		XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder()
-                        .setServiceName("45.55.183.45").setUsernameAndPassword("hcc", "adminpassword")
-                        .setCompressionEnabled(false).build();
-```
+Sending a message can be done through the sendMessage method, which takes a string and either a string, JSONObject, or JSONArray. Message types are stored in a "struct" called Messages within SocketService.
 
-This allows us to correctly instantiate a config file for use with our connection.
+    socket.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, jsonData);
 
+SendMessage will throw an error if it does not have a connection to the server, so make sure to check for that.
 
-#Important for Connections in our Application
+To receive a message, you need to set up a listener, which is usually an anonymous function that will get called when the server send s message back with the given message type (such as createWhiteboard).
 
-One thing I found out is that you cannot, cannot, CANNOT create a connection in the main application thread (ie the onCreate method) in the main activity. This is because as our connection is made the application thread must then wait for a response and cannot do anything in the mean time. In order to fix this you must make an ASyncTask method that will handle this stuff on a seperate thread. This was shown in the tutorial that Pete posted but it did not explain why it was necessary.
+For example, to set up a listener to for a createWhiteboard message,
 
-Here is what I did :
-
-```
-		public void connect(){
-        AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>(){
-            @Override
-            protected Boolean doInBackground(Void... arg0){
-                boolean isConnected = false;
-
-                XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder()
-                        .setServiceName("45.55.183.45").setUsernameAndPassword("hcc", "adminpassword")
-                        .setCompressionEnabled(false).build();
-
-                connection = new XMPPTCPConnection(conf);
-
-                XMPPConnectionListener connectionListener = new XMPPConnectionListener();
-                connection.addConnectionListener(connectionListener);
-                try{
-                    connection.connect();
-                    isConnected = true;
-                } catch (IOException e){
-                } catch (SmackException e){
-                } catch (XMPPException e){
-                }
-
-                return isConnected;
+    socket.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            
+            // args[0] is a string containing the server's response, which we parse into a JSONObject
+            JSONObject recvd = (JSONObject) args[0];
+            
+            try {
+                Log.i("createWhiteboard", "received message: " + recvd.getString("message"));
+            } catch (JSONException e) {
+                Log.e("createWhiteboard", "error parsing received message");
             }
-        };
-        connectionThread.execute();
-    }
+            
+            // After we have successfully processed the response, 
+            // remove the listener so it doesn't get called again.
+            socket.clearListener(SocketService.Messages.CREATE_WHITEBOARD);
+        }
+    });
 
-```
-#User Permissions
-List all extra permissions added here.
+### Debugging messages
 
-   - \<uses-permission android:name="android.permission.INTERNET"/\>
+You can see a live log of the public server at https://lempo.d.umn.edu:4995/log.html
 
-#TODO
+Additionally, you can simulate a real client and test sending messages at https://lempo.d.umn.edu:4995/console.html
 
-So the only issue I am running into now is that connection to the server is getting dropped due to an :
+### Server message types
 
->           javax.net.ssl.SSLHandshakeException: java.security.cert.CertPathValidatorException: Trust anchor for certification path not found.
+|       Name       |       Purpose         | Arguments | Returns |
+| ---------------- | --------------------- | --------- | ------- |
+| createWhiteboard | Creates a whiteboard. | name | A success or error message |
+| joinWhiteboard   | Joins a whiteboard.   | name | A success or error message |
+| deleteWhiteboard | Deleted a whiteboard. | name | A success or error message |
+| me               | Allows user to get information about themselves | none | A JSONObject with 'whiteboard' property containing user's current whiteboard |
+| chat message     | Blast a message to all users | message | The message |
+| drawevent        | Sends a drawevent to users in the current whiteboard | drawevent object generated by DrawProtocol | none |
 
-which, as far as I have read, means we need to create a certificate that will handle this connection so that this does not bypass Androids security standards
 
+## Contributors
+
+Put your name and email/website here! Leave a blank line between names.
+
+[Mitchell Rysavy](http://d.umn.edu/~rysau001) ([rysau001@d.umn.edu](mailto:rysau001@d.umn.edu))
 

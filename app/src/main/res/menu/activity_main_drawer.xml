@@ -1,40 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
         <item
-            android:id="@+id/add_board"
-            android:icon="@drawable/plus_board"
-            android:title="New Whiteboard" />
+            android:id="@+id/login"
+            android:icon="@drawable/login"
+            android:title="Login" />
         <item
             android:id="@+id/join_board"
             android:icon="@drawable/handshake"
-            android:title="Join Whiteboard" />
+            android:title="Whiteboards" />
         <item
-            android:id="@+id/load_board"
-            android:icon="@drawable/loading"
-            android:title="Load Whiteboard" />
-        <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Settings" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Google Drive">
         <menu>
+
             <item
-                android:id="@+id/contacts"
-                android:icon="@drawable/users"
-                android:title="Contacts"/>
+                android:id="@+id/google_drive"
+                android:icon="@drawable/drive_save"
+                android:title="Google Drive"/>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/addFile"
+                android:icon="@drawable/load"
+                android:title="Load Drive"/>
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/add_url"
+                android:icon="@drawable/load"
+                android:title="Load From URL"/>
+
         </menu>
     </item>
+
+    <!--<item android:title="Communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_contacts"-->
+                <!--android:icon="@drawable/users"-->
+                <!--android:title="Contacts"/>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>

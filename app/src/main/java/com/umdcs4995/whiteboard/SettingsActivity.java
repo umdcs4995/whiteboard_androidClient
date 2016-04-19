@@ -5,13 +5,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import uiFragments.SettingsFragment;
+import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.uiElements.SettingsFragment;
+
 
 /**
  * Activity for handling the Settings menu displayed to the user upon selection.
  */
 public class SettingsActivity extends AppCompatActivity
-    implements SettingsFragment.OnFragmentInteractionListener {
+        implements SettingsFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
