@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
+ * Created by Laura J. Krebs
+ * 
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link DriveLoadFragment.OnFragmentInteractionListener} interface
