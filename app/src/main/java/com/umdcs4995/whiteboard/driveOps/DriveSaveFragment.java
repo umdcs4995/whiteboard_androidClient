@@ -18,10 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.ConnectionResult;
@@ -33,11 +31,8 @@ import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.File;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
@@ -46,14 +41,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * to handle interaction events.
- * Use the {@link DriveSaveFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by Laura J. Krebs
+ *
  */
 public class DriveSaveFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -66,32 +57,21 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     /**
      * Integer representation of code that is used when sending an intent to start an OpenFileActivity for a result. -LJK
      */
-    private static final int DRIVE_OPEN_CODE = 0;
     private static final int REQUEST_CODE_CREATOR = 2;
-    private static final int REQUEST_CODE_RESOLUTION = 1; //3; // change
-    private static final int REQUEST_ACCOUNT_PICKER = 2; // new
-    private static final int REQUEST_AUTHORIZATION = 1; // new
+    private static final int REQUEST_ACCOUNT_PICKER = 2;
+    private static final int REQUEST_AUTHORIZATION = 1;
     private static final int RESULT_STORE_FILE = 4;
     private static final int RC_SIGN_IN = 9001;
-    private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport(); // new
-    private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance(); // new
-
 
     private GoogleAccountCredential credential;
 
     /* Client for accessing Google APIs */
     private GoogleApiClient googleApiClient;
-    private com.google.api.services.drive.Drive client;
-    private Bitmap bitmapToSave;
 
-    private View driveSaveView, drawView;
-    private ProgressBar progressBar;
+    private View driveSaveView;
     private static Uri fileURI;
     private static com.google.api.services.drive.Drive service;
-    private List<File> resultList;
     private ListView listView;
-    private String[] fileArray;
-    private ArrayAdapter adapter;
 
 
     private OnDriveSaveButtonClickedListener onDriveSaveButtonClickedListener;
