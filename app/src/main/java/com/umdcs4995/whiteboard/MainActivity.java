@@ -215,18 +215,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     @Override
     protected void onResume() {
         super.onResume();
-
-        GoogleUser gu = Globals.getInstance().getClientUser();
-
-        if(gu.isLoggedIn()) {
-            tvNavHeaderName.setText(gu.getFullname());
-            tvNavHeaderEmail.setText(gu.getEmail());
-            ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
-        } else {
-            tvNavHeaderName.setText("Whiteboard");
-            tvNavHeaderEmail.setText("Please Login");
-            ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
-        }
+        updateNavBarHeaderElements();
     }
 
 
@@ -594,6 +583,24 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         ;
     };
+
+    /**
+     * Method for updating the navigation bar elements.  Should be called after the user logs
+     * in or logs out.
+     */
+    public void updateNavBarHeaderElements() {
+        GoogleUser gu = Globals.getInstance().getClientUser();
+
+        if(gu.isLoggedIn()) {
+            tvNavHeaderName.setText(gu.getFullname());
+            tvNavHeaderEmail.setText(gu.getEmail());
+            ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
+        } else {
+            tvNavHeaderName.setText("Whiteboard");
+            tvNavHeaderEmail.setText("Please Login");
+            ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
+        }
+    }
 
 }
 

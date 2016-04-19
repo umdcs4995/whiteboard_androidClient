@@ -52,6 +52,7 @@ import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -630,7 +631,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("googleDisplayPicture", encodeTobase64(result));
             editor.commit();
-
+            Globals.getInstance().setClientUser(new GoogleUser());
+            MainActivity ma = (MainActivity) getActivity();
+            ma.updateNavBarHeaderElements();
         }
     }
 
