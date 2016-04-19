@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //whiteboardDrawFragment.fabHideMenu();
+                whiteboardDrawFragment.fabHideMenu();
                 //Statement used to set toolbars visibility
                 if (toolbar.getVisibility() == View.GONE) {
                     toolbar.setVisibility(View.VISIBLE);

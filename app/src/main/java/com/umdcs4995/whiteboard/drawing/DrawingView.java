@@ -18,6 +18,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ import java.util.LinkedList;
 /**
  * Creates a drawing on a canvas using user input.
  */
-public class DrawingView extends View implements GestureOverlayView.OnGestureListener{
+public class DrawingView extends View {
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
@@ -53,11 +54,20 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
 
-//TODO delete
+//TODO delete if not used
     //Width and the height of the canvas
     int canvasW = -1;
     int canvasH = -1;
 
+//Gesture devices
+    //handles all the scaling actions
+    private ScaleGestureDetector detector;
+    //the initial scaleFactor
+    private float scaleFactor = 1.f;
+
+    //the MAX and MIN zooms of the canvas
+    private static float MIN_ZOOM = .7f;
+    private static float MAX_ZOOM = 5f;
 
 
     //Network interaction member items.
@@ -122,7 +132,18 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         Globals g = Globals.getInstance();
         protocol = g.getWhiteboardProtocol();
         drawingEventQueue = g.getDrawEventQueue();
+        //Set up the pinch to zoom gesture controls
+        detector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                Log.i("Onscale", "This is the on scale detector working");
+                scaleFactor *= detector.getScaleFactor();
+                scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
+                invalidate();
+                return true;
+            }
 
+        });
         if(!pollingThread.isAlive()) {
             //pollingThread.start();
         }
@@ -156,8 +177,13 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
     @Override
     protected void onDraw(Canvas canvas) {
         //draw view
+        canvas.save();
+        canvas.scale(scaleFactor, scaleFactor);
+
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+
+        canvas.restore();
     }
 
     /**
@@ -171,14 +197,14 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //detect user touch
 
         if (firstDrawEvent) {
             startTime = System.currentTimeMillis();
             firstDrawEvent = false;
         }
-        float touchX = event.getX();
-        float touchY = event.getY();
+        float touchX = event.getX() / scaleFactor;
+        float touchY = event.getY() / scaleFactor;
+
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
@@ -227,7 +253,8 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
             return true;
         } else {
             // View Mode Handling
-            // TODO: Pinch to zoom / scroll & anything else in the view mode
+            //hand the event off to the gesture detector
+            detector.onTouchEvent(event);
         }
         return true;
     }
@@ -248,7 +275,7 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
             canvasBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         else {
-            Bitmap immutableBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Bitmap immutableBitmap = Bitmap.createBitmap((int)(w/MIN_ZOOM), (int)(h/MIN_ZOOM), Bitmap.Config.ARGB_8888);
             canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
         canvasW = w;
@@ -399,26 +426,6 @@ public class DrawingView extends View implements GestureOverlayView.OnGestureLis
         super.draw(drawCanvas);
         this.postInvalidate();
         //drawCanvas.setBitmap(Bitmap.createBitmap(bitmap, 0, 0, drawCanvas.getWidth(), drawCanvas.getHeight()));
-    }
-
-    @Override
-    public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGesture(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
-
-    }
-
-    @Override
-    public void onGestureCancelled(GestureOverlayView overlay, MotionEvent event) {
-
     }
 
 
