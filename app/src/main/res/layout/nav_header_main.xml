@@ -24,9 +24,17 @@
             android:id="@+id/whiteboard_logo"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:paddingTop="10dp"
+            android:paddingTop="15dp"
             android:src="@drawable/whiteboard_logo"
             android:layout_alignParentRight="true"/>
+
+        <ImageView
+            android:id="@+id/navbar_profilephoto"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:paddingTop="15dp"
+            android:src="@drawable/whiteboard_logo"
+            android:layout_alignParentRight="false"/>
 
 
         <TextView

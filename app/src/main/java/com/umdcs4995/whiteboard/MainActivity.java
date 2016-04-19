@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     //multiple inflations of the navbar header.
     private TextView tvNavHeaderName;
     private TextView tvNavHeaderEmail;
+    private ImageView ivProfilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
         tvNavHeaderName = (TextView) headerView.findViewById(R.id.navbar_username);
         tvNavHeaderEmail = (TextView) headerView.findViewById(R.id.navbar_email);
+        ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
 
     }
 
@@ -218,9 +221,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         if(gu.isLoggedIn()) {
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
+            ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
         } else {
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");
+            ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
         }
     }
 

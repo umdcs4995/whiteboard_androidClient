@@ -1,8 +1,18 @@
 package com.umdcs4995.whiteboard.whiteboarddata;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.media.Image;
 import android.preference.PreferenceManager;
+import android.util.Base64;
+import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
 
@@ -19,6 +29,7 @@ public class GoogleUser {
     private String faceBase64;
     private boolean googleUser;
     private boolean loggedIn;
+    private Bitmap profilePhoto;
 
     /**
      * Constructor for the GoogleUser.  Note the current fields are populated by a method call
@@ -40,11 +51,11 @@ public class GoogleUser {
         SharedPreferences sp = PreferenceManager.
                 getDefaultSharedPreferences(Globals.getInstance().getGlobalContext());
         //Extract the resource
-        fullname = sp.getString("googleDisplayName","");
+        fullname = sp.getString("googleDisplayName", "");
 
         // Check to see that the full name exists.  If not, then the user hasn't logged in yet.
         // so set the flag and bail out.
-        if(fullname == "") {
+        if (fullname == "") {
             loggedIn = false;
             return;
         }
@@ -59,12 +70,12 @@ public class GoogleUser {
         //Get the email from the preferences
         email = sp.getString("googleUserEmail", "");
 
+        //Get the picture
+        profilePhoto = decodeBase64(sp.getString("googleDisplayPicture", ""));
+
         //Set the flag.
         loggedIn = true;
     }
-
-
-
 
 
     //======Getters and Setters===========
@@ -90,5 +101,60 @@ public class GoogleUser {
 
     public String getEmail() {
         return email;
+    }
+
+    public Bitmap getImage() {
+        return profilePhoto;
+    }
+
+    // method for base64 to bitmap
+    private Bitmap decodeBase64(String input) {
+        if(input.equals("")) {
+            return null;
+        } else {
+            byte[] decodedByte = Base64.decode(input, 0);
+            Log.d("GoogleUser", "Decoding image");
+            return BitmapFactory
+                    .decodeByteArray(decodedByte, 0, decodedByte.length);
+        }
+    }
+
+
+    /**
+     * Returns a rounded profile image bitmap for use in the navigation header.
+     * @param radius
+     * @return
+     */
+    public Bitmap getRoundedProfileImage(int radius) {
+        Bitmap bmp = profilePhoto;
+        Bitmap sbmp;
+
+        if (bmp.getWidth() != radius || bmp.getHeight() != radius) {
+            float smallest = Math.min(bmp.getWidth(), bmp.getHeight());
+            float factor = smallest / radius;
+            sbmp = Bitmap.createScaledBitmap(bmp, (int)(bmp.getWidth() / factor), (int)(bmp.getHeight() / factor), false);
+        } else {
+            sbmp = bmp;
+        }
+
+        Bitmap output = Bitmap.createBitmap(radius, radius,
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xffa19774;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, radius, radius);
+
+        paint.setAntiAlias(true);
+        paint.setFilterBitmap(true);
+        paint.setDither(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(Color.parseColor("#BAB399"));
+        canvas.drawCircle(radius / 2 + 0.7f,
+                radius / 2 + 0.7f, radius / 2 + 0.1f, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(sbmp, rect, rect, paint);
+
+        return output;
     }
 }

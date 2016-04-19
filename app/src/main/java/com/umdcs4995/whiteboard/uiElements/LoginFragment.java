@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -327,6 +329,9 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             editor.putString("googleUserEmail", acct.getEmail());
             editor.commit();
 
+            //Save the picture
+
+
 
             updateUI(true);
 
@@ -365,6 +370,8 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 new LoadProfileImage(profileImg).execute(personPhotoUrl);
             }
             profileImg.setImageURI(personPhoto);
+
+
             Log.d(TAG, "person photo " + personPhoto);
             Log.d(TAG, "in updateUI: signedIN");
             if (googleApiClient.isConnected()) {
@@ -616,7 +623,29 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+
+            //Save the shared preferences for the users photo.
+            SharedPreferences sp = PreferenceManager.
+                    getDefaultSharedPreferences(Globals.getInstance().getGlobalContext());
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("googleDisplayPicture", encodeTobase64(result));
+            editor.commit();
+
         }
+    }
+
+    /**
+     * Utility method to encode an image to base 64.
+     */
+    private String encodeTobase64(Bitmap image) {
+        Bitmap immage = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        Log.d("Image Log:", imageEncoded);
+        return imageEncoded;
     }
 }
 
