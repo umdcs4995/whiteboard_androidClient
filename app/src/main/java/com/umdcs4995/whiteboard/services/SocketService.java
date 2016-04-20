@@ -212,4 +212,31 @@ public class SocketService extends Service {
             return SocketService.this;
         }
     }
+
+
+    //Instance of a runnable used to reconnect the client if connection is lost.
+    private ReconnectRunnable reconnectRunnable = new ReconnectRunnable();
+    /**
+     * Method is called to start reconnection.
+     * @return
+     */
+    public synchronized void startReconnecting() {
+        Log.i("Globals", "StartReconnecting");
+        if(!currentlyReconnecting) {
+            currentlyReconnecting = true;
+            reconnectRunnable.reset();
+            Thread t = new Thread(reconnectRunnable);
+            t.start();
+        }
+    }
+
+    boolean currentlyReconnecting = false;
+    /**
+     * Sets the connecting flag for the service.  This is needed to make sure the service
+     * doesn't launch more than one reconnecting thread.
+     * @param reconnecting
+     */
+    public void setCurrentlyReconnecting(boolean reconnecting) {
+        currentlyReconnecting = reconnecting;
+    }
 }

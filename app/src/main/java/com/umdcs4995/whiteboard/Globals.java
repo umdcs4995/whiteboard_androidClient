@@ -57,10 +57,6 @@ public class Globals {
     //Instance of the GoogleUser for the client.
     private GoogleUser clientUser;
 
-    //Instance of a thread used to reconnect the client if connection is lost.
-    private ReconnectRunnable reconnectRunnable = new ReconnectRunnable();
-    private Thread reconnectThread = new Thread(reconnectRunnable);
-
     /**
      * Private data member which binds the xmpp service to the client.
      */
@@ -273,15 +269,7 @@ public class Globals {
         return lastCheckSuccessful;
     }
 
-    /**
-     * Method is called to start reconnection.
-     * @return
-     */
-    public void startReconnecting() {
-        if(!reconnectThread.isAlive()) {
-            reconnectThread.start();
-        }
-    }
+
 
     //=============Getters and Setters====================
     public GoogleUser getClientUser() {

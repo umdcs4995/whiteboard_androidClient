@@ -40,7 +40,11 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
+import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -82,7 +86,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
 
 
     /**
-     * Receiver for segment changed broadcasts.
+     * Receiver for repaint requests.
      */
     private BroadcastReceiver bRepaintRequestReceiver = new BroadcastReceiver() {
         @Override
@@ -98,6 +102,40 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             }
         }
     };
+
+    /**
+     * Receiver for reconnection notifications.
+     */
+    private BroadcastReceiver brReconnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("MAINACTIVITY", "Received reconnection broadcast.");
+            Whiteboard wb = Globals.getInstance().getWhiteboard();
+            if(wb != null) {
+                //Attempt to rejoin whiteboard.
+                JSONObject joinWbRequest = new JSONObject();
+                try {
+                    joinWbRequest.put("name", wb.getWhiteboardName());
+                } catch (JSONException e) {
+                    Log.i("brReconnectionReceiver", "failed to join whiteboard");
+                }
+
+                final SocketService socket = Globals.getInstance().getSocketService();
+
+                try {
+                    socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
+                } catch (Exception e) {
+                    Log.e("CreateBoard", "Not connected to server");
+                }
+
+                wb.resendUnsentFragments();
+            }
+
+        }
+    };
+
+
+
 
 
     @Nullable
@@ -211,6 +249,11 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         //Register the intent receiver so that the view updates upon receiving.
         lbm.registerReceiver(bRepaintRequestReceiver,
                 new IntentFilter("repaintRequest"));
+
+        //Register the intent receiver so that the view updates upon receiving.
+        lbm.registerReceiver(brReconnectionReceiver,
+                new IntentFilter(AppConstants.BM_RECONNECTED));
+
     }
 
     /**

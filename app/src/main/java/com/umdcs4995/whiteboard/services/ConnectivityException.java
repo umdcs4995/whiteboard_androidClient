@@ -26,7 +26,7 @@ public class ConnectivityException extends Exception {
         this.errorCode = errorCode;
 
         //Attempt to reconnect to the server
-        Globals.getInstance().startReconnecting();
+        Globals.getInstance().getSocketService().startReconnecting();
     }
 
     // ======= Getters and Setters

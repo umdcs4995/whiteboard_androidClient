@@ -8,7 +8,11 @@ import android.graphics.Path;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.AppConstants;
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
+import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
 
 import java.util.LinkedList;
 
@@ -106,8 +110,29 @@ public class Whiteboard {
      */
     public void broadcastRepaintRequest(Context context) {
         Log.i("Whiteboard.java", "Broadcasting repaint request message.");
-        Intent intent = new Intent("repaintRequest");
+        Intent intent = new Intent(AppConstants.BM_REPAINT);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    /**
+     * Resends all fragments to the server that haven't been sent as of yet.  Should be called
+     * after receiving a broadcast intent notifing the app of a connection loss and subsequent
+     * establishment.
+     */
+    public void resendUnsentFragments() {
+        WhiteboardProtocol protocol = Globals.getInstance().getWhiteboardProtocol();
+        for(int i = 0; i < segments.size(); i++) {
+            LineSegment ls = segments.get(i);
+            if(!ls.hasBeenSent()) {
+                //Send the line out to the server.
+                try {
+                    protocol.outDrawProtocol(ls.getDrawEvents());
+                    ls.lineIsOnScreen();
+                } catch (ConnectivityException ce) {
+                    //Here we can safely do nothing.  The line will not be set as sent and
+                    //reconnection is handled elsewhere, in ConnectivityException.
+                }
+            }
+        }
+    }
 }

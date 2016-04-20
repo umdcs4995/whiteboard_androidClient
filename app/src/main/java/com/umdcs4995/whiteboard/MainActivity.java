@@ -1,7 +1,10 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
@@ -15,6 +18,7 @@ import android.support.design.widget.NavigationView.OnNavigationItemSelectedList
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -64,6 +68,7 @@ import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListen
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -189,6 +194,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         tvNavHeaderName = (TextView) headerView.findViewById(R.id.navbar_username);
         tvNavHeaderEmail = (TextView) headerView.findViewById(R.id.navbar_email);
         ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
+
+
+
 
     }
 
@@ -601,6 +609,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
         }
     }
+
+
 
 }
 

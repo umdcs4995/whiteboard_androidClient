@@ -1,7 +1,10 @@
 package com.umdcs4995.whiteboard.services;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.Globals;
 
 /**
@@ -18,6 +21,9 @@ public class ReconnectRunnable implements Runnable {
     //flag to check for connection.
     private boolean connected = false;
 
+    //flag to hold the running status of the runnable.
+    private boolean running = false;
+
     //the default delay time for the first attempt to reconnect.
     private int delay = 2000;
 
@@ -29,6 +35,7 @@ public class ReconnectRunnable implements Runnable {
      */
     @Override
     public void run() {
+        running = true;
         while(!connected) {
             try {
                 Thread.sleep(delay); //Wait the specified time
@@ -49,6 +56,7 @@ public class ReconnectRunnable implements Runnable {
                 //Do nothing here.
             }
         }
+
     }
 
 
@@ -65,6 +73,19 @@ public class ReconnectRunnable implements Runnable {
      * Method is called up reconnection.
      */
     private void onReconnect() {
-        
+        Globals.getInstance().getSocketService().setCurrentlyReconnecting(false);
+        Log.i(TAG, "Broadcasting reconnection message.");
+        Intent intent = new Intent(AppConstants.BM_RECONNECTED);
+        LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext()).sendBroadcast(intent);
     }
+
+    /**
+     * Method called to reset the ReconnectRunnable
+     */
+    public void reset() {
+        connected = false;
+        attempts = 1;
+    }
+
+
 }
