@@ -1,5 +1,7 @@
 package com.umdcs4995.whiteboard.services;
 
+import com.umdcs4995.whiteboard.Globals;
+
 /**
  * Special exception thrown by the socket service when there was an error communicating with the
  * server.  These exceptions can then be handled by the application to
@@ -22,6 +24,9 @@ public class ConnectivityException extends Exception {
     public ConnectivityException(int errorCode, String message) {
         this.message = message;
         this.errorCode = errorCode;
+
+        //Attempt to reconnect to the server
+        Globals.getInstance().startReconnecting();
     }
 
     // ======= Getters and Setters

@@ -79,12 +79,13 @@ public class WhiteboardProtocol {
     /**
      * Send out a drawing event list to the server.
      */
-    public void outDrawProtocol(LinkedList<DrawingEvent> deq) {
+    public void outDrawProtocol(LinkedList<DrawingEvent> deq) throws ConnectivityException {
         JSONArray output = DrawProtocol.generateJSON(deq);
         try {
             socketService.sendMessage(SocketService.Messages.DRAW_EVENT, output);
         } catch (ConnectivityException ce) {
             Log.e("WhiteboardProtocol", "Failed to Send DrawEvents: " + ce.getMessage());
+            throw ce;
         }
     }
 

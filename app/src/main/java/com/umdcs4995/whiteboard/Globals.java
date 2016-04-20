@@ -11,6 +11,7 @@ import android.support.v7.util.SortedList;
 import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.services.ReconnectRunnable;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
@@ -55,6 +56,10 @@ public class Globals {
 
     //Instance of the GoogleUser for the client.
     private GoogleUser clientUser;
+
+    //Instance of a thread used to reconnect the client if connection is lost.
+    private ReconnectRunnable reconnectRunnable = new ReconnectRunnable();
+    private Thread reconnectThread = new Thread(reconnectRunnable);
 
     /**
      * Private data member which binds the xmpp service to the client.
@@ -268,6 +273,15 @@ public class Globals {
         return lastCheckSuccessful;
     }
 
+    /**
+     * Method is called to start reconnection.
+     * @return
+     */
+    public void startReconnecting() {
+        if(!reconnectThread.isAlive()) {
+            reconnectThread.start();
+        }
+    }
 
     //=============Getters and Setters====================
     public GoogleUser getClientUser() {
@@ -277,5 +291,7 @@ public class Globals {
     public void setClientUser(GoogleUser gu) {
         clientUser = gu;
     }
+
+
 
 }
