@@ -58,9 +58,12 @@ public class DrawingView extends View {
     private float scaleFactor = 1.f;
 
     //the MAX and MIN zooms of the canvas
-    private static float MIN_ZOOM = .5f;
+    private static float MIN_ZOOM = .7f;
     private static float MAX_ZOOM = 5f;
 
+    //The translation values of the canvas
+    private float translateX = 0f;
+    private float translateY = 0f;
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
@@ -270,6 +273,21 @@ public class DrawingView extends View {
         } else {
             // View Mode Handling
             //hand the event off to the gesture detector
+
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    //TODO handle the begining of the drag operation
+                    Log.i("DRAG", "Drag motion down");
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    //this is where the drag action happens
+                    Log.i("DRAG", "Drag motion move");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    //end the drag action
+                    Log.i("DRAG", "Drag motion up");
+                    break;
+            }
             detector.onTouchEvent(event);
         }
         return true;
