@@ -172,11 +172,20 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   JSON Object that is passed in with message data.
      */
-    public void sendMessage(String id, JSONObject message) throws Exception {
+    public void sendMessage(String id, JSONObject message) throws ConnectivityException {
+        if(!Globals.getInstance().isConnectedToServer()) {
+            throw new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " +
+                            message.toString());
+        }
         sendMessage(id, message.toString());
     }
-    public void sendMessage(String id, JSONArray message) throws Exception {
-
+    public void sendMessage(String id, JSONArray message) throws ConnectivityException {
+        if(!Globals.getInstance().isConnectedToServer()) {
+            throw new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " +
+                            message.toString());
+        }
         sendMessage(id, message.toString());
     }
 
@@ -185,9 +194,10 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   String that contains the message data.
      */
-    public void sendMessage(String id, String message) throws Exception {
+    public void sendMessage(String id, String message) throws ConnectivityException {
         if(!Globals.getInstance().isConnectedToServer()) {
-            throw(new Exception("Attempted to send a message without an internet connection"));
+            throw(new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " + message));
         }
         Log.v(TAG, "SENT: " + id + ": " + message);
         socket.emit(id, message);

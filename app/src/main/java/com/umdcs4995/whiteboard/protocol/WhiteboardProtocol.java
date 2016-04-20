@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.protocol;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.services.SocketService;
 
 import org.json.JSONArray;
@@ -82,8 +83,8 @@ public class WhiteboardProtocol {
         JSONArray output = DrawProtocol.generateJSON(deq);
         try {
             socketService.sendMessage(SocketService.Messages.DRAW_EVENT, output);
-        } catch (Exception e) {
-            Log.e("WhiteboardProtocol", "TODO: handle me");
+        } catch (ConnectivityException ce) {
+            Log.e("WhiteboardProtocol", "Failed to Send DrawEvents: " + ce.getMessage());
         }
     }
 
