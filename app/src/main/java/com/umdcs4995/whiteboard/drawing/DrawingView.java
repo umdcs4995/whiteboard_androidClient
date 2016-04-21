@@ -29,9 +29,9 @@ import java.util.LinkedList;
  */
 public class DrawingView extends View {
     //drawing path
-    private Path drawPath, guestPath;
+    private Path drawPath;
     //drawing and canvas paint
-    private Paint drawPaint, guestPaint, canvasPaint;
+    private Paint drawPaint, canvasPaint;
     //initial color
     private int paintColor = 0x00000000; // black
     private int lastColor;
@@ -46,6 +46,7 @@ public class DrawingView extends View {
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
     Whiteboard wb = Globals.getInstance().getWhiteboard();
+    MainActivity ma = (MainActivity) getContext();
 
 //TODO delete if not used
     //Width and the height of the canvas
@@ -99,7 +100,7 @@ public class DrawingView extends View {
                                         //Clear the screen.
                                         startNew();
                                         //Redraw all the old ones.
-                                        Globals.getInstance().getWhiteboard().repaintLineSegments(guestPath, guestPaint, drawCanvas, getThis());
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
                                     } catch (NullPointerException ex) {
                                         //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
                                         Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
@@ -152,7 +153,6 @@ public class DrawingView extends View {
         brushSize = 5;
 
         drawPath = new Path();
-        guestPath = new Path();
 
         drawPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         drawPaint.setColor(paintColor);
@@ -161,14 +161,6 @@ public class DrawingView extends View {
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        guestPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        guestPaint.setColor(paintColor);
-        guestPaint.setAntiAlias(true);
-        guestPaint.setStrokeWidth(brushSize);
-        guestPaint.setStyle(Paint.Style.STROKE);
-        guestPaint.setStrokeJoin(Paint.Join.ROUND);
-        guestPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
@@ -213,7 +205,7 @@ public class DrawingView extends View {
 
         DrawingEvent de;
 
-        MainActivity ma = (MainActivity) getContext();
+
 
         if(ma.isDrawModeEnabled()) {
             //DrawMode handling
@@ -448,7 +440,7 @@ public class DrawingView extends View {
         @Override
         public void run() {
             try {
-                ls.drawLine(false, guestPath, guestPaint, drawCanvas, view);
+                ls.drawLine(false, drawPath, drawPaint, drawCanvas, view);
             } catch(Exception e) {
                 Log.e("POLLINGRUNNABLE", "Error drawing string");
             }
