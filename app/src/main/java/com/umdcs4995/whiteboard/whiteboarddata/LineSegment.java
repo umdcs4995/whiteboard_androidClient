@@ -29,6 +29,9 @@ public class LineSegment {
     private boolean boolOnscreen;
     private boolean boolHasBeenSent;
 
+    private Paint linePaint;
+    private Path linePath;
+
     /**
      * Constructor
      * @param events The list of events that represents a line segment.
@@ -62,6 +65,14 @@ public class LineSegment {
         DrawingEvent de = drawEvents.get(0);
         if(de != null) {
             Log.v(TAG, "POPPING QUEUE: " + de.getStartTime());
+            linePath = new Path();
+            linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            linePaint.setColor(de.getColor());
+            linePaint.setAntiAlias(true);
+            linePaint.setStrokeWidth(de.getThickness());
+            linePaint.setStyle(Paint.Style.STROKE);
+            linePaint.setStrokeJoin(Paint.Join.ROUND);
+            linePaint.setStrokeCap(Paint.Cap.ROUND);
         } else {
             Log.v(TAG, "POPPING empty QUEUE");
         }
@@ -141,8 +152,6 @@ public class LineSegment {
             e = de;
             oldTouchX = oldX;
             oldTouchY = oldY;
-            this.drawPath = drawPath;
-            this.drawPaint = drawPaint;
             this.drawCanvas = drawCanvas;
             this.view = view;
         }
@@ -151,34 +160,26 @@ public class LineSegment {
         public void run() {
             float touchX = e.getxValue();
             float touchY = e.getyValue();
-            Paint tempPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            tempPaint.setColor(e.getColor());
-            tempPaint.setAntiAlias(true);
-            tempPaint.setStrokeWidth(e.getThickness());
-            tempPaint.setStyle(Paint.Style.STROKE);
-            tempPaint.setStrokeJoin(Paint.Join.ROUND);
-            tempPaint.setStrokeCap(Paint.Cap.ROUND);
-            drawPaint = tempPaint;
             switch (e.getAction()) {
                 case DrawingEvent.ACTION_DOWN:
                     // When user touches the View, move to that point from the old point.
                     // position to start drawing.
-                    drawPath.moveTo(oldTouchX, oldTouchY);
-                    drawPath.moveTo(touchX, touchY);
-                    drawCanvas.drawPath(drawPath, drawPaint);
+                    linePath.moveTo(oldTouchX, oldTouchY);
+                    linePath.moveTo(touchX, touchY);
+                    drawCanvas.drawPath(linePath, linePaint);
                     break;
                 case DrawingEvent.ACTION_MOVE:
                     // When user moves finger, draw a path from the old point to the new point
                     // along with their touch.
-                    drawPath.moveTo(oldTouchX, oldTouchY);
-                    drawPath.lineTo(touchX, touchY);
-                    drawCanvas.drawPath(drawPath, drawPaint);
+                    linePath.moveTo(oldTouchX, oldTouchY);
+                    linePath.lineTo(touchX, touchY);
+                    drawCanvas.drawPath(linePath, linePaint);
                     break;
                 case DrawingEvent.ACTION_UP:
                     // When user lifts finger, draw the path
                     // and reset it for the next draw.
-                    drawCanvas.drawPath(drawPath, drawPaint);
-                    drawPath.reset();
+                    drawCanvas.drawPath(linePath, linePaint);
+                    linePath.reset();
                     break;
                 default:
                     return;

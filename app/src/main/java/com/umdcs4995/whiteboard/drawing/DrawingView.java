@@ -29,9 +29,9 @@ import java.util.LinkedList;
  */
 public class DrawingView extends View {
     //drawing path
-    private Path drawPath, guestPath;
+    private Path drawPath;
     //drawing and canvas paint
-    private Paint drawPaint, guestPaint, canvasPaint;
+    private Paint drawPaint, canvasPaint;
     //initial color
     private int paintColor = 0x00000000; // black
     private int lastColor;
@@ -46,6 +46,7 @@ public class DrawingView extends View {
     private Boolean firstDrawEvent = true;
     private long startTime = -1;
     Whiteboard wb = Globals.getInstance().getWhiteboard();
+    MainActivity ma = (MainActivity) getContext();
 
 //TODO delete if not used
     //Width and the height of the canvas
@@ -59,12 +60,28 @@ public class DrawingView extends View {
     private float scaleFactor = 1.f;
 
     //the MAX and MIN zooms of the canvas
-    private static float MIN_ZOOM = .7f;
+    private static float MIN_ZOOM = 1.f;
     private static float MAX_ZOOM = 5f;
+
+    //Modes of the Dragging and the zoom
+    private final int NORMAL_MODE = 0;
+    private final int DRAG_MODE = 1;
+    private final int ZOOM_MODE = 2;
+
+    //holds the current code
+    private int currMode = 0;
 
     //The translation values of the canvas
     private float translateX = 0f;
     private float translateY = 0f;
+
+    //The previous Translation values of the canvas
+    private float previousTranslateX = 0f;
+    private float previousTranslateY = 0f;
+
+    //The start position of the drag and zoom
+    private float startX = 0f;
+    private float startY = 0f;
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
@@ -99,7 +116,7 @@ public class DrawingView extends View {
                                         //Clear the screen.
                                         startNew();
                                         //Redraw all the old ones.
-                                        Globals.getInstance().getWhiteboard().repaintLineSegments(guestPath, guestPaint, drawCanvas, getThis());
+                                        Globals.getInstance().getWhiteboard().repaintLineSegments(drawPath, drawPaint, drawCanvas, getThis());
                                     } catch (NullPointerException ex) {
                                         //Most likely the DrawingView.getThis() method hasn't been established.  Just handle it and wait.
                                         Log.e("DRAWINGVIEW", "Nullpointer in repaintLineSegments()");
@@ -134,7 +151,6 @@ public class DrawingView extends View {
             public boolean onScale(ScaleGestureDetector detector) {
                 scaleFactor *= detector.getScaleFactor();
                 scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
-                invalidate();
                 return true;
             }
         });
@@ -152,7 +168,6 @@ public class DrawingView extends View {
         brushSize = 5;
 
         drawPath = new Path();
-        guestPath = new Path();
 
         drawPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         drawPaint.setColor(paintColor);
@@ -161,14 +176,6 @@ public class DrawingView extends View {
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        guestPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        guestPaint.setColor(paintColor);
-        guestPaint.setAntiAlias(true);
-        guestPaint.setStrokeWidth(brushSize);
-        guestPaint.setStyle(Paint.Style.STROKE);
-        guestPaint.setStrokeJoin(Paint.Join.ROUND);
-        guestPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
@@ -184,6 +191,7 @@ public class DrawingView extends View {
         canvas.save();
         //set the scale of the canvas based on the scale factor
         canvas.scale(scaleFactor, scaleFactor);
+        canvas.translate(translateX / scaleFactor, translateY / scaleFactor);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
         canvas.restore();
@@ -206,14 +214,14 @@ public class DrawingView extends View {
             startTime = System.currentTimeMillis();
             firstDrawEvent = false;
         }
-        float touchX = event.getX() / scaleFactor;
-        float touchY = event.getY() / scaleFactor;
+        float touchX = (event.getX() - previousTranslateX) / scaleFactor ;
+        float touchY = (event.getY() - previousTranslateY) / scaleFactor ;
 
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
 
-        MainActivity ma = (MainActivity) getContext();
+
 
         if(ma.isDrawModeEnabled()) {
             //DrawMode handling
@@ -284,22 +292,48 @@ public class DrawingView extends View {
             // View Mode Handling
             //hand the event off to the gesture detector
 
-            switch (event.getAction()){
+            switch (event.getAction() & MotionEvent.ACTION_MASK){
                 case MotionEvent.ACTION_DOWN:
-                    //TODO handle the begining of the drag operation
+                    //TODO handle the beginning of the drag operation
+                    //first finger on the screen
+                    currMode = DRAG_MODE;
+                    //sets the first position for the translation
+                    startX = event.getX() - previousTranslateX;
+                    startY = event.getY() - previousTranslateY;
+                    //log event
                     Log.i("DRAG", "Drag motion down");
                     break;
                 case MotionEvent.ACTION_MOVE:
                     //this is where the drag action happens
+                    //first finger moves on the screen
+                    translateX = event.getX() - startX;
+                    translateY = event.getY() - startY;
                     Log.i("DRAG", "Drag motion move");
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    //This event fires when a second finger is pressed onto the screen
+                    currMode = ZOOM_MODE;
                     break;
                 case MotionEvent.ACTION_UP:
                     //end the drag action
+                    currMode = NORMAL_MODE;
+                    previousTranslateX = translateX;
+                    previousTranslateY = translateY;
                     Log.i("DRAG", "Drag motion up");
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    //second finger leaves the screen
+                    currMode = DRAG_MODE;
+                    previousTranslateX = translateX;
+                    previousTranslateY = translateY;
                     break;
             }
             detector.onTouchEvent(event);
+            if ((currMode == DRAG_MODE && scaleFactor != 1f) || currMode == ZOOM_MODE) {
+                invalidate();
+            }
         }
+
         return true;
     }
 
@@ -448,7 +482,7 @@ public class DrawingView extends View {
         @Override
         public void run() {
             try {
-                ls.drawLine(false, guestPath, guestPaint, drawCanvas, view);
+                ls.drawLine(false, drawPath, drawPaint, drawCanvas, view);
             } catch(Exception e) {
                 Log.e("POLLINGRUNNABLE", "Error drawing string");
             }
