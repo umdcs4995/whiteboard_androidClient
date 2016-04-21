@@ -33,6 +33,19 @@
             android:layout_below="@id/textView_contactlist_name"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageButton_contactlist_delete"
+            android:src="@drawable/delete"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:layout_alignParentRight="true"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical"/>
     </RelativeLayout>
+
+
 
 </LinearLayout>

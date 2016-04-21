@@ -1,10 +1,15 @@
 package com.umdcs4995.whiteboard.uiElements;
 
+import android.annotation.TargetApi;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.app.DialogFragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -46,10 +52,11 @@ import io.socket.global.Global;
  * Activity for handling the list of whiteboards that the user can join
  */
 
-public class JoinBoardFragment extends Fragment {
+public class JoinBoardFragment extends Fragment implements DialogClickListener{
 
     ContactList whiteboardList = new ContactList();
     private SocketService socketService = Globals.getInstance().getSocketService();
+    private int mStackLevel = 0;
 
     /**
      * Called on creation of the fragment.
@@ -89,7 +96,7 @@ public class JoinBoardFragment extends Fragment {
                         try {
                             socketService.sendMessage(SocketService.Messages.CREATE_WHITEBOARD, addWbRequest);
                         } catch (Exception e) {
-                            Log.e("JoinBoard", "Not connected to server");
+                            e.printStackTrace();
                         }
 
                         socketService.addListener(SocketService.Messages.CREATE_WHITEBOARD, new Emitter.Listener() {
@@ -157,6 +164,7 @@ public class JoinBoardFragment extends Fragment {
     /**
      * Creates the contact list view and adapters.
      */
+    @TargetApi(Build.VERSION_CODES.M)
     private void setupWhiteboardListView() {
         //First get some strings
         ContactWb[] people = new ContactWb[whiteboardList.getSize()];
@@ -174,9 +182,19 @@ public class JoinBoardFragment extends Fragment {
             ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
             listView.setAdapter(customAdapter);
             listView.setOnItemClickListener(makeWhiteboardListListener());
+
         } catch (NullPointerException ex) {
             Log.i("JOINBOARDFRAGMENT", ex.getMessage());
         }
+
+        ImageView deleteButton = (ImageView) getView().findViewById(R.id.imageButton_contactlist_delete);
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteDialog();
+            }
+        });
     }
 
     /**
@@ -231,13 +249,52 @@ public class JoinBoardFragment extends Fragment {
                 try {
                     socket.sendMessage(SocketService.Messages.JOIN_WHITEBOARD, joinWbRequest);
                 } catch (Exception e) {
-                    Log.e("CreateBoard", "Not connected to server");
+                    e.printStackTrace();
                 }
 
             }
         };
 
         return l;
+    }
+
+    /**
+     * Shows confirmation dialog for whiteboard deletion.
+     * FragmentTransaction adds/removes dialog from the stack.
+     */
+    public void showDeleteDialog() {
+        mStackLevel++;
+
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("delete dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        DeleteBoardFragment frag = DeleteBoardFragment.newInstance(mStackLevel);
+        frag.setTargetFragment(this, 0);
+        frag.setCancelable(false);
+        frag.show(getActivity().getSupportFragmentManager(), "delete dialog");
+    }
+
+    /**
+     * Completes action for "yes" clicked on delete board dialog.
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onPositiveClick() {
+        Toast.makeText(getContext(), "Whiteboard deleted", Toast.LENGTH_SHORT).show();
+        Log.i("DeleteBoardDialog", "'Yes' clicked.");
+    }
+
+    /**
+     * Completes action for "no" clicked on delete board dialog.
+     */
+    @Override
+    public void onNegativeClick() {
+        Toast.makeText(getContext(), "Whiteboard not deleted", Toast.LENGTH_SHORT).show();
+        Log.i("DeleteBoardDialog", "'No' clicked.");
     }
 
     /**
@@ -252,6 +309,8 @@ public class JoinBoardFragment extends Fragment {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Globals.getInstance().getServerAddress() + "/whiteboards.json";
+        Logger.getAnonymousLogger().info(url);
+
 
         // Request a string response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -270,6 +329,7 @@ public class JoinBoardFragment extends Fragment {
 
                             } catch (JSONException e) {
                                 getActivity().runOnUiThread(new Runnable() {
+                                    @TargetApi(Build.VERSION_CODES.M)
                                     @Override
                                     public void run() {
                                         Toast.makeText(getContext(), "Error parsing whiteboards.json from server", Toast.LENGTH_LONG);
@@ -283,6 +343,7 @@ public class JoinBoardFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 getActivity().runOnUiThread(new Runnable() {
+                    @TargetApi(Build.VERSION_CODES.M)
                     @Override
                     public void run() {
                         Toast.makeText(getContext(), "Error retrieving whiteboards.json from server", Toast.LENGTH_LONG);

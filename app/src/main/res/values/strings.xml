@@ -20,6 +20,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="dialog_delete_whiteboard">Are you sure you wish to delete this whiteboard?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <string name="dialog_new_whiteboard_title">Create New Whiteboard</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
