@@ -58,7 +58,7 @@ public class DrawingView extends View {
     private float scaleFactor = 1.f;
 
     //the MAX and MIN zooms of the canvas
-    private static float MIN_ZOOM = .7f;
+    private static float MIN_ZOOM = 1.f;
     private static float MAX_ZOOM = 5f;
 
     //The translation values of the canvas
