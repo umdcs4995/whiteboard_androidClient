@@ -1,11 +1,17 @@
 package com.umdcs4995.whiteboard.whiteboarddata;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.umdcs4995.whiteboard.AppConstants;
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 
@@ -120,6 +126,7 @@ public class LineSegment {
         }
 
         boolOnscreen = true;
+        broadcastLinePaintComplete(Globals.getInstance().getGlobalContext());
 
     }
 
@@ -241,6 +248,15 @@ public class LineSegment {
      */
     public LinkedList<DrawingEvent> getDrawEvents() {
         return drawEvents;
+    }
+
+    /**
+     * Broadcast to the app informing of the completion of a linepaint.
+     */
+    public void broadcastLinePaintComplete(Context context) {
+        Log.i("LineSegment.java", "Broadcasting line painted message.");
+        Intent intent = new Intent(AppConstants.BM_LINEPAINTED);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
 

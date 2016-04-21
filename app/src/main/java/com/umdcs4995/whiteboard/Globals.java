@@ -269,6 +269,30 @@ public class Globals {
         return lastCheckSuccessful;
     }
 
+    /**
+     * Variable holds the active number of painting threads currently open.  This is needed to
+     * reduce thread overload when receiving a large number of paint segments.
+     */
+    private int activePaintCount = 0;
+
+    /**
+     * Method increments the activePaintCount.  This should be called each time a LineSegment.draw
+     * method is called.
+     */
+    public void incrementPaintCount() {
+        activePaintCount++;
+        Log.v("GLOBALS", "INCR,Active Paint Sessions: " + activePaintCount);
+    }
+
+    /**
+     * Method decrements the activePaintCount.  This should be called each time the Whiteboard...
+     * DrawFragments receives a message that a line has been completed.
+     */
+    public void decrementPaintCount() {
+        activePaintCount--;
+        Log.v("GLOBALS", "DECR,Active Paint Sessions: " + activePaintCount);
+    }
+
 
 
     //=============Getters and Setters====================
@@ -278,6 +302,10 @@ public class Globals {
 
     public void setClientUser(GoogleUser gu) {
         clientUser = gu;
+    }
+
+    public int getActivePaintCount() {
+        return activePaintCount;
     }
 
 

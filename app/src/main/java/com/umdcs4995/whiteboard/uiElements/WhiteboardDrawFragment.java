@@ -99,6 +99,9 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             } catch(NullPointerException e) {
                 Log.e("DRAWINGVIEW", "Catch Nullpointer processing Whiteboard.repaintLineSegments()");
                 e.printStackTrace();
+            } catch(Exception e) {
+                Log.e("WHITEBOARDDRAWFRAGMENT", "Exception: " + e.toString());
+                e.printStackTrace();
             }
         }
     };
@@ -131,6 +134,18 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 wb.resendUnsentFragments();
             }
 
+        }
+    };
+
+    /**
+     * Receiver for line painting completion notifications.  Note one of these should be received
+     * for each line.
+     */
+    private BroadcastReceiver bLinePaintCompleted = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("DRAWINGVIEW", "Received line paint complete broadcast");
+            Globals.getInstance().decrementPaintCount();
         }
     };
 
@@ -253,6 +268,9 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         //Register the intent receiver so that the view updates upon receiving.
         lbm.registerReceiver(brReconnectionReceiver,
                 new IntentFilter(AppConstants.BM_RECONNECTED));
+
+        lbm.registerReceiver(bLinePaintCompleted,
+                new IntentFilter(AppConstants.BM_LINEPAINTED));
 
     }
 

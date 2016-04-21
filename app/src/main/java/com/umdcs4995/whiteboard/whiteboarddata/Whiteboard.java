@@ -5,15 +5,18 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.drawing.DrawingView;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
 
+import java.net.URL;
 import java.util.LinkedList;
 
 /**
@@ -69,13 +72,45 @@ public class Whiteboard {
                                     final DrawingView view) {
 
         for (int i = 0; i < segments.size(); i++) {
-            try {
-                LineSegment segment = segments.get(i);
-                if(!segment.isOnscreen()) segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
-            } catch (InterruptedException e) {
-                Log.e("WHITEBOARD.java", "Error drawing line");
+            LineSegment ls = segments.get(i);
+            if (!ls.isOnscreen()) {
+                if (Globals.getInstance().getActivePaintCount() <= 10) {
+                    Globals.getInstance().incrementPaintCount();
+                    Object[] params = new Object[5];
+                    params[0] = ls;
+                    params[1] = drawPath;
+                    params[2] = drawPaint;
+                    params[3] = drawCanvas;
+                    params[4] = view;
+                    new PrintLineTask().execute(params);
+                }
             }
         }
+
+//            if(Globals.getInstance().getActivePaintCount() >= AppConstants.MAX_REPAINT_COUNT) {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            //Increment the paint count to tell the Globals that we are painting a line.
+//            //Helps with thread overload.
+//            Globals.getInstance().incrementPaintCount();
+//
+//            try {
+//                while(Globals.getInstance().getActivePaintCount() >= 10) {
+//                    //Infinite loop until queue has been reduced.
+//                    Thread.sleep(10);
+//                }
+//            final LineSegment segment = segments.get(i);
+//            if(!segment.isOnscreen()) segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+//
+//            } catch (InterruptedException e) {
+//                Log.e("WHITEBOARD.java", "Error drawing line");
+//            }
+//        }
 
     }
 
@@ -135,4 +170,53 @@ public class Whiteboard {
             }
         }
     }
+
+
+    /**
+     * Class for an ASync task which handles printing all the lines in the background while the user
+     * can do other things.
+     * Note: the order to pass parameters is:
+     *     LineSegment to draw
+     *     drawPath
+     *     drawPaint
+     *     drawCanvas
+     *     view
+     */
+    private class PrintLineTask extends AsyncTask<Object, Void, Void> {
+
+         Path drawPath;
+         Paint drawPaint;
+        Canvas drawCanvas;
+        DrawingView view;
+
+        LineSegment segment;
+
+
+        @Override
+        protected Void doInBackground(Object... params) {
+            drawPath = (Path) params[1];
+            drawPaint = (Paint) params[2];
+            drawCanvas = (Canvas) params[3];
+            view = (DrawingView) params[4];
+
+            segment =(LineSegment) params[0];
+
+
+
+            return null;
+        }
+
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            try {
+                segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
