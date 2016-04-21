@@ -172,11 +172,20 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   JSON Object that is passed in with message data.
      */
-    public void sendMessage(String id, JSONObject message) throws Exception {
+    public void sendMessage(String id, JSONObject message) throws ConnectivityException {
+        if(!Globals.getInstance().isConnectedToServer()) {
+            throw new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " +
+                            message.toString());
+        }
         sendMessage(id, message.toString());
     }
-    public void sendMessage(String id, JSONArray message) throws Exception {
-
+    public void sendMessage(String id, JSONArray message) throws ConnectivityException {
+        if(!Globals.getInstance().isConnectedToServer()) {
+            throw new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " +
+                            message.toString());
+        }
         sendMessage(id, message.toString());
     }
 
@@ -185,9 +194,10 @@ public class SocketService extends Service {
      * @param id        String that contains the key for the server function
      * @param message   String that contains the message data.
      */
-    public void sendMessage(String id, String message) throws Exception {
+    public void sendMessage(String id, String message) throws ConnectivityException {
         if(!Globals.getInstance().isConnectedToServer()) {
-            throw(new Exception("Attempted to send a message without an internet connection"));
+            throw(new ConnectivityException(ConnectivityException.TYPE_NODEVICECONNECTIVITY,
+                    "Attempted to send a message without an internet connection: " + message));
         }
         Log.v(TAG, "SENT: " + id + ": " + message);
         socket.emit(id, message);
@@ -201,5 +211,32 @@ public class SocketService extends Service {
         public SocketService getService() {
             return SocketService.this;
         }
+    }
+
+
+    //Instance of a runnable used to reconnect the client if connection is lost.
+    private ReconnectRunnable reconnectRunnable = new ReconnectRunnable();
+    /**
+     * Method is called to start reconnection.
+     * @return
+     */
+    public synchronized void startReconnecting() {
+        Log.i("Globals", "StartReconnecting");
+        if(!currentlyReconnecting) {
+            currentlyReconnecting = true;
+            reconnectRunnable.reset();
+            Thread t = new Thread(reconnectRunnable);
+            t.start();
+        }
+    }
+
+    boolean currentlyReconnecting = false;
+    /**
+     * Sets the connecting flag for the service.  This is needed to make sure the service
+     * doesn't launch more than one reconnecting thread.
+     * @param reconnecting
+     */
+    public void setCurrentlyReconnecting(boolean reconnecting) {
+        currentlyReconnecting = reconnecting;
     }
 }

@@ -18,6 +18,7 @@ import android.view.View;
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.whiteboarddata.LineSegment;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
@@ -257,10 +258,19 @@ public class DrawingView extends View {
                             brushSize
                     );
                     currentLineList.add(de);
-                    protocol.outDrawProtocol(currentLineList);
                     LineSegment ls = new LineSegment(wb.getLineSegmentCount(), currentLineList);
                     wb.addSegmentToList(ls);
-                    ls.lineIsOnScreen();
+
+                    //Send the line out to the server.
+                    try {
+                        protocol.outDrawProtocol(currentLineList);
+                        ls.lineSent();
+                    } catch (ConnectivityException ce) {
+                        //Here we can safely do nothing.  The line will not be set as sent and
+                        //reconnection is handled elsewhere, in ConnectivityException.
+                    }
+
+
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
                     firstDrawEvent = true; //<- Added to reset the start time on the next stroke.

@@ -311,6 +311,7 @@ public abstract class DrawProtocol {
         Whiteboard wb = Globals.getInstance().getWhiteboard();
         int lsCount = wb.getLineSegmentCount();
         LineSegment ls = new LineSegment(lsCount, list);
+        ls.lineSent();
         wb.addSegmentToList(ls);
         wb.broadcastRepaintRequest(Globals.getInstance().getGlobalContext());
 

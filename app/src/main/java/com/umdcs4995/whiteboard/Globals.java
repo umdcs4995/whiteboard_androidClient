@@ -11,6 +11,7 @@ import android.support.v7.util.SortedList;
 import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEventQueue;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.services.ReconnectRunnable;
 import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
@@ -269,6 +270,7 @@ public class Globals {
     }
 
 
+
     //=============Getters and Setters====================
     public GoogleUser getClientUser() {
         return clientUser;
@@ -277,5 +279,7 @@ public class Globals {
     public void setClientUser(GoogleUser gu) {
         clientUser = gu;
     }
+
+
 
 }

@@ -126,6 +126,10 @@ public class GoogleUser {
      * @return
      */
     public Bitmap getRoundedProfileImage(int radius) {
+        if(profilePhoto == null) {
+            //A profile image hasn't been saved.  Return null
+            return null;
+        }
         Bitmap bmp = profilePhoto;
         Bitmap sbmp;
 

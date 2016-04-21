@@ -1,7 +1,10 @@
 package com.umdcs4995.whiteboard;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
@@ -15,6 +18,7 @@ import android.support.design.widget.NavigationView.OnNavigationItemSelectedList
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -64,6 +68,7 @@ import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListen
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,6 +195,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         tvNavHeaderEmail = (TextView) headerView.findViewById(R.id.navbar_email);
         ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
 
+
+
+
     }
 
     @Override
@@ -302,20 +310,23 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
      */
     private void changeMainFragment(Fragment fragment) {
 
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
 
+        if(!fragment.getClass().equals(whiteboardDrawFragment.getClass())) {
+            //this will clear the back stack and displays no animation on the screen
+            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        //Check if Fragment is a different type than the current one and if so, add it to the
-        //back stack.
-        Class c = currentFragment.getClass();
-        if(fragment.getClass() != c || c == WhiteboardDrawFragment.class ) {
             transaction.addToBackStack(fragment.toString());
         }
 
-        currentFragment = fragment;
+
         transaction.commit();
+
+
+        currentFragment = fragment;
     }
 
     /*
@@ -594,13 +605,21 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         if(gu.isLoggedIn()) {
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
-            ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
+            Bitmap b = gu.getRoundedProfileImage(70);
+            if(b != null) {
+                ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
+            } else {
+                ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
+            }
+
         } else {
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");
             ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
         }
     }
+
+
 
 }
 

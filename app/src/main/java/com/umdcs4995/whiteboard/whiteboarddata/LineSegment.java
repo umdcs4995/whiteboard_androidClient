@@ -23,10 +23,11 @@ public class LineSegment {
     private String TAG = "LINESEGMENT";
     private int ordianlID;
     private boolean LOGGING = false;
-    LinkedList<DrawingEvent> drawEvents;
+    private LinkedList<DrawingEvent> drawEvents;
 
     private boolean hasDrawnLive;
     private boolean boolOnscreen;
+    private boolean boolHasBeenSent;
 
     /**
      * Constructor
@@ -36,6 +37,7 @@ public class LineSegment {
         this.ordianlID = ordianlID;
         hasDrawnLive = false;
         drawEvents = events;
+        boolHasBeenSent = false;
     }
 
     /**
@@ -212,6 +214,32 @@ public class LineSegment {
      */
     public void lineIsOnScreen() {
         this.boolOnscreen = true;
+    }
+
+    /**
+     * Returns true if the line has been successfully sent to the server by the service.
+     * Returns false if it has not.  Needed for client to server line transmission reliability.
+     */
+    public boolean hasBeenSent() {
+        return boolHasBeenSent;
+    }
+
+    /**
+     * The service change this to true confirm here if the line has been sent over the network.
+     * Note that once the line has been sent there should be no reason to unsend it.  Also, if
+     * the line was received from the network, this should be called so a duplicate won't be
+     * sent back if the client loses connectivity.
+     */
+    public void lineSent() {
+        boolHasBeenSent = true;
+    }
+
+    /**
+     * Method returns an instance to the line segments list of DrawEvents.  This is needed
+     * because the protocol currently does not respond to line segments.
+     */
+    public LinkedList<DrawingEvent> getDrawEvents() {
+        return drawEvents;
     }
 }
 
