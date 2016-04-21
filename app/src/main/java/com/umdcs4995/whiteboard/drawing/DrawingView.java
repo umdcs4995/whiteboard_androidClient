@@ -264,7 +264,7 @@ public class DrawingView extends View {
                     //Send the line out to the server.
                     try {
                         protocol.outDrawProtocol(currentLineList);
-                        ls.lineIsOnScreen();
+                        ls.lineSent();
                     } catch (ConnectivityException ce) {
                         //Here we can safely do nothing.  The line will not be set as sent and
                         //reconnection is handled elsewhere, in ConnectivityException.
