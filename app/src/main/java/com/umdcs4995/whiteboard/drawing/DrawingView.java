@@ -61,14 +61,14 @@ public class DrawingView extends View {
 
     //the MAX and MIN zooms of the canvas
     private static float MIN_ZOOM = 1.f;
-    private static float MAX_ZOOM = 5f;
+    private static float MAX_ZOOM = 5.f;
 
-    //Modes of the Dragging and the zoom
+    //States of the Dragging and the zoom referred to as mode
     private final int NORMAL_MODE = 0;
     private final int DRAG_MODE = 1;
     private final int ZOOM_MODE = 2;
 
-    //holds the current code
+    //holds the current state of the drawing
     private int currMode = 0;
 
     //The translation values of the canvas
@@ -191,11 +191,27 @@ public class DrawingView extends View {
         canvas.save();
         //set the scale of the canvas based on the scale factor
         canvas.scale(scaleFactor, scaleFactor);
+        //Left Bound of the screen
+        if((translateX * -1) < 0) {
+            translateX = 0;
+        }
+        //Right Bound
+        else if((translateX * -1) > (scaleFactor - 1) * drawCanvas.getWidth()) {
+            translateX = (1 - scaleFactor) * drawCanvas.getWidth();
+        }
+        //Top Bound
+        if(translateY * -1 < 0) {
+            translateY = 0;
+        }
+        //Bottom Bound
+        else if(translateY * ((float) -1) > ((scaleFactor -1 ) * drawCanvas.getHeight())){
+            translateY = (1 - scaleFactor) * drawCanvas.getHeight();
+        }
+        //translates the canvas
         canvas.translate(translateX / scaleFactor, translateY / scaleFactor);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
         canvas.restore();
-
     }
 
     /**
@@ -220,8 +236,6 @@ public class DrawingView extends View {
         Long eventTime = System.currentTimeMillis();
 
         DrawingEvent de;
-
-
 
         if(ma.isDrawModeEnabled()) {
             //DrawMode handling
@@ -308,6 +322,22 @@ public class DrawingView extends View {
                     //first finger moves on the screen
                     translateX = event.getX() - startX;
                     translateY = event.getY() - startY;
+                    //Left Bound of the screen
+                    if((translateX * -1) < 0) {
+                        translateX = 0;
+                    }
+                    //Right Bound
+                    else if((translateX * -1) > (scaleFactor - 1) * drawCanvas.getWidth()) {
+                        translateX = (1 - scaleFactor) * drawCanvas.getWidth();
+                    }
+                    //Top Bound
+                    if(translateY * -1 < 0) {
+                        translateY = 0;
+                    }
+                    //Bottom Bound
+                    else if(translateY * ((float) -1) > ((scaleFactor -1 ) * drawCanvas.getHeight())){
+                        translateY = (1 - scaleFactor) * drawCanvas.getHeight();
+                    }
                     Log.i("DRAG", "Drag motion move");
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
