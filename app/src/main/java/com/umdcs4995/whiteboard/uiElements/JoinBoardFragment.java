@@ -52,7 +52,7 @@ import io.socket.global.Global;
  * Activity for handling the list of whiteboards that the user can join
  */
 
-public class JoinBoardFragment extends Fragment implements DialogClickListener{
+public class JoinBoardFragment extends Fragment {
 
     ContactList whiteboardList = new ContactList();
     private SocketService socketService = Globals.getInstance().getSocketService();
@@ -186,15 +186,6 @@ public class JoinBoardFragment extends Fragment implements DialogClickListener{
         } catch (NullPointerException ex) {
             Log.i("JOINBOARDFRAGMENT", ex.getMessage());
         }
-
-        ImageView deleteButton = (ImageView) getView().findViewById(R.id.imageButton_contactlist_delete);
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeleteDialog();
-            }
-        });
     }
 
     /**
@@ -256,45 +247,6 @@ public class JoinBoardFragment extends Fragment implements DialogClickListener{
         };
 
         return l;
-    }
-
-    /**
-     * Shows confirmation dialog for whiteboard deletion.
-     * FragmentTransaction adds/removes dialog from the stack.
-     */
-    public void showDeleteDialog() {
-        mStackLevel++;
-
-        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("delete dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        DeleteBoardFragment frag = DeleteBoardFragment.newInstance(mStackLevel);
-        frag.setTargetFragment(this, 0);
-        frag.setCancelable(false);
-        frag.show(getActivity().getSupportFragmentManager(), "delete dialog");
-    }
-
-    /**
-     * Completes action for "yes" clicked on delete board dialog.
-     */
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onPositiveClick() {
-        Toast.makeText(getContext(), "Whiteboard deleted", Toast.LENGTH_SHORT).show();
-        Log.i("DeleteBoardDialog", "'Yes' clicked.");
-    }
-
-    /**
-     * Completes action for "no" clicked on delete board dialog.
-     */
-    @Override
-    public void onNegativeClick() {
-        Toast.makeText(getContext(), "Whiteboard not deleted", Toast.LENGTH_SHORT).show();
-        Log.i("DeleteBoardDialog", "'No' clicked.");
     }
 
     /**
