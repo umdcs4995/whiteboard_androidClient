@@ -62,9 +62,25 @@ public class DrawingView extends View {
     private static float MIN_ZOOM = 1.f;
     private static float MAX_ZOOM = 5f;
 
+    //Modes of the Dragging and the zoom
+    private final int NORMAL_MODE = 0;
+    private final int DRAG_MODE = 1;
+    private final int ZOOM_MODE = 2;
+
+    //holds the current code
+    private int currMode = 0;
+
     //The translation values of the canvas
     private float translateX = 0f;
     private float translateY = 0f;
+
+    //The previous Translation values of the canvas
+    private float previousTranslateX = 0f;
+    private float previousTranslateY = 0f;
+
+    //The start position of the drag and zoom
+    private float startX = 0f;
+    private float startY = 0f;
 
     //Network interaction member items.
     private DrawingEventQueue drawingEventQueue;
@@ -134,7 +150,6 @@ public class DrawingView extends View {
             public boolean onScale(ScaleGestureDetector detector) {
                 scaleFactor *= detector.getScaleFactor();
                 scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
-                invalidate();
                 return true;
             }
         });
@@ -184,6 +199,7 @@ public class DrawingView extends View {
         canvas.save();
         //set the scale of the canvas based on the scale factor
         canvas.scale(scaleFactor, scaleFactor);
+        canvas.translate(translateX / scaleFactor, translateY / scaleFactor);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
         canvas.restore();
@@ -206,8 +222,8 @@ public class DrawingView extends View {
             startTime = System.currentTimeMillis();
             firstDrawEvent = false;
         }
-        float touchX = event.getX() / scaleFactor;
-        float touchY = event.getY() / scaleFactor;
+        float touchX = (event.getX() - previousTranslateX) / scaleFactor ;
+        float touchY = (event.getY() - previousTranslateY) / scaleFactor ;
 
         Long eventTime = System.currentTimeMillis();
 
@@ -284,22 +300,48 @@ public class DrawingView extends View {
             // View Mode Handling
             //hand the event off to the gesture detector
 
-            switch (event.getAction()){
+            switch (event.getAction() & MotionEvent.ACTION_MASK){
                 case MotionEvent.ACTION_DOWN:
-                    //TODO handle the begining of the drag operation
+                    //TODO handle the beginning of the drag operation
+                    //first finger on the screen
+                    currMode = DRAG_MODE;
+                    //sets the first position for the translation
+                    startX = event.getX() - previousTranslateX;
+                    startY = event.getY() - previousTranslateY;
+                    //log event
                     Log.i("DRAG", "Drag motion down");
                     break;
                 case MotionEvent.ACTION_MOVE:
                     //this is where the drag action happens
+                    //first finger moves on the screen
+                    translateX = event.getX() - startX;
+                    translateY = event.getY() - startY;
                     Log.i("DRAG", "Drag motion move");
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    //This event fires when a second finger is pressed onto the screen
+                    currMode = ZOOM_MODE;
                     break;
                 case MotionEvent.ACTION_UP:
                     //end the drag action
+                    currMode = NORMAL_MODE;
+                    previousTranslateX = translateX;
+                    previousTranslateY = translateY;
                     Log.i("DRAG", "Drag motion up");
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    //second finger leaves the screen
+                    currMode = DRAG_MODE;
+                    previousTranslateX = translateX;
+                    previousTranslateY = translateY;
                     break;
             }
             detector.onTouchEvent(event);
+            if ((currMode == DRAG_MODE && scaleFactor != 1f) || currMode == ZOOM_MODE) {
+                invalidate();
+            }
         }
+
         return true;
     }
 
