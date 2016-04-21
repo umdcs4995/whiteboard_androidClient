@@ -310,20 +310,23 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
      */
     private void changeMainFragment(Fragment fragment) {
 
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.mainFrame, fragment);
 
+        if(!fragment.getClass().equals(whiteboardDrawFragment.getClass())) {
+            //this will clear the back stack and displays no animation on the screen
+            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        //Check if Fragment is a different type than the current one and if so, add it to the
-        //back stack.
-        Class c = currentFragment.getClass();
-        if(fragment.getClass() != c || c == WhiteboardDrawFragment.class ) {
             transaction.addToBackStack(fragment.toString());
         }
 
-        currentFragment = fragment;
+
         transaction.commit();
+
+
+        currentFragment = fragment;
     }
 
     /*
