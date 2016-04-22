@@ -96,5 +96,5 @@ Put your name and email/website here! Leave a blank line between names.
 
 [Mitchell Rysavy](http://d.umn.edu/~rysau001) ([rysau001@d.umn.edu](mailto:rysau001@d.umn.edu))
 
-[Laura J. Krebs]([krebs148@d.umn.edu](mailto:krebs148@d.umn.edu))
+Laura J. Krebs  ([krebs148@d.umn.edu](mailto:krebs148@d.umn.edu))
 
