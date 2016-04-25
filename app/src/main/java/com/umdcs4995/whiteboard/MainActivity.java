@@ -20,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -189,17 +190,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         /**
          *Hides or makes visible the draw components and toolbar
          */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setImageDrawable(ContextCompat.getDrawable(this.getApplicationContext(), R.drawable.ic_viewpage));
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                whiteboardDrawFragment.fabHideMenu();
+                whiteboardDrawFragment.fabHideMenu(fab);
                 //Statement used to set toolbars visibility
-                if (toolbar.getVisibility() == View.GONE) {
-                    toolbar.setVisibility(View.VISIBLE);
-                } else {
-                    toolbar.setVisibility(View.GONE);
-                }
+
             }
         });
 

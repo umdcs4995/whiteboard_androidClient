@@ -22,7 +22,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -485,28 +487,30 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      * Currently tied to the fab button this function hides or un-hides the toolbar
      * Both the top / side drawing menus are shown or hidden when this function is called
      */
-    public void fabHideMenu(){
+    public void fabHideMenu(FloatingActionButton fab){
         //set all the components to Visible or Gone
         if (newBtn.getVisibility() == View.GONE) {
-                setDrawMode(true);
-                undoBtn.setVisibility(View.VISIBLE);
-                newBtn.setVisibility(View.VISIBLE);
-                eraseBtn.setVisibility(View.VISIBLE);
-                drawBtn.setVisibility(View.VISIBLE);
-                saveBtn.setVisibility(View.VISIBLE);
-                c1.setVisibility(View.VISIBLE);
-                c2.setVisibility(View.VISIBLE);
-                c3.setVisibility(View.VISIBLE);
-                c4.setVisibility(View.VISIBLE);
-                c5.setVisibility(View.VISIBLE);
-                c6.setVisibility(View.VISIBLE);
-                c7.setVisibility(View.VISIBLE);
-                c8.setVisibility(View.VISIBLE);
-                c9.setVisibility(View.VISIBLE);
-                c10.setVisibility(View.VISIBLE);
-                c11.setVisibility(View.VISIBLE);
-                c12.setVisibility(View.VISIBLE);
+            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_viewpage));
+            setDrawMode(true);
+            undoBtn.setVisibility(View.VISIBLE);
+            newBtn.setVisibility(View.VISIBLE);
+            eraseBtn.setVisibility(View.VISIBLE);
+            drawBtn.setVisibility(View.VISIBLE);
+            saveBtn.setVisibility(View.VISIBLE);
+            c1.setVisibility(View.VISIBLE);
+            c2.setVisibility(View.VISIBLE);
+            c3.setVisibility(View.VISIBLE);
+            c4.setVisibility(View.VISIBLE);
+            c5.setVisibility(View.VISIBLE);
+            c6.setVisibility(View.VISIBLE);
+            c7.setVisibility(View.VISIBLE);
+            c8.setVisibility(View.VISIBLE);
+            c9.setVisibility(View.VISIBLE);
+            c10.setVisibility(View.VISIBLE);
+            c11.setVisibility(View.VISIBLE);
+            c12.setVisibility(View.VISIBLE);
         } else {
+            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_editpen));
             setDrawMode(false);
             undoBtn.setVisibility(View.GONE);
             newBtn.setVisibility(View.GONE);
