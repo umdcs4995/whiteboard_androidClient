@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -652,6 +653,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
             Bitmap b = gu.getRoundedProfileImage(70);
+            ivProfilePhoto.setVisibility(View.INVISIBLE);
             if(b != null) {
                 ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
             } else {
@@ -662,6 +664,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");
             ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
+            ivProfilePhoto.setVisibility(View.INVISIBLE);
         }
     }
 
