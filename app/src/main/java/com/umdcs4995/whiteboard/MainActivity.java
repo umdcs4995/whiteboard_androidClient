@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                             Globals.getInstance().getSocketService().startReconnecting();
                         }
                     });
+            snackbar.setActionTextColor(getResources().getColor(R.color.whiteboardBrightBlue));
 
             snackbar.show();
         }
