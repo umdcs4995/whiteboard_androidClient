@@ -14,6 +14,8 @@ import com.umdcs4995.whiteboard.Globals;
  */
 public class ReconnectRunnable implements Runnable {
     private final String TAG = "ReconnectRunnable";
+    private final int OPENDELAY = 2000;
+    private final int LONGDELAY = 10000;
 
     //flag used for debugging
     private boolean debugging = true;
@@ -25,7 +27,7 @@ public class ReconnectRunnable implements Runnable {
     private boolean running = false;
 
     //the default delay time for the first attempt to reconnect.
-    private int delay = 2000;
+    private int delay = OPENDELAY;
 
     //the number of attempts the client has made to reconnect.
     private int attempts = 1;
@@ -50,6 +52,10 @@ public class ReconnectRunnable implements Runnable {
                     onReconnect();
                 } else {
                     //Connection not established, increments the attempts.
+                    if(attempts >= 6) {
+                        //Here, we up the delay to save on battery and CPU usage.
+                        delay = LONGDELAY;
+                    }
                     attempts++;
                 }
             } catch(InterruptedException ie ) {
@@ -84,6 +90,7 @@ public class ReconnectRunnable implements Runnable {
      */
     public void reset() {
         connected = false;
+        delay = OPENDELAY;
         attempts = 1;
     }
 
