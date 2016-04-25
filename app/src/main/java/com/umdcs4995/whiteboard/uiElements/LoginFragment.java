@@ -90,6 +90,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private GoogleSignInOptions gso;
     private GoogleSignInAccount acct;
 
+    private String alias;
     private SignInButton signInButton;
 
     /* Keys for persisting instance variables in savedInstanceState */
@@ -412,6 +413,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         googleApiClient.connect();
 
         // Show a message to the user that we are signing in.
+        Log.d(TAG, "Enter Username Stuff Here!!!!");
         statusTextView.setText(R.string.signing_in);
         Log.d(TAG, "In sign in clicked");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
