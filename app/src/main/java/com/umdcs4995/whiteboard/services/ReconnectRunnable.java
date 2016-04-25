@@ -3,6 +3,7 @@ package com.umdcs4995.whiteboard.services;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.umdcs4995.whiteboard.AppConstants;
 import com.umdcs4995.whiteboard.Globals;
@@ -15,16 +16,10 @@ import com.umdcs4995.whiteboard.Globals;
 public class ReconnectRunnable implements Runnable {
     private final String TAG = "ReconnectRunnable";
     private final int OPENDELAY = 2000;
-    private final int LONGDELAY = 10000;
-
-    //flag used for debugging
-    private boolean debugging = true;
+    private final int MAXATTEMPTS = 6;
 
     //flag to check for connection.
     private boolean connected = false;
-
-    //flag to hold the running status of the runnable.
-    private boolean running = false;
 
     //the default delay time for the first attempt to reconnect.
     private int delay = OPENDELAY;
@@ -37,8 +32,8 @@ public class ReconnectRunnable implements Runnable {
      */
     @Override
     public void run() {
-        running = true;
-        while(!connected) {
+        while(!connected && attempts <= MAXATTEMPTS) {
+
             try {
                 Thread.sleep(delay); //Wait the specified time
 
@@ -52,9 +47,9 @@ public class ReconnectRunnable implements Runnable {
                     onReconnect();
                 } else {
                     //Connection not established, increments the attempts.
-                    if(attempts >= 6) {
-                        //Here, we up the delay to save on battery and CPU usage.
-                        delay = LONGDELAY;
+                    if(attempts == MAXATTEMPTS) {
+                        //Here, we call onFailure.
+                        onFailure();
                     }
                     attempts++;
                 }
@@ -82,6 +77,16 @@ public class ReconnectRunnable implements Runnable {
         Globals.getInstance().getSocketService().setCurrentlyReconnecting(false);
         Log.i(TAG, "Broadcasting reconnection message.");
         Intent intent = new Intent(AppConstants.BM_RECONNECTED);
+        LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext()).sendBroadcast(intent);
+    }
+
+    /**
+     * Method called if the max number of attempts is reached.
+     */
+    private void onFailure() {
+        Globals.getInstance().getSocketService().setCurrentlyReconnecting(false);
+        Log.i(TAG, "Broadcasting failure to reconnect message.");
+        Intent intent = new Intent(AppConstants.BM_CONNECTIONLOST);
         LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext()).sendBroadcast(intent);
     }
 

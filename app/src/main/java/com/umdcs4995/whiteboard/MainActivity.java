@@ -12,9 +12,11 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -121,6 +124,48 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private TextView tvNavHeaderEmail;
     private ImageView ivProfilePhoto;
 
+
+    //Broadcast receiver instances.
+
+    /**
+     * Broadcast receiver for a reconnected event.
+     */
+    private BroadcastReceiver brReconnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("MAINACTIVITY", "Received reconnection broadcast.");
+            Toast toast = Toast.makeText(getApplicationContext(), "Reconnected",
+                    Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    };
+
+    /**
+     * Broadcast receiver for a connection lost event.
+     */
+    private BroadcastReceiver brConnectionLostReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("MAINACTIVITY", "Received connection lost broadcast.");
+//            Toast toast = Toast.makeText(getApplicationContext(), "Connection Lost",
+//                    Toast.LENGTH_SHORT);
+//            toast.show();
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id
+                    .drawer_layout);
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Connection Lost.", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RECONNECT", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Globals.getInstance().getSocketService().startReconnecting();
+                        }
+                    });
+
+            snackbar.show();
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //SET THE TOOLBAR BELOW
@@ -196,7 +241,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
 
 
-
+        //Setup broadcast receiver
+        registerBroadcastReceiver();
 
     }
 
@@ -619,6 +665,20 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         }
     }
 
+    /**
+     * This method registers the broadcast receivers neccessary for the main activity.
+     */
+    private void registerBroadcastReceiver() {
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext());
+
+        //Register the intent receiver so that the view updates upon receiving.
+        lbm.registerReceiver(brReconnectionReceiver,
+                new IntentFilter(AppConstants.BM_RECONNECTED));
+
+        lbm.registerReceiver(brConnectionLostReceiver,
+                new IntentFilter(AppConstants.BM_CONNECTIONLOST));
+
+    }
 
 
 }
