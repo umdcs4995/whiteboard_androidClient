@@ -43,15 +43,16 @@ import java.util.Arrays;
 
 /**
  * Created by Laura J. Krebs
- *
+ * DriveLoadFragment takes the google API client created in MainActivity to access
+ * the user's Google Drive account, allowing the user to load an image from their Drive account
+ * into the whiteboard.
  */
 public class DriveLoadFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
+    /* Used for debugging/loggin purposes */
     private static final String TAG = "DriveLoadFragment";
-    private static final int REQUEST_ACCOUNT_PICKER = 2; // new
+    private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final int REQUEST_CODE_CREATOR = 3;
 
 
