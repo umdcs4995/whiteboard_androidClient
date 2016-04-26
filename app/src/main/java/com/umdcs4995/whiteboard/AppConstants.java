@@ -20,4 +20,5 @@ public class AppConstants {
     public static String BM_REPAINT = "repaintRequest";
     public static String BM_RECONNECTED = "reconnected";
     public static String BM_LINEPAINTED = "linePainted";
+    public static String BM_CONNECTIONLOST = "connectionLost";
 }

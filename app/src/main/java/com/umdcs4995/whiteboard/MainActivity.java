@@ -11,13 +11,17 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -121,6 +126,49 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private TextView tvNavHeaderEmail;
     private ImageView ivProfilePhoto;
 
+
+    //Broadcast receiver instances.
+
+    /**
+     * Broadcast receiver for a reconnected event.
+     */
+    private BroadcastReceiver brReconnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("MAINACTIVITY", "Received reconnection broadcast.");
+            Toast toast = Toast.makeText(getApplicationContext(), "Reconnected",
+                    Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    };
+
+    /**
+     * Broadcast receiver for a connection lost event.
+     */
+    private BroadcastReceiver brConnectionLostReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("MAINACTIVITY", "Received connection lost broadcast.");
+//            Toast toast = Toast.makeText(getApplicationContext(), "Connection Lost",
+//                    Toast.LENGTH_SHORT);
+//            toast.show();
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id
+                    .drawer_layout);
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Connection Lost.", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RECONNECT", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Globals.getInstance().getSocketService().startReconnecting();
+                        }
+                    });
+            snackbar.setActionTextColor(getResources().getColor(R.color.whiteboardBrightBlue));
+
+            snackbar.show();
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //SET THE TOOLBAR BELOW
@@ -144,17 +192,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         /**
          *Hides or makes visible the draw components and toolbar
          */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setImageDrawable(ContextCompat.getDrawable(this.getApplicationContext(), R.drawable.ic_viewpage));
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                whiteboardDrawFragment.fabHideMenu();
+                whiteboardDrawFragment.fabHideMenu(fab);
                 //Statement used to set toolbars visibility
-                if (toolbar.getVisibility() == View.GONE) {
-                    toolbar.setVisibility(View.VISIBLE);
-                } else {
-                    toolbar.setVisibility(View.GONE);
-                }
+
             }
         });
 
@@ -196,7 +241,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
 
 
-
+        //Setup broadcast receiver
+        registerBroadcastReceiver();
 
     }
 
@@ -267,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             // The client tries to join a whiteboard by sending the server the name of the whiteboard.
             // The server then replies with a error message or a join successful message.
             case R.id.join_board:
-                changeMainFragment(joinBoardFragment);
+                if(currentFragment != joinBoardFragment) changeMainFragment(joinBoardFragment);
                 break;
 
 //            case R.id.nav_contacts://Navigates to list of contacts
@@ -280,23 +326,25 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 break;
 
             case R.id.add_url:
-                changeMainFragment(loadURLFragment);
+                if(currentFragment != loadURLFragment) changeMainFragment(loadURLFragment);
                 break;
 
             case R.id.login:
-                changeMainFragment(loginFragment);
+                if(currentFragment != loginFragment) changeMainFragment(loginFragment);
                 break;
             case R.id.google_drive:
-                Bundle bundle = new Bundle();
-                Bitmap b = findViewById(R.id.drawing).getDrawingCache();
-                ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                b.compress(CompressFormat.PNG, 50, bs);
-                bundle.putByteArray("byteArray", bs.toByteArray());
-                driveSaveFragment.setArguments(bundle);
-                changeMainFragment(driveSaveFragment);
+                if(currentFragment != driveSaveFragment) {
+                    Bundle bundle = new Bundle();
+                    Bitmap b = findViewById(R.id.drawing).getDrawingCache();
+                    ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                    b.compress(CompressFormat.PNG, 50, bs);
+                    bundle.putByteArray("byteArray", bs.toByteArray());
+                    driveSaveFragment.setArguments(bundle);
+                    changeMainFragment(driveSaveFragment);
+                }
                 break;
             case R.id.addFile:
-                changeMainFragment(driveLoadFragment);
+                if(currentFragment != driveLoadFragment) changeMainFragment(driveLoadFragment);
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -313,7 +361,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.mainFrame, fragment);
 
         if(!fragment.getClass().equals(whiteboardDrawFragment.getClass())) {
             //this will clear the back stack and displays no animation on the screen
@@ -322,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             transaction.addToBackStack(fragment.toString());
         }
 
-
+        transaction.replace(R.id.mainFrame, fragment);
         transaction.commit();
 
 
@@ -606,6 +653,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
             Bitmap b = gu.getRoundedProfileImage(70);
+            ivProfilePhoto.setVisibility(View.INVISIBLE);
             if(b != null) {
                 ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
             } else {
@@ -616,9 +664,24 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");
             ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
+            ivProfilePhoto.setVisibility(View.INVISIBLE);
         }
     }
 
+    /**
+     * This method registers the broadcast receivers neccessary for the main activity.
+     */
+    private void registerBroadcastReceiver() {
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(Globals.getInstance().getGlobalContext());
+
+        //Register the intent receiver so that the view updates upon receiving.
+        lbm.registerReceiver(brReconnectionReceiver,
+                new IntentFilter(AppConstants.BM_RECONNECTED));
+
+        lbm.registerReceiver(brConnectionLostReceiver,
+                new IntentFilter(AppConstants.BM_CONNECTIONLOST));
+
+    }
 
 
 }
