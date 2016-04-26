@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             // The client tries to join a whiteboard by sending the server the name of the whiteboard.
             // The server then replies with a error message or a join successful message.
             case R.id.join_board:
-                if(currentFragment != joinBoardFragment) changeMainFragment(joinBoardFragment);
+                changeMainFragment(joinBoardFragment);
                 break;
 
 //            case R.id.nav_contacts://Navigates to list of contacts
@@ -312,25 +312,25 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 break;
 
             case R.id.add_url:
-                if(currentFragment != loadURLFragment) changeMainFragment(loadURLFragment);
+                changeMainFragment(loadURLFragment);
                 break;
 
             case R.id.login:
-                if(currentFragment != loginFragment) changeMainFragment(loginFragment);
+                changeMainFragment(loginFragment);
                 break;
             case R.id.google_drive:
-                if(currentFragment != driveSaveFragment) {
-                    Bundle bundle = new Bundle();
-                    Bitmap b = findViewById(R.id.drawing).getDrawingCache();
-                    ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                    b.compress(CompressFormat.PNG, 50, bs);
-                    bundle.putByteArray("byteArray", bs.toByteArray());
-                    driveSaveFragment.setArguments(bundle);
-                    changeMainFragment(driveSaveFragment);
-                }
+
+                Bundle bundle = new Bundle();
+                Bitmap b = findViewById(R.id.drawing).getDrawingCache();
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                b.compress(CompressFormat.PNG, 50, bs);
+                bundle.putByteArray("byteArray", bs.toByteArray());
+                driveSaveFragment.setArguments(bundle);
+                changeMainFragment(driveSaveFragment);
+
                 break;
             case R.id.addFile:
-                if(currentFragment != driveLoadFragment) changeMainFragment(driveLoadFragment);
+                changeMainFragment(driveLoadFragment);
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -343,8 +343,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
      * @param fragment
      */
     private void changeMainFragment(Fragment fragment) {
-
-
+        //Begin to switch the main fragment.
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
 
@@ -537,6 +536,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     public void onFragmentSuicide(int command) {
         if(command == this.POP_ME) {
             getSupportFragmentManager().popBackStack();
+            currentFragment = whiteboardDrawFragment;
         }
     }
 
