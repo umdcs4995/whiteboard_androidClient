@@ -16,9 +16,15 @@
 
         <ImageView android:src="@drawable/whiteboard_logo"
                    android:layout_width="wrap_content"
-                   android:layout_height="72dp"
-                   android:layout_marginBottom="24dp"
+                   android:layout_height="150dp"
+                   android:layout_marginBottom="10dp"
                    android:layout_gravity="center_horizontal" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
 
         <TextView
             android:id="@+id/status"
@@ -49,20 +55,28 @@
             android:theme="@style/WhiteboardMainTheme" />
 
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sign_out_and_disconnect"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <Button
             android:id="@+id/sign_out_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/sign_out"
             android:theme="@style/WhiteboardMainTheme" />
 
     </LinearLayout>
-
 </FrameLayout>
