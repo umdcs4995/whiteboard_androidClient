@@ -5,15 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.IntentSender;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -73,16 +71,9 @@ import com.umdcs4995.whiteboard.uiElements.LoginFragment.OnLoginBtnClickedListen
 import com.umdcs4995.whiteboard.uiElements.SuicidalFragment;
 import com.umdcs4995.whiteboard.uiElements.WhiteboardDrawFragment;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
-import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.UUID;
-
-import io.socket.emitter.Emitter.Listener;
 
 
 public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener,
@@ -107,9 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private GoogleApiClient googleApiClient;
     private GoogleSignInOptions gso;
     private String TAG = "MainActivity";
-    /* Keys for persisting instance variables in savedInstanceState */
-    private static final String KEY_IS_RESOLVING = "is_resolving";
-    private static final String KEY_SHOULD_RESOLVE = "should_resolve";
 
     /* Is there a ConnectionResult resolution in progress? */
     private boolean mIsResolving = false;
@@ -183,8 +171,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             toolbar.setTitle("Whiteboard");
         }
 
-
-
         setSupportActionBar(toolbar);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -225,9 +211,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppIndex.API).addApi(Drive.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
                 .addApi(Plus.API, PlusOptions.builder().build())
-                //.addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
 
+        /* If the client is not already connected via the cached sign in, connect it */
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
