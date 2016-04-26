@@ -28,8 +28,8 @@ public class BuddyListProtocol {
             try {
                 JSONObject jo = ja.getJSONObject(i);
                 String name = jo.getString("name");
-                String email = jo.getString("clients");
-                String picture64 = jo.getString("picture64");
+                String email = jo.getString("email");
+                String picture64 = jo.getString("picture");
                 Buddy buddy = new Buddy(name, email, picture64, false);
                 buddies.add(buddy);
             } catch (JSONException e) {

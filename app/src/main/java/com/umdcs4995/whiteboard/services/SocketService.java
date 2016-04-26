@@ -49,10 +49,10 @@ public class SocketService extends Service {
         public static final String DRAW_EVENT = "drawevent";
         public static final String ME = "me";
         public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
-        public static final String LISTBUDDIES = "clientList";
+        public static final String LISTBUDDIES = "listClientsJSON";
 
         public static final String MOTION_EVENT = "motionevent";
-
+        public static final String CLIENTINFO = "clientInformation";
 
         // TODO: put the rest of the messages in here
     }
@@ -150,19 +150,17 @@ public class SocketService extends Service {
         });
 
         //Listener for the buddy list receiver
-        addListener(Messages.DRAW_EVENT, new Emitter.Listener() {
+        addListener("listClients", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 Log.i("SOCKETSERVICE", "Incoming buddy list");
-                Log.v(TAG, "INCOMING: " + (String) args[0]);
+                JSONObject jo = (JSONObject) args[0];
+                Log.v(TAG, "INCOMING: " + jo.toString());
 
                 try {
-                    JSONArray parsed = new JSONArray((String)args[0]);
-                    BuddyListProtocol.execute(parsed);
+                    //BuddyListProtocol.execute(ja);
                 } catch (NullPointerException e) {
                     Log.e(TAG, "NullpointerError Error, malformed string");
-                } catch (JSONException e) {
-                    Log.e(TAG, "Problem parsing JSON response from server");
                 }
             }
         });

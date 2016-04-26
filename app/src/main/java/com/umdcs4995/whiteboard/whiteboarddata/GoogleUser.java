@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
 
 /**
  * Created by rob on 4/18/16.
@@ -72,6 +73,14 @@ public class GoogleUser {
 
         //Set the flag.
         loggedIn = true;
+
+        //Send out the client information to the server.
+        try {
+            Globals.getInstance().getWhiteboardProtocol().outClientInformation(this);
+        } catch (ConnectivityException ce) {
+            //Do nothing here.
+        }
+
     }
 
 

@@ -10,7 +10,9 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
 
 import java.util.LinkedList;
@@ -63,6 +65,11 @@ public class ContactListFragment extends Fragment {
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        try {
+            Globals.getInstance().getWhiteboardProtocol().outBuddyRequest();
+        } catch (ConnectivityException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

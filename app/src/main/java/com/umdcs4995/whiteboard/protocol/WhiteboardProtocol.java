@@ -5,8 +5,10 @@ import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
@@ -100,6 +102,27 @@ public class WhiteboardProtocol {
             Log.e("WhiteboardProtocol", "Failed to Send Buddy List Request: " + ce.getMessage());
             throw ce;
         }
+    }
+
+
+    /**
+     * Sends
+     */
+    public void outClientInformation(GoogleUser gu) throws ConnectivityException {
+
+        try {
+            JSONObject jo = new JSONObject();
+            jo.put("name", gu.getFullname());
+            jo.put("email", gu.getEmail());
+            jo.put("picture", gu.getImage());
+            socketService.sendMessage(SocketService.Messages.CLIENTINFO, "");
+        } catch (ConnectivityException ce) {
+            Log.e("WhiteboardProtocol", "Failed to Send Client Information: " + ce.getMessage());
+            throw ce;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
