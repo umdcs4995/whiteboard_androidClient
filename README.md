@@ -89,10 +89,13 @@ To do this, you will first need to add your SSAH ID to our google-services.json 
 keytool -exportcert -list -v \
 -alias <your-key-name> -keystore <path-to-production-keystore>
 Copy this code down, you will need it!
-2. Open the Credentials page.
+
+2. Open the Credentials page https://console.developers.google.com/projectselector/apis/credentials?pli=1
+
 Follow these steps if your application needs to submit authorized requests:
 
 Click Add credentials > OAuth 2.0 client ID.
+
 Select Android.
 In the Package name field, enter your Android app's package name.
 Paste the SHA1 fingerprint into the form where requested.
