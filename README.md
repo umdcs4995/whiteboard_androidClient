@@ -97,15 +97,23 @@ Follow these steps if your application needs to submit authorized requests:
 Click Add credentials > OAuth 2.0 client ID.
 
 Select Android.
+
 In the Package name field, enter your Android app's package name.
+
 Paste the SHA1 fingerprint into the form where requested.
+
 Click Create.
+
 Otherwise, follow the steps below, which are for applications that only need to make unauthorized API calls:
 
 Click Add credentials > API key.
+
 Select Android key.
+
 Paste the SHA1 fingerprint into the form where requested.
+
 Type your Android app's package name into the form where requested.
+
 Click Create.
 
 ## Contributors
