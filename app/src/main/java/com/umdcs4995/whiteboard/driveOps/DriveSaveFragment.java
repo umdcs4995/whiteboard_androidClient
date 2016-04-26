@@ -29,9 +29,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
@@ -44,41 +42,43 @@ import java.util.Arrays;
 
 /**
  * Created by Laura J. Krebs
- *
+ * Drive Save Fragment takes the Google API client created in MainActivity to access the user's
+ * Drive account and save the current image drawn on the whiteboard to their Drive account. The
+ * default image save format is PNG, however the user has the option to change the format.
  */
 public class DriveSaveFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    GoogleApiClient.OnConnectionFailedListener {
+
+    /* Tag used in Logger for debugging purposes */
     private static final String TAG = "DriveSaveFragment";
 
-    /**
-     * Integer representation of code that is used when sending an intent to start an OpenFileActivity for a result. -LJK
-     */
+    /* Integer representation of code that is used when sending an intent to start an OpenFileActivity for a result. -LJK */
     private static final int REQUEST_CODE_CREATOR = 2;
+
+    /* Integer representation of the request code for selecting an account to log in with if the
+    * user has not previously logged in using the login button on the main navigation drawer */
     private static final int REQUEST_ACCOUNT_PICKER = 2;
+
+    /* Integer representation of the request code sent along with the Google Account Credential
+     * to authorize signing into the account */
     private static final int REQUEST_AUTHORIZATION = 1;
+
+    /* Integer representation of the request code sent with the IntentSender to store the file */
     private static final int RESULT_STORE_FILE = 4;
     private static final int RC_SIGN_IN = 9001;
 
+    /* The Google Account Credential contains the list of scopes used when logging into Google Drive
+     * (or other services if added in the future like DropBox, etc) using OAuth */
     private GoogleAccountCredential credential;
 
     /* Client for accessing Google APIs */
     private GoogleApiClient googleApiClient;
 
+    /* The fragment view */
     private View driveSaveView;
+
     private static Uri fileURI;
-    private static com.google.api.services.drive.Drive service;
     private ListView listView;
-
-
-    private OnDriveSaveButtonClickedListener onDriveSaveButtonClickedListener;
-
-    /* Keys for persisting instance variables in savedInstanceState */
-    private static final String KEY_IS_RESOLVING = "is_resolving";
-    private static final String KEY_SHOULD_RESOLVE = "should_resolve";
 
     /* Is there a ConnectionResult resolution in progress? */
     private boolean mIsResolving = false;
@@ -86,12 +86,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
+    /* Used to access the DrawingView to save the current image as a bitmap */
     Fragment whiteboardDrawFragment = new WhiteboardDrawFragment();
 
     public DriveSaveFragment() {
@@ -102,8 +99,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment DriveSaveFragment.
      */
     public static DriveSaveFragment newInstance(String param1, String param2) {
@@ -113,22 +108,12 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         return fragment;
     }
 
-    public interface OnDriveSaveButtonClickedListener {
-        public void onDriveSaveButtonClicked();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "made it to driveSaveFrag");
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
-
-        com.google.api.services.drive.Drive service = getDriveService(credential);
 
         SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
         credential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
@@ -137,23 +122,10 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
 
         googleApiClient.connect();
 
-
         if (googleApiClient.isConnected() == false) {
             googleApiClient.connect();
         }
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-//        //listView = (ListView) driveSaveView.findViewById(R.id.driveSaveListView);
-//        final Button driveSaveButton = (Button) driveSaveView.findViewById(R.id.driveSaveBtn);
-//        driveSaveButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                final Intent storeIntent = new Intent(Intent.ACTION_PICK);
-//                storeIntent.setType("*/*");
-//                startActivityForResult(storeIntent, RESULT_STORE_FILE);
-//            }
-//        });
-//        client = new com.google.api.services.drive.Drive.Builder(
-//                m_transport, m_jsonFactory, credential).setApplicationName("Whiteboard/1.0")
-//                .build();
     }
 
     @Override
@@ -278,7 +250,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                         Log.d(TAG, "in onActivityResult: got account name");
 
                         credential.setSelectedAccountName(accountName);
-                        service = getDriveService(credential);
+//                        service = getDriveService(credential);
                     }
                 }
                 try {
@@ -291,8 +263,9 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    // account is already picked
+                    // account is already picked so do nothing
                 } else {
+                    // user is not logged in. Use the credential to choose an account to sign in to
                     startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
                 }
                 break;
@@ -300,9 +273,7 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 fileURI = data.getData();
                 //save the file to google drive
                 try {
-                    Log.d(TAG, "in on activity result about to call save to Drive");
                     saveToDrive();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -310,22 +281,14 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    private com.google.api.services.drive.Drive getDriveService(GoogleAccountCredential credential) {
-        return new com.google.api.services.drive.Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
-                .setApplicationName("Whiteboard").build();
-    }
+//    private com.google.api.services.drive.Drive getDriveService(GoogleAccountCredential credential) {
+//        return new com.google.api.services.drive.Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+//                .setApplicationName("Whiteboard").build();
+//    }
 
 
     public void saveToDrive() throws IOException {
-        Log.d(TAG, "made it to saveToDrive()");
         googleApiClient.connect();
-//        Thread t = new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "Inside the thread Creating new contents.");
-
-
         Bundle bundle = this.getArguments();
         final Bitmap image = BitmapFactory.decodeByteArray(bundle.getByteArray("byteArray"), 0, bundle.getByteArray("byteArray").length);
 
@@ -378,16 +341,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
     }
 
     /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    /**
      * Callback for GoogleApiClient connection failure
      */
     @Override
@@ -433,7 +386,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
                 Log.w(TAG, "Google Play Services Error:" + connectionResult);
                 String errorString = apiAvailability.getErrorString(resultCode);
                 //Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
-
                 mShouldResolve = false;
             }
         }
@@ -451,7 +403,6 @@ public class DriveSaveFragment extends Fragment implements GoogleApiClient.Conne
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
