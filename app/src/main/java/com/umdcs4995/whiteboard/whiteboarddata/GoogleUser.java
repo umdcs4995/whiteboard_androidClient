@@ -21,15 +21,12 @@ import com.umdcs4995.whiteboard.Globals;
  */
 public class GoogleUser {
 
-    private String fullname;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private Image face;
-    private String faceBase64;
-    private boolean googleUser;
-    private boolean loggedIn;
-    private Bitmap profilePhoto;
+    protected String fullname;
+    protected String firstname;
+    protected String lastname;
+    protected String email;
+    protected boolean loggedIn;
+    protected Bitmap profilePhoto;
 
     /**
      * Constructor for the GoogleUser.  Note the current fields are populated by a method call
@@ -91,10 +88,6 @@ public class GoogleUser {
         return firstname;
     }
 
-    public Image getFace() {
-        return face;
-    }
-
     public boolean isLoggedIn() {
         return loggedIn;
     }
@@ -108,7 +101,7 @@ public class GoogleUser {
     }
 
     // method for base64 to bitmap
-    private Bitmap decodeBase64(String input) {
+    protected Bitmap decodeBase64(String input) {
         if(input.equals("")) {
             return null;
         } else {

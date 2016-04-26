@@ -89,4 +89,17 @@ public class WhiteboardProtocol {
         }
     }
 
+    /**
+     * Sends out a buddy list request.  The server should keep track of which whiteboard this
+     * user is on and provide a list of all other users on taht whiteboard.
+     */
+    public void outBuddyRequest() throws ConnectivityException {
+        try {
+            socketService.sendMessage(SocketService.Messages.LISTBUDDIES, "");
+        } catch (ConnectivityException ce) {
+            Log.e("WhiteboardProtocol", "Failed to Send Buddy List Request: " + ce.getMessage());
+            throw ce;
+        }
+    }
+
 }

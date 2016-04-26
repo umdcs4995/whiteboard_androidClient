@@ -93,13 +93,13 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private BroadcastReceiver bRepaintRequestReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("DRAWINGVIEW", "Received repaint request broadcast");
+            Log.i("WHITEBOARDDRAWFRAGMENT", "Received repaint request broadcast");
             Whiteboard wb = Globals.getInstance().getWhiteboard();
             try {
                 wb.repaintLineSegments(drawView.getDrawPath(),
                         drawView.getDrawPaint(), drawView.getDrawCanvas(), drawView);
             } catch(NullPointerException e) {
-                Log.e("DRAWINGVIEW", "Catch Nullpointer processing Whiteboard.repaintLineSegments()");
+                Log.e("WHITEBOARDDRAWFRAGMENT", "Catch Nullpointer processing Whiteboard.repaintLineSegments()");
                 e.printStackTrace();
             } catch(Exception e) {
                 Log.e("WHITEBOARDDRAWFRAGMENT", "Exception: " + e.toString());
@@ -114,7 +114,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     private BroadcastReceiver brReconnectionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("MAINACTIVITY", "Received reconnection broadcast.");
+            Log.i("WHITEBOARDDRAWFRAGMENT", "Received reconnection broadcast.");
             Whiteboard wb = Globals.getInstance().getWhiteboard();
             if(wb != null) {
                 //Attempt to rejoin whiteboard.

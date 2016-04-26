@@ -11,6 +11,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
+
+import java.util.LinkedList;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
@@ -22,7 +25,7 @@ import contacts.ContactWb;
 
 public class ContactListFragment extends Fragment {
 
-    ContactList contactList = new ContactList();
+    LinkedList<Buddy> buddies = new LinkedList<>();
 
     /**
      * Called on creation of the fragment.
@@ -54,17 +57,12 @@ public class ContactListFragment extends Fragment {
      * Briefly setup some test contacts.
      */
     private void setupTestContacts() {
-        contactList.addContact("rob0001", "Rob", ContactList.STATUS_CONNECTED);
-        contactList.addContact("pet0001", "Peter", ContactList.STATUS_CONNECTED);
-        contactList.addContact("willems", "Willemsen", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("lau0001", "Laura", ContactList.STATUS_CONNECTED);
-        contactList.addContact("kad0001", "Kade", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("ama0001", "Amanda", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("sco0001", "Scott", ContactList.STATUS_CONNECTED);
-        contactList.addContact("jes0001", "Jesse", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("tri0001", "Tristan", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("mit0001", "Mitch", ContactList.STATUS_CONNECTED);
-        contactList.addContact("maz0001", "Maz", ContactList.STATUS_DISCONNECTED);
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
+        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
     }
 
     /**
@@ -72,14 +70,14 @@ public class ContactListFragment extends Fragment {
      */
     private void setupContactListView() {
         //First get some strings
-        ContactWb[] people = new ContactWb[contactList.getSize()];
+        Buddy[] people = new Buddy[buddies.size()];
 
         //Pull the contact list in.
-        for(int i = 0; i < contactList.getSize(); i++) {
-            people[i] = contactList.getContactOrdinal(i);
+        for(int i = 0; i < buddies.size(); i++) {
+            people[i] = buddies.get(i);
         }
 
-        ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
+        ListAdapter customAdapter = new BuddyListAdapter(this.getContext(), people);
         //Grab the list view and set the adapter.
 
 

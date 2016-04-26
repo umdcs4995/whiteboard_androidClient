@@ -32,6 +32,7 @@ public class Whiteboard {
     String whiteboardName;
     //List of users.
     LinkedList<LineSegment> segments;
+    LinkedList<Buddy> buddies;
 
 
     /**
@@ -86,31 +87,6 @@ public class Whiteboard {
                 }
             }
         }
-
-//            if(Globals.getInstance().getActivePaintCount() >= AppConstants.MAX_REPAINT_COUNT) {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            //Increment the paint count to tell the Globals that we are painting a line.
-//            //Helps with thread overload.
-//            Globals.getInstance().incrementPaintCount();
-//
-//            try {
-//                while(Globals.getInstance().getActivePaintCount() >= 10) {
-//                    //Infinite loop until queue has been reduced.
-//                    Thread.sleep(10);
-//                }
-//            final LineSegment segment = segments.get(i);
-//            if(!segment.isOnscreen()) segment.drawLine(false, drawPath, drawPaint, drawCanvas, view);
-//
-//            } catch (InterruptedException e) {
-//                Log.e("WHITEBOARD.java", "Error drawing line");
-//            }
-//        }
 
     }
 
@@ -219,4 +195,18 @@ public class Whiteboard {
         }
     }
 
+
+    /**
+     * Sets the buddy list for the Whiteboard.
+     */
+    public void setBuddies(LinkedList<Buddy> buddies) {
+        this.buddies = buddies;
+    }
+
+    /**
+     * Gets the buddy list for the Whiteboard.
+     */
+    public LinkedList<Buddy> getBuddies() {
+        return buddies;
+    }
 }

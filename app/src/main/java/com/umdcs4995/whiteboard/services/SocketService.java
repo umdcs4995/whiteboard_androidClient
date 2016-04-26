@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.protocol.BuddyListProtocol;
 import com.umdcs4995.whiteboard.protocol.WbProtocolException;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +49,7 @@ public class SocketService extends Service {
         public static final String DRAW_EVENT = "drawevent";
         public static final String ME = "me";
         public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
+        public static final String LISTBUDDIES = "clientList";
 
         public static final String MOTION_EVENT = "motionevent";
 
@@ -145,6 +148,25 @@ public class SocketService extends Service {
                 }
             }
         });
+
+        //Listener for the buddy list receiver
+        addListener(Messages.DRAW_EVENT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.i("SOCKETSERVICE", "Incoming buddy list");
+                Log.v(TAG, "INCOMING: " + (String) args[0]);
+
+                try {
+                    JSONArray parsed = new JSONArray((String)args[0]);
+                    BuddyListProtocol.execute(parsed);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullpointerError Error, malformed string");
+                } catch (JSONException e) {
+                    Log.e(TAG, "Problem parsing JSON response from server");
+                }
+            }
+        });
+
     }
 
     @Nullable
