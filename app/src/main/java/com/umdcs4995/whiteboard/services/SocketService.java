@@ -150,7 +150,7 @@ public class SocketService extends Service {
         });
 
         //Listener for the buddy list receiver
-        addListener("listClients", new Emitter.Listener() {
+        addListener("listClientsJSON", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 Log.i("SOCKETSERVICE", "Incoming buddy list");
