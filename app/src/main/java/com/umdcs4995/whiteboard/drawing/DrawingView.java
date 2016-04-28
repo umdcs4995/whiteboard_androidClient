@@ -48,11 +48,6 @@ public class DrawingView extends View {
     Whiteboard wb = Globals.getInstance().getWhiteboard();
     MainActivity ma = (MainActivity) getContext();
 
-//TODO delete if not used
-    //Width and the height of the canvas
-    int canvasW = -1;
-    int canvasH = -1;
-
 //Gesture devices
     //handles all the scaling actions
     private ScaleGestureDetector detector;
@@ -242,6 +237,8 @@ public class DrawingView extends View {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     // When user touches the View, move to that
+                    //TODO: should be able to hide the menu
+                    //
                     // position to start drawing.
                     de = new DrawingEvent(
                             DrawingEvent.ACTION_DOWN,
@@ -386,8 +383,6 @@ public class DrawingView extends View {
             Bitmap immutableBitmap = Bitmap.createBitmap((int)(w/MIN_ZOOM), (int)(h/MIN_ZOOM), Bitmap.Config.ARGB_8888);
             canvasBitmap = immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
-        canvasW = w;
-        canvasH = h;
 
         drawCanvas = new Canvas(canvasBitmap);
     }

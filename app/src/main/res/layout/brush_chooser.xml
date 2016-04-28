@@ -1,31 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical" >
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#F0F0F5" >
 
-    <ImageButton
-        android:id="@+id/small_brush"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:contentDescription="@string/sml"
-        android:src="@drawable/small" />
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:id="@+id/linearLayout">
 
-    <ImageButton
-        android:id="@+id/medium_brush"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:contentDescription="@string/med"
-        android:src="@drawable/medium" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Seekbar"
+            android:textColor="@color/bright_foreground_material_light"
+            android:textSize="20sp" />
 
-    <ImageButton
-        android:id="@+id/large_brush"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:contentDescription="@string/lrg"
-        android:src="@drawable/large" />
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:progress="20"
+            android:secondaryProgress="20" />
 
-</LinearLayout>
+        <com.umdcs4995.whiteboard.uiElements.ChooseBrushSizeCircle
+            android:layout_width="133dp"
+            android:layout_height="133dp"
+            android:id="@+id/ChangingCircle"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:id="@+id/cancel"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/linearLayout"
+                android:layout_alignStart="@+id/linearLayout"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@android:string/ok"
+                android:id="@+id/confirm"
+                android:layout_below="@+id/linearLayout"
+                android:layout_alignRight="@+id/linearLayout"
+                android:layout_alignEnd="@+id/linearLayout"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

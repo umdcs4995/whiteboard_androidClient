@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -171,7 +170,7 @@ public class LineSegment {
                 case DrawingEvent.ACTION_DOWN:
                     // When user touches the View, move to that point from the old point.
                     // position to start drawing.
-                    linePath.moveTo(oldTouchX, oldTouchY);
+                    //linePath.moveTo(oldTouchX, oldTouchY);
                     linePath.moveTo(touchX, touchY);
                     drawCanvas.drawPath(linePath, linePaint);
                     break;

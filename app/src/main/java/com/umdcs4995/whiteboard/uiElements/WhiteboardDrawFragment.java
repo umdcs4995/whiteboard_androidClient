@@ -8,13 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Bitmap;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -30,9 +26,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,11 +72,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
 
-    //Flag so that the DrawingView.setup() method is only called once.
-    private boolean drawingViewSetup = false;
-
     //initialize brush sizes
-    //TODO grab from the resource file
     private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
 
 
@@ -151,10 +144,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
     };
 
-
-
-
-
     @Nullable
     @Override
     /**
@@ -204,7 +193,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 Drawable drawBitMap = new BitmapDrawable(getResources(), bitmap);
                 drawView.setBackground(drawBitMap);
             }
-
         }
     }
 
@@ -245,7 +233,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      */
     public void paintClicked(View view) {
         drawView.setErase(false);
-        //drawView.setBrushSize(drawView.getLastBrushSize());
         if(view!=currPaint){
             ImageButton imgView = (ImageButton)view;
             int color = Color.parseColor(view.getTag().toString());
@@ -388,8 +375,54 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             final Dialog brushDialog = new Dialog(getContext());
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
+            SeekBar seekbar = (SeekBar) brushDialog.findViewById(R.id.seekbar);
+            final ChooseBrushSizeCircle changingCircle = (ChooseBrushSizeCircle) brushDialog.findViewById(R.id.ChangingCircle);
+            changingCircle.setColor(drawView.getColor());
+            changingCircle.setRadius((int)drawView.getBrushSize()/2);
+            seekbar.setProgress(changingCircle.getRadius()-5);
+            Button cancelBtn = (Button) brushDialog.findViewById(R.id.cancel);
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    brushDialog.dismiss();
+                }
+            });
+            Button confirmBtn = (Button) brushDialog.findViewById(R.id.confirm);
+            confirmBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawView.setBrushSize(changingCircle.getRadius()*2);
+                    drawView.setErase(false);
+                    brushDialog.dismiss();
+                }
+            });
 
-            //small brush option
+            seekbar.setMax(95);
+            changingCircle.invalidate();
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress,
+                                              boolean fromUser) {
+                    // TODO Auto-generated method stub
+                    changingCircle.setRadius(progress+5);
+                    changingCircle.invalidate();
+                }
+            });
+
+            /*//small brush option
             ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
             smallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -420,7 +453,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
-            });
+            });*/
 
             brushDialog.show();
         }
@@ -600,8 +633,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void setDrawMode(boolean mode){
         drawMode = mode;
     }
-
-
 
     public Bitmap getMyBitmap() {
         return drawView.getCanvasBitmap();
