@@ -72,11 +72,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     //able to accurately draw over the dots.
     private String testURL = "http://www.connectthedots101.com/dot_to_dots_for_kids/Pachycephalosaurus/Pachycephalosaurus_with_Patches_connect_dots.png";
 
-    //Flag so that the DrawingView.setup() method is only called once.
-    private boolean drawingViewSetup = false;
-
     //initialize brush sizes
-    //TODO grab from the resource file
     private float smallBrush = 5, mediumBrush = 10, largeBrush = 15;
 
 
@@ -148,10 +144,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
         }
     };
 
-
-
-
-
     @Nullable
     @Override
     /**
@@ -201,7 +193,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
                 Drawable drawBitMap = new BitmapDrawable(getResources(), bitmap);
                 drawView.setBackground(drawBitMap);
             }
-
         }
     }
 
@@ -242,7 +233,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
      */
     public void paintClicked(View view) {
         drawView.setErase(false);
-        //drawView.setBrushSize(drawView.getLastBrushSize());
         if(view!=currPaint){
             ImageButton imgView = (ImageButton)view;
             int color = Color.parseColor(view.getTag().toString());
@@ -643,8 +633,6 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
     public void setDrawMode(boolean mode){
         drawMode = mode;
     }
-
-
 
     public Bitmap getMyBitmap() {
         return drawView.getCanvasBitmap();

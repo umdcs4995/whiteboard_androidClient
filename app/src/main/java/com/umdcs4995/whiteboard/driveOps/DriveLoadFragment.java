@@ -43,22 +43,17 @@ import java.util.Arrays;
 
 /**
  * Created by Laura J. Krebs
- *
+ * DriveLoadFragment takes the google API client created in MainActivity to access
+ * the user's Google Drive account, allowing the user to load an image from their Drive account
+ * into the whiteboard.
  */
 public class DriveLoadFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
+    /* Used for debugging/loggin purposes */
     private static final String TAG = "DriveLoadFragment";
-    private static final int REQUEST_ACCOUNT_PICKER = 2; // new
+    private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final int REQUEST_CODE_CREATOR = 3;
-
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private static com.google.api.services.drive.Drive service;
@@ -100,11 +95,8 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment DriveLoadFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static DriveLoadFragment newInstance(String param1, String param2) {
         DriveLoadFragment fragment = new DriveLoadFragment();
         Bundle args = new Bundle();
@@ -117,8 +109,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Made it to drive load fragment");
         if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
         googleAccountCredential = GoogleAccountCredential.usingOAuth2(getActivity().getApplicationContext(), Arrays.asList(DriveScopes.DRIVE));
         com.google.api.services.drive.Drive service = getDriveService(googleAccountCredential);
@@ -192,7 +183,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -214,11 +204,10 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         if (mSelectedFileDriveId != null) {
             open();
             Log.i(TAG, "In onConnected about to finish");
-            //finish();
         }
 
-        // Let the user pick an mp4 or a jpeg file if there are
-        // no files selected by the user.
+        // Let the user pick from the following MIME types: mp4, jpeg, png, gif, etc. Currently
+        // mp4 is not supported by the surrounding application context
         Log.d(TAG, "made it to on connected");
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
@@ -232,6 +221,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
         }
 
     }
+
 
     private void open() {
         Log.d(TAG, "inside open");
@@ -255,9 +245,7 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                 Log.d(TAG, "In result callback but can't open file");
                 return;
             }
-            //showMessage("Open File: file contents open");
             Log.d(TAG, "Open File: file contents open");
-
 
             // DriveContents object contains pointers to actual byte stream
             DriveContents contents = result.getDriveContents();
@@ -266,7 +254,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
             bitmap = BitmapFactory.decodeStream(is);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(CompressFormat.PNG, 100, stream);
-            // new here
             byte[] bytes = stream.toByteArray();
             //Need to find the stuff that used to be in main that would handle the data and
             //put it instead into an onFinish() listener of some type that we initalize here
@@ -326,7 +313,6 @@ public class DriveLoadFragment extends Fragment implements GoogleApiClient.Conne
                     Log.d(TAG, "in onactivityResult inside request code opener ok");
                     mSelectedFileDriveId = (DriveId) data.getParcelableExtra(
                             OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-
                     open();
                 } else {
                     Log.d(TAG, "result not ok ");
