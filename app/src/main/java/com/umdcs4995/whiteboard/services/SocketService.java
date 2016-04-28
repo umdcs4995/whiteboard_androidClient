@@ -74,13 +74,20 @@ public class SocketService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        TCP_ADDRESS = Globals.getInstance().getServerAddress();
-        connect();
+        try {
+            TCP_ADDRESS = Globals.getInstance().getServerAddress();
+            connect();
 
-        // TODO: Move listener code to other parts of the codebase
-        setupListeners();
+            // TODO: Move listener code to other parts of the codebase
+            setupListeners();
 
-        return super.onStartCommand(intent, flags, startId);
+            return super.onStartCommand(intent, flags, startId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            onDestroy();
+        }
+
+        return -1;
     }
 
     /**
