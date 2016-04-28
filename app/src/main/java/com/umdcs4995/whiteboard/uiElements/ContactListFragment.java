@@ -14,6 +14,7 @@ import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import java.util.LinkedList;
 
@@ -27,7 +28,7 @@ import contacts.ContactWb;
 
 public class ContactListFragment extends Fragment {
 
-    LinkedList<Buddy> buddies = new LinkedList<>();
+    LinkedList<GoogleUser> buddies = new LinkedList<>();
 
     /**
      * Called on creation of the fragment.
@@ -37,7 +38,6 @@ public class ContactListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        setupTestContacts();
 
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         return view;
@@ -52,6 +52,16 @@ public class ContactListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //clear the temporary list
+        buddies.clear();
+
+        //add the current user to the top of the buddy list.
+        buddies.add(Globals.getInstance().getClientUser());
+
+        //Test method.
+        setupTestContacts();
+
         setupContactListView();
     }
 
@@ -59,6 +69,7 @@ public class ContactListFragment extends Fragment {
      * Briefly setup some test contacts.
      */
     private void setupTestContacts() {
+
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
         buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
@@ -77,7 +88,7 @@ public class ContactListFragment extends Fragment {
      */
     private void setupContactListView() {
         //First get some strings
-        Buddy[] people = new Buddy[buddies.size()];
+        GoogleUser[] people = new GoogleUser[buddies.size()];
 
         //Pull the contact list in.
         for(int i = 0; i < buddies.size(); i++) {

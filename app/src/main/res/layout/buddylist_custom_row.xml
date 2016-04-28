@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/imageView_contactList_connection_icon"
+        android:id="@+id/imageView_buddyList_profile_pic"
         android:src="@drawable/connected"
         android:layout_margin="10dp" />
 
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/textView_contactlist_name"
+            android:id="@+id/textView_buddylist_name"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"/>
 
@@ -29,8 +29,8 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
-            android:id="@+id/textview_contactlist_status"
-            android:layout_below="@id/textView_contactlist_name"
+            android:id="@+id/textview_buddylist_email"
+            android:layout_below="@id/textView_buddylist_name"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"/>
 

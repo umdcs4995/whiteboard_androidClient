@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
@@ -17,14 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 /**
  * Created by rob on 2/14/16.
  */
-public class BuddyListAdapter extends ArrayAdapter<Buddy> {
+public class BuddyListAdapter extends ArrayAdapter<GoogleUser> {
 
 
-    public BuddyListAdapter(Context context, Buddy[] buddies) {
+    public BuddyListAdapter(Context context, GoogleUser[] buddies) {
         //Automatically generated constructor with alt+insert
         //change "int resource" to Typename[] name and then call super
         //on context, new layout, name)
@@ -42,47 +44,22 @@ public class BuddyListAdapter extends ArrayAdapter<Buddy> {
         View customView = inflater.inflate(R.layout.buddylist_custom_row, parent, false);
 
         //Retrieving the contact info from the position value passed in.
-        Buddy buddy = getItem(position);
+        GoogleUser buddy = getItem(position);
 
         //Sets the users name status and icon
-        TextView nameView = (TextView) customView.findViewById(R.id.textView_contactlist_name);
-        TextView statusView = (TextView) customView.findViewById(R.id.textview_contactlist_status);
-        ImageView statusIcon = (ImageView) customView.findViewById(R.id.imageView_contactList_connection_icon);
-        ImageView deleteButton = (ImageView) customView.findViewById(R.id.imageButton_contactlist_delete);
+        TextView nameView = (TextView) customView.findViewById(R.id.textView_buddylist_name);
+        TextView emailView = (TextView) customView.findViewById(R.id.textview_buddylist_email);
+        ImageView profilePic = (ImageView) customView.findViewById(R.id.imageView_buddyList_profile_pic);
 
+        //Set the fields with the buddy's information.
         nameView.setText(buddy.getFullname());
-        //Checking to see if the user is connected
-        if(buddy.isLoggedIn()) {
-            //If connected we change the text to indicate so.
-            statusView.setText("Logged In");
-            statusIcon.setImageResource(R.drawable.connected);
-            //We also change the color to green indicating they are connected.
-            statusView.setTextColor(Color.rgb(0,200,50));
-        } else {
-            //If disconnected we change the text to say so.
-            statusView.setText("Disconnected");
-            statusIcon.setImageResource(R.drawable.disconnected);
-            //Again we change the color to indicate the disconnection.
-            statusView.setTextColor(Color.rgb(200,0,0));
-        }
+        emailView.setText(buddy.getEmail());
+
+        Bitmap bm = buddy.getRoundedProfileImage(70);
+        profilePic.setImageBitmap(bm);
+
         //After making changes we need to return the view
         return customView;
     }
 
-    /**
-     * Completes action for "yes" clicked on delete board dialog.
-     */
-    @TargetApi(Build.VERSION_CODES.M)
-    public void onPositiveClick() {
-        Toast.makeText(getContext(), "Whiteboard deleted", Toast.LENGTH_SHORT).show();
-        Log.i("DeleteBoardDialog", "'Yes' clicked.");
-    }
-
-    /**
-     * Completes action for "no" clicked on delete board dialog.
-     */
-    public void onNegativeClick() {
-        Toast.makeText(getContext(), "Whiteboard not deleted", Toast.LENGTH_SHORT).show();
-        Log.i("DeleteBoardDialog", "'No' clicked.");
-    }
 }
