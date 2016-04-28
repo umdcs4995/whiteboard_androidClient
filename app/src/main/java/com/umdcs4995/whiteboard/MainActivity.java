@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     //multiple inflations of the navbar header.
     private TextView tvNavHeaderName;
     private TextView tvNavHeaderEmail;
+    private TextView tvNavHeaderAlias;
     private ImageView ivProfilePhoto;
 
 
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         //Need to be global to prevent multiple inflations.
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
         tvNavHeaderName = (TextView) headerView.findViewById(R.id.navbar_username);
+        tvNavHeaderAlias = (TextView) headerView.findViewById(R.id.navbar_alias);
         tvNavHeaderEmail = (TextView) headerView.findViewById(R.id.navbar_email);
         ivProfilePhoto = (ImageView) headerView.findViewById(R.id.navbar_profilephoto);
 
@@ -638,6 +640,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         if(gu.isLoggedIn()) {
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
+            tvNavHeaderAlias.setText(Globals.getInstance().getUsername());
             Bitmap b = gu.getRoundedProfileImage(70);
             ivProfilePhoto.setVisibility(View.INVISIBLE);
             if(b != null) {

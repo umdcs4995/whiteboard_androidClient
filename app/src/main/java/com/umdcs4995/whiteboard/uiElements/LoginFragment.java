@@ -358,7 +358,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                 e.printStackTrace();
             }
             //current
-
+            Globals.getInstance().setUsername(username);
             updateUI(true);
 
         } else {

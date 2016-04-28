@@ -26,7 +26,9 @@
             android:layout_height="70dp"
             android:paddingTop="15dp"
             android:src="@drawable/whiteboard_logo"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <ImageView
             android:id="@+id/navbar_profilephoto"
@@ -34,7 +36,9 @@
             android:layout_height="70dp"
             android:paddingTop="15dp"
             android:src="@drawable/whiteboard_logo"
-            android:layout_alignParentRight="false"/>
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
 
         <TextView
@@ -51,6 +55,16 @@
             android:text="Username"
             android:textSize="22dp"
             android:layout_above="@id/navbar_email"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Alias"
+            android:id="@+id/navbar_alias"
+            android:layout_above="@+id/navbar_username"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
     </RelativeLayout>
 
