@@ -378,7 +378,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             SeekBar seekbar = (SeekBar) brushDialog.findViewById(R.id.seekbar);
             final ChooseBrushSizeCircle changingCircle = (ChooseBrushSizeCircle) brushDialog.findViewById(R.id.ChangingCircle);
             changingCircle.setColor(drawView.getColor());
-            changingCircle.setRadius((int)drawView.getBrushSize());
+            changingCircle.setRadius((int)drawView.getBrushSize()/2);
             seekbar.setProgress(changingCircle.getRadius()-5);
             Button cancelBtn = (Button) brushDialog.findViewById(R.id.cancel);
             cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -391,7 +391,7 @@ public class WhiteboardDrawFragment extends Fragment implements View.OnClickList
             confirmBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    drawView.setBrushSize(changingCircle.getRadius());
+                    drawView.setBrushSize(changingCircle.getRadius()*2);
                     drawView.setErase(false);
                     brushDialog.dismiss();
                 }
