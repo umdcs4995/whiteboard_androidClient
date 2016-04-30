@@ -57,6 +57,9 @@ public class Globals {
     //Instance of the GoogleUser for the client.
     private GoogleUser clientUser;
 
+    //instance of the username of the user (that the user manually selects)
+    private String clientUserName;
+
     /**
      * Private data member which binds the xmpp service to the client.
      */
@@ -308,6 +311,13 @@ public class Globals {
         return activePaintCount;
     }
 
+    public void setUsername(String username) {
+        clientUserName = username;
+    }
+
+    public String getUsername() {
+        return clientUserName;
+    }
 
 
 }
