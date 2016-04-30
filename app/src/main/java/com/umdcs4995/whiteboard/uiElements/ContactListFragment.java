@@ -1,26 +1,39 @@
 package com.umdcs4995.whiteboard.uiElements;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
+import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.util.LinkedList;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
+import io.socket.emitter.Emitter;
 
 /**
  * Activity for handling the contact list screen for the app.
@@ -29,6 +42,7 @@ import contacts.ContactWb;
 public class ContactListFragment extends Fragment {
 
     LinkedList<GoogleUser> buddies = new LinkedList<>();
+    private final String TAG = "ContactListFragment";
 
     /**
      * Called on creation of the fragment.
@@ -61,6 +75,24 @@ public class ContactListFragment extends Fragment {
 
         //Test method.
         setupTestContacts();
+
+        //Listener for the buddy list receiver
+        final SocketService ss = Globals.getInstance().getSocketService();
+        ss.addListener(SocketService.Messages.LISTBUDDIES, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.i("SOCKETSERVICE", "Incoming buddy list");
+                JSONObject jo = (JSONObject) args[0];
+                Log.v(TAG, "INCOMING: " + jo.toString());
+
+                try {
+                    //BuddyListProtocol.execute(ja);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullpointerError Error, malformed string");
+                }
+                ss.clearListener(SocketService.Messages.LISTBUDDIES);
+            }
+        });
 
         setupContactListView();
     }
@@ -119,6 +151,31 @@ public class ContactListFragment extends Fragment {
         };
 
         return l;
+    }
+
+    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public LoadProfileImage(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 
 }

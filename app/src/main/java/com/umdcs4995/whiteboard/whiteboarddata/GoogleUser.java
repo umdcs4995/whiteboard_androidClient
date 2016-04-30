@@ -16,6 +16,10 @@ import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
+import com.umdcs4995.whiteboard.services.SocketService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by rob on 4/18/16.
@@ -28,6 +32,8 @@ public class GoogleUser {
     protected String email;
     protected boolean loggedIn;
     protected Bitmap profilePhoto;
+    protected String profilePhotoString;
+    protected String profilePhotoURL;
 
     /**
      * Constructor for the GoogleUser.  Note the current fields are populated by a method call
@@ -69,17 +75,11 @@ public class GoogleUser {
         email = sp.getString("googleUserEmail", "");
 
         //Get the picture
+        profilePhotoString = sp.getString("googleDisplayPicture", "");
         profilePhoto = decodeBase64(sp.getString("googleDisplayPicture", ""));
 
         //Set the flag.
         loggedIn = true;
-
-        //Send out the client information to the server.
-        try {
-            Globals.getInstance().getWhiteboardProtocol().outClientInformation(this);
-        } catch (ConnectivityException ce) {
-            //Do nothing here.
-        }
 
     }
 
@@ -107,6 +107,14 @@ public class GoogleUser {
 
     public Bitmap getImage() {
         return profilePhoto;
+    }
+
+    public String getProfileURL() {
+        return profilePhotoURL;
+    }
+
+    public void setPRofileURL(String profileURL) {
+        this.profilePhotoURL = profileURL;
     }
 
     // method for base64 to bitmap
@@ -165,4 +173,27 @@ public class GoogleUser {
     }
 
 
+    /**
+     * Send the JSONObject to
+     */
+    public void sendInformationToUser() {
+
+        SocketService ss = Globals.getInstance().getSocketService();
+
+        JSONObject jo = new JSONObject();
+
+        try {
+            jo.put("name", fullname);
+            jo.put("email", email);
+            jo.put("picture", " ");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ss.sendMessage(SocketService.Messages.CLIENTINFO, jo);
+        } catch (ConnectivityException e) {
+            //Do nothing here.  ConnectivityException handles reconnection.
+        }
+    }
 }

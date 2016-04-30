@@ -659,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             } else {
                 ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
             }
-
+            gu.sendInformationToUser();
         } else {
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");
