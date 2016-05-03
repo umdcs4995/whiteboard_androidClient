@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -20,13 +21,14 @@ import android.widget.ListView;
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.protocol.BuddyListProtocol;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.services.SocketService;
-import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
@@ -67,17 +69,14 @@ public class ContactListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //clear the temporary list
-        buddies.clear();
-
-        //add the current user to the top of the buddy list.
-        buddies.add(Globals.getInstance().getClientUser());
-
-        //Test method.
-        setupTestContacts();
 
         //Listener for the buddy list receiver
         final SocketService ss = Globals.getInstance().getSocketService();
+        try {
+            Globals.getInstance().getWhiteboardProtocol().outBuddyRequest();
+        } catch (ConnectivityException e) {
+            e.printStackTrace();
+        }
         ss.addListener(SocketService.Messages.LISTBUDDIES, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -86,15 +85,23 @@ public class ContactListFragment extends Fragment {
                 Log.v(TAG, "INCOMING: " + jo.toString());
 
                 try {
-                    //BuddyListProtocol.execute(ja);
+                    BuddyListProtocol.execute(jo);
+                    buddies = Globals.getInstance().getWhiteboard().getBuddies();
+                    GoogleUser[] gus = new GoogleUser[buddies.size()];
+                    for(int i = 0; i < buddies.size(); i++) {
+                        gus[i] = buddies.get(i);
+                    }
+                    new LoadProfileImages().execute(gus);
                 } catch (NullPointerException e) {
                     Log.e(TAG, "NullpointerError Error, malformed string");
                 }
                 ss.clearListener(SocketService.Messages.LISTBUDDIES);
+                setupContactListView();
+
             }
         });
 
-        setupContactListView();
+
     }
 
     /**
@@ -102,23 +109,14 @@ public class ContactListFragment extends Fragment {
      */
     private void setupTestContacts() {
 
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        buddies.add(new Buddy("Robert DeGree", "rob@whiteboard.com", " ", false));
-        try {
-            Globals.getInstance().getWhiteboardProtocol().outBuddyRequest();
-        } catch (ConnectivityException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /**
      * Creates the contact list view and adapters.
      */
     private void setupContactListView() {
+        buddies = Globals.getInstance().getWhiteboard().getBuddies();
         //First get some strings
         GoogleUser[] people = new GoogleUser[buddies.size()];
 
@@ -127,54 +125,51 @@ public class ContactListFragment extends Fragment {
             people[i] = buddies.get(i);
         }
 
-        ListAdapter customAdapter = new BuddyListAdapter(this.getContext(), people);
+        final ListAdapter customAdapter = new BuddyListAdapter(this.getContext(), people);
         //Grab the list view and set the adapter.
 
+        MainActivity ma = (MainActivity) getActivity();
+        ma.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
+                listView.setAdapter(customAdapter);
+            }
+        });
 
-        ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
-        listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(makeContactListListener());
     }
+
 
     /**
-     * Make an item lick listener for the contacts.
-     * @return
+     * This background task loads the profile images in the background and then displays them
+     * when finished
      */
-    private AdapterView.OnItemClickListener makeContactListListener() {
-        AdapterView.OnItemClickListener l = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //This is where the code goes for a click of an item of the list.
-                ContactWb person = (ContactWb) parent.getItemAtPosition(position);
-                new NotYetImplementedToast(getContext(), person.getName() + " clicked!");
+    private class LoadProfileImages extends AsyncTask<GoogleUser, Void, Void> {
+
+        protected Void doInBackground(GoogleUser... gus) {
+            Log.v("LOADPROFILEIMAGETASK", "In Background");
+            for(int i = 0; i < gus.length; i++) {
+                Log.v("LOADPROFILEIMAGETASK", "Loading image: " + i);
+                GoogleUser gu = gus[i];
+
+                InputStream in = null;
+
+                try {
+                    in = new java.net.URL(gu.getProfileURL()).openStream();
+                    Bitmap downloadedPic = BitmapFactory.decodeStream(in);
+                    gu.setImage(downloadedPic);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
-        };
-
-        return l;
-    }
-
-    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public LoadProfileImage(ImageView bmImage) {
-            this.bmImage = bmImage;
+            return null;
         }
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            setupContactListView();
+            super.onPostExecute(aVoid);
         }
     }
 

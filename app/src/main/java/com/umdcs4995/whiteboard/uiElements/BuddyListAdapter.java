@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.umdcs4995.whiteboard.R;
-import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 /**

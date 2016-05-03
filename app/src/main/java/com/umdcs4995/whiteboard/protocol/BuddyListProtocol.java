@@ -3,7 +3,7 @@ package com.umdcs4995.whiteboard.protocol;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
-import com.umdcs4995.whiteboard.whiteboarddata.Buddy;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONArray;
@@ -19,9 +19,16 @@ import java.util.LinkedList;
  */
 public class BuddyListProtocol {
 
-    public static void execute(JSONArray ja) {
+    public static void execute(JSONObject incomingList) {
         Whiteboard wb = Globals.getInstance().getWhiteboard();
-        LinkedList<Buddy> buddies = new LinkedList<>();
+        LinkedList<GoogleUser> buddies = new LinkedList<>();
+
+        JSONArray ja = null;
+        try {
+            ja = incomingList.getJSONArray("clients");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         for(int i = 0; i < ja.length(); i++) {
             //Parse each buddy.
@@ -30,12 +37,13 @@ public class BuddyListProtocol {
                 String name = jo.getString("name");
                 String email = jo.getString("email");
                 String picture64 = jo.getString("picture");
-                Buddy buddy = new Buddy(name, email, picture64, false);
+                GoogleUser buddy = new GoogleUser(name, email, picture64, false);
                 buddies.add(buddy);
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 Log.e("BUDDYLISTPROTOCOL", "Malformed String");
+                e.printStackTrace();
             }
         }
 

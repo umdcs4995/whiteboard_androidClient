@@ -653,13 +653,13 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
             Bitmap b = gu.getRoundedProfileImage(70);
-            ivProfilePhoto.setVisibility(View.INVISIBLE);
+            ivProfilePhoto.setVisibility(View.VISIBLE);
             if(b != null) {
                 ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
             } else {
                 ivProfilePhoto.setImageResource(R.drawable.whiteboard_logo);
             }
-            gu.sendInformationToUser();
+
         } else {
             tvNavHeaderName.setText("Whiteboard");
             tvNavHeaderEmail.setText("Please Login");

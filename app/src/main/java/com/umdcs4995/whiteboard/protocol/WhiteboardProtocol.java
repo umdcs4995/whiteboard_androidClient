@@ -105,24 +105,4 @@ public class WhiteboardProtocol {
     }
 
 
-    /**
-     * Sends
-     */
-    public void outClientInformation(GoogleUser gu) throws ConnectivityException {
-
-        try {
-            JSONObject jo = new JSONObject();
-            jo.put("name", gu.getFullname());
-            jo.put("email", gu.getEmail());
-            jo.put("picture", gu.getImage());
-            socketService.sendMessage(SocketService.Messages.CLIENTINFO, "");
-        } catch (ConnectivityException ce) {
-            Log.e("WhiteboardProtocol", "Failed to Send Client Information: " + ce.getMessage());
-            throw ce;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 }

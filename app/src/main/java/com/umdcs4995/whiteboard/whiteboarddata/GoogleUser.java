@@ -44,6 +44,28 @@ public class GoogleUser {
         populateFromCache();
     }
 
+    /**
+     * Constructor for the GoogleUser.  Used for the buddylist.
+     */
+    public GoogleUser(String fullname, String email, String URL, boolean loggedIn) {
+        this.fullname = fullname;
+        this.email = email;
+        this.profilePhotoURL = URL;
+        this.loggedIn = loggedIn;
+
+        if(this.fullname.length() == 0) {
+            this.fullname = "Unknown User";
+            this.firstname = "Unknown";
+            this.lastname = "User";
+        } else {
+            //First name is the first part of the full name up until the first space.
+            firstname = fullname.substring(0, fullname.indexOf(" "));
+
+            //Last name is the last part of the full name, starting at the first space.
+            lastname = fullname.substring(fullname.indexOf(" "), fullname.length());
+        }
+    }
+
 
     /**
      * This method accesses items in the SharedPreferences that should be stored after the
@@ -77,6 +99,7 @@ public class GoogleUser {
         //Get the picture
         profilePhotoString = sp.getString("googleDisplayPicture", "");
         profilePhoto = decodeBase64(sp.getString("googleDisplayPicture", ""));
+        profilePhotoURL = sp.getString("googleDisplayPictureURL", null);
 
         //Set the flag.
         loggedIn = true;
@@ -109,13 +132,14 @@ public class GoogleUser {
         return profilePhoto;
     }
 
+    public void setImage(Bitmap image) {
+        this.profilePhoto = image;
+    }
+
     public String getProfileURL() {
         return profilePhotoURL;
     }
 
-    public void setPRofileURL(String profileURL) {
-        this.profilePhotoURL = profileURL;
-    }
 
     // method for base64 to bitmap
     protected Bitmap decodeBase64(String input) {
@@ -137,6 +161,7 @@ public class GoogleUser {
      */
     public Bitmap getRoundedProfileImage(int radius) {
         if(profilePhoto == null) {
+            Log.i("GOOGLEUSER", "No profile photo found.");
             //A profile image hasn't been saved.  Return null
             return null;
         }
@@ -185,7 +210,7 @@ public class GoogleUser {
         try {
             jo.put("name", fullname);
             jo.put("email", email);
-            jo.put("picture", " ");
+            jo.put("picture", profilePhotoURL);
         } catch (JSONException e) {
             e.printStackTrace();
         }

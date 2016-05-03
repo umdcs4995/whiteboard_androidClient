@@ -32,7 +32,7 @@ public class Whiteboard {
     String whiteboardName;
     //List of users.
     LinkedList<LineSegment> segments;
-    LinkedList<Buddy> buddies;
+    LinkedList<GoogleUser> buddies;
 
 
     /**
@@ -199,14 +199,14 @@ public class Whiteboard {
     /**
      * Sets the buddy list for the Whiteboard.
      */
-    public void setBuddies(LinkedList<Buddy> buddies) {
+    public void setBuddies(LinkedList<GoogleUser> buddies) {
         this.buddies = buddies;
     }
 
     /**
      * Gets the buddy list for the Whiteboard.
      */
-    public LinkedList<Buddy> getBuddies() {
+    public LinkedList<GoogleUser> getBuddies() {
         return buddies;
     }
 }
