@@ -65,7 +65,7 @@ public class LineSegment {
             final Canvas drawCanvas,
             final DrawingView view) throws InterruptedException {
 
-        inRealTime = !hasDrawnLive;
+        inRealTime = false; // !hasDrawnLive;
 
         DrawingEvent de = drawEvents.get(0);
         if(de != null) {
