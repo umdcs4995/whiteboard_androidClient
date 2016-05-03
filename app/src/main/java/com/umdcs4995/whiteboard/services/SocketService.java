@@ -47,6 +47,7 @@ public class SocketService extends Service {
 
         public static final String CHAT_MESSAGE = "chat message";
         public static final String DRAW_EVENT = "drawevent";
+        public static final String AUTHENTICATE = "authenticate";
         public static final String ME = "me";
         public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
         public static final String LISTBUDDIES = "listClients";

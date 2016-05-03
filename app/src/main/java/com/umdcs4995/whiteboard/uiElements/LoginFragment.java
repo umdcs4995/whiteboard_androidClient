@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,7 +53,11 @@ import com.google.api.services.gmail.GmailScopes;
 import com.umdcs4995.whiteboard.Globals;
 import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.services.SocketService;
 import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -65,6 +70,8 @@ import java.util.Arrays;
  */
 public class LoginFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener, GoogleApiClient.ConnectionCallbacks {
+
+    private SocketService socketService = Globals.getInstance().getSocketService();
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -90,6 +97,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
     private GoogleSignInOptions gso;
     private GoogleSignInAccount acct;
 
+    private String alias;
     private SignInButton signInButton;
 
     /* Keys for persisting instance variables in savedInstanceState */
@@ -194,7 +202,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int height = displayMetrics.heightPixels;
         final int width = displayMetrics.widthPixels;
-
+        Log.d(TAG, "finished oncreate");
 
     }
 
@@ -331,9 +339,26 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             editor.commit();
 
             //Save the picture
-
-
-
+            EditText username_field = (EditText) loginView.findViewById(R.id.input_name);
+            String username = username_field.getText().toString();
+            Log.d(TAG, "Username: " + username);
+            statusTextView.setText(R.string.signing_in);
+            Log.d(TAG, "In handlesigninresult");
+            JSONObject data = new JSONObject();
+            try {
+                data.put("email", acct.getEmail());
+                data.put("username", username);
+            }
+            catch (JSONException e){
+               e.printStackTrace();
+            }
+            try {
+                socketService.sendMessage(SocketService.Messages.AUTHENTICATE, data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //current
+            Globals.getInstance().setUsername(username);
             updateUI(true);
 
         } else {
@@ -412,8 +437,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         googleApiClient.connect();
 
         // Show a message to the user that we are signing in.
-        statusTextView.setText(R.string.signing_in);
-        Log.d(TAG, "In sign in clicked");
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
