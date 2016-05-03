@@ -5,8 +5,10 @@ import android.util.Log;
 import com.umdcs4995.whiteboard.drawing.DrawingEvent;
 import com.umdcs4995.whiteboard.services.ConnectivityException;
 import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
@@ -88,5 +90,19 @@ public class WhiteboardProtocol {
             throw ce;
         }
     }
+
+    /**
+     * Sends out a buddy list request.  The server should keep track of which whiteboard this
+     * user is on and provide a list of all other users on taht whiteboard.
+     */
+    public void outBuddyRequest() throws ConnectivityException {
+        try {
+            socketService.sendMessage(SocketService.Messages.LISTBUDDIES, "");
+        } catch (ConnectivityException ce) {
+            Log.e("WhiteboardProtocol", "Failed to Send Buddy List Request: " + ce.getMessage());
+            throw ce;
+        }
+    }
+
 
 }

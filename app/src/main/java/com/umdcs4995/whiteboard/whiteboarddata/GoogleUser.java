@@ -15,21 +15,25 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
+import com.umdcs4995.whiteboard.services.SocketService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by rob on 4/18/16.
  */
 public class GoogleUser {
 
-    private String fullname;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private Image face;
-    private String faceBase64;
-    private boolean googleUser;
-    private boolean loggedIn;
-    private Bitmap profilePhoto;
+    protected String fullname;
+    protected String firstname;
+    protected String lastname;
+    protected String email;
+    protected boolean loggedIn;
+    protected Bitmap profilePhoto;
+    protected String profilePhotoString;
+    protected String profilePhotoURL;
 
     /**
      * Constructor for the GoogleUser.  Note the current fields are populated by a method call
@@ -38,6 +42,28 @@ public class GoogleUser {
      */
     public GoogleUser() {
         populateFromCache();
+    }
+
+    /**
+     * Constructor for the GoogleUser.  Used for the buddylist.
+     */
+    public GoogleUser(String fullname, String email, String URL, boolean loggedIn) {
+        this.fullname = fullname;
+        this.email = email;
+        this.profilePhotoURL = URL;
+        this.loggedIn = loggedIn;
+
+        if(this.fullname.length() == 0) {
+            this.fullname = "Unknown User";
+            this.firstname = "Unknown";
+            this.lastname = "User";
+        } else {
+            //First name is the first part of the full name up until the first space.
+            firstname = fullname.substring(0, fullname.indexOf(" "));
+
+            //Last name is the last part of the full name, starting at the first space.
+            lastname = fullname.substring(fullname.indexOf(" "), fullname.length());
+        }
     }
 
 
@@ -71,10 +97,13 @@ public class GoogleUser {
         email = sp.getString("googleUserEmail", "");
 
         //Get the picture
+        profilePhotoString = sp.getString("googleDisplayPicture", "");
         profilePhoto = decodeBase64(sp.getString("googleDisplayPicture", ""));
+        profilePhotoURL = sp.getString("googleDisplayPictureURL", null);
 
         //Set the flag.
         loggedIn = true;
+
     }
 
 
@@ -91,10 +120,6 @@ public class GoogleUser {
         return firstname;
     }
 
-    public Image getFace() {
-        return face;
-    }
-
     public boolean isLoggedIn() {
         return loggedIn;
     }
@@ -107,8 +132,17 @@ public class GoogleUser {
         return profilePhoto;
     }
 
+    public void setImage(Bitmap image) {
+        this.profilePhoto = image;
+    }
+
+    public String getProfileURL() {
+        return profilePhotoURL;
+    }
+
+
     // method for base64 to bitmap
-    private Bitmap decodeBase64(String input) {
+    protected Bitmap decodeBase64(String input) {
         if(input.equals("")) {
             return null;
         } else {
@@ -127,6 +161,7 @@ public class GoogleUser {
      */
     public Bitmap getRoundedProfileImage(int radius) {
         if(profilePhoto == null) {
+            Log.i("GOOGLEUSER", "No profile photo found.");
             //A profile image hasn't been saved.  Return null
             return null;
         }
@@ -160,5 +195,30 @@ public class GoogleUser {
         canvas.drawBitmap(sbmp, rect, rect, paint);
 
         return output;
+    }
+
+
+    /**
+     * Send the JSONObject to
+     */
+    public void sendInformationToUser() {
+
+        SocketService ss = Globals.getInstance().getSocketService();
+
+        JSONObject jo = new JSONObject();
+
+        try {
+            jo.put("name", fullname);
+            jo.put("email", email);
+            jo.put("picture", profilePhotoURL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ss.sendMessage(SocketService.Messages.CLIENTINFO, jo);
+        } catch (ConnectivityException e) {
+            //Do nothing here.  ConnectivityException handles reconnection.
+        }
     }
 }

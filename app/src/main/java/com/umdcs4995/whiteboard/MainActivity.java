@@ -302,9 +302,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 changeMainFragment(joinBoardFragment);
                 break;
 
-//            case R.id.nav_contacts://Navigates to list of contacts
-//                changeMainFragment(contactListFragment);
-//                break;
+            case R.id.nav_contacts://Navigates to list of contacts
+                changeMainFragment(contactListFragment);
+                break;
 
             case R.id.nav_settings://Navigates to Settings Activity
                 Intent i = new Intent(this, SettingsActivity.class);
@@ -639,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvNavHeaderName.setText(gu.getFullname());
             tvNavHeaderEmail.setText(gu.getEmail());
             Bitmap b = gu.getRoundedProfileImage(70);
-            ivProfilePhoto.setVisibility(View.INVISIBLE);
+            ivProfilePhoto.setVisibility(View.VISIBLE);
             if(b != null) {
                 ivProfilePhoto.setImageBitmap(gu.getRoundedProfileImage(70));
             } else {

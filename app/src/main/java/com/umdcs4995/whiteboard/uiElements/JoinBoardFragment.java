@@ -120,6 +120,7 @@ public class JoinBoardFragment extends Fragment {
                                     });
                                     //Fragment suicides here
                                     Globals.getInstance().setWhiteboard(new Whiteboard(whiteboardName.getText().toString()));
+                                    Globals.getInstance().getClientUser().sendInformationToUser();
                                     mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
                                 } catch (JSONException e) {
                                     Log.e("createWhiteboard", "error parsing received message");
@@ -229,6 +230,7 @@ public class JoinBoardFragment extends Fragment {
                             });
                             //Fragment suicides here
                             Globals.getInstance().setWhiteboard(new Whiteboard(person.getName()));
+                            Globals.getInstance().getClientUser().sendInformationToUser();
                             mainActivity.onFragmentSuicide(SuicidalFragment.POP_ME);
                         } catch (JSONException e) {
                             Log.w("joinWhiteboard", "error parsing received message");

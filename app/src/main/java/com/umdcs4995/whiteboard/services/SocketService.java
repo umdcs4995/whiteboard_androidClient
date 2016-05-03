@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.protocol.BuddyListProtocol;
 import com.umdcs4995.whiteboard.protocol.WbProtocolException;
 import com.umdcs4995.whiteboard.protocol.WhiteboardProtocol;
+import com.umdcs4995.whiteboard.whiteboarddata.Whiteboard;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,9 +49,10 @@ public class SocketService extends Service {
         public static final String DRAW_EVENT = "drawevent";
         public static final String ME = "me";
         public static final String DELETE_WHITEBOARD = "deleteWhiteboard";
+        public static final String LISTBUDDIES = "listClients";
 
         public static final String MOTION_EVENT = "motionevent";
-
+        public static final String CLIENTINFO = "clientInformation";
 
         // TODO: put the rest of the messages in here
     }
@@ -152,6 +155,7 @@ public class SocketService extends Service {
                 }
             }
         });
+
     }
 
     @Nullable
