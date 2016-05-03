@@ -1,20 +1,41 @@
 package com.umdcs4995.whiteboard.uiElements;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.umdcs4995.whiteboard.Globals;
+import com.umdcs4995.whiteboard.MainActivity;
 import com.umdcs4995.whiteboard.R;
+import com.umdcs4995.whiteboard.protocol.BuddyListProtocol;
+import com.umdcs4995.whiteboard.services.ConnectivityException;
+import com.umdcs4995.whiteboard.services.SocketService;
+import com.umdcs4995.whiteboard.whiteboarddata.GoogleUser;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
 
 import contacts.ContactList;
 import contacts.ContactListAdapter;
 import contacts.ContactWb;
+import io.socket.emitter.Emitter;
 
 /**
  * Activity for handling the contact list screen for the app.
@@ -22,7 +43,8 @@ import contacts.ContactWb;
 
 public class ContactListFragment extends Fragment {
 
-    ContactList contactList = new ContactList();
+    LinkedList<GoogleUser> buddies = new LinkedList<>();
+    private final String TAG = "ContactListFragment";
 
     /**
      * Called on creation of the fragment.
@@ -32,7 +54,6 @@ public class ContactListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        setupTestContacts();
 
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         return view;
@@ -47,62 +68,109 @@ public class ContactListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupContactListView();
+
+
+        //Listener for the buddy list receiver
+        final SocketService ss = Globals.getInstance().getSocketService();
+        try {
+            Globals.getInstance().getWhiteboardProtocol().outBuddyRequest();
+        } catch (ConnectivityException e) {
+            e.printStackTrace();
+        }
+        ss.addListener(SocketService.Messages.LISTBUDDIES, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.i("SOCKETSERVICE", "Incoming buddy list");
+                JSONObject jo = (JSONObject) args[0];
+                Log.v(TAG, "INCOMING: " + jo.toString());
+
+                try {
+                    BuddyListProtocol.execute(jo);
+                    buddies = Globals.getInstance().getWhiteboard().getBuddies();
+                    GoogleUser[] gus = new GoogleUser[buddies.size()];
+                    for(int i = 0; i < buddies.size(); i++) {
+                        gus[i] = buddies.get(i);
+                    }
+                    new LoadProfileImages().execute(gus);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullpointerError Error, malformed string");
+                }
+                ss.clearListener(SocketService.Messages.LISTBUDDIES);
+                setupContactListView();
+
+            }
+        });
+
+
     }
 
     /**
      * Briefly setup some test contacts.
      */
     private void setupTestContacts() {
-        contactList.addContact("rob0001", "Rob", ContactList.STATUS_CONNECTED);
-        contactList.addContact("pet0001", "Peter", ContactList.STATUS_CONNECTED);
-        contactList.addContact("willems", "Willemsen", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("lau0001", "Laura", ContactList.STATUS_CONNECTED);
-        contactList.addContact("kad0001", "Kade", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("ama0001", "Amanda", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("sco0001", "Scott", ContactList.STATUS_CONNECTED);
-        contactList.addContact("jes0001", "Jesse", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("tri0001", "Tristan", ContactList.STATUS_DISCONNECTED);
-        contactList.addContact("mit0001", "Mitch", ContactList.STATUS_CONNECTED);
-        contactList.addContact("maz0001", "Maz", ContactList.STATUS_DISCONNECTED);
+
+
     }
 
     /**
      * Creates the contact list view and adapters.
      */
     private void setupContactListView() {
+        buddies = Globals.getInstance().getWhiteboard().getBuddies();
         //First get some strings
-        ContactWb[] people = new ContactWb[contactList.getSize()];
+        GoogleUser[] people = new GoogleUser[buddies.size()];
 
         //Pull the contact list in.
-        for(int i = 0; i < contactList.getSize(); i++) {
-            people[i] = contactList.getContactOrdinal(i);
+        for(int i = 0; i < buddies.size(); i++) {
+            people[i] = buddies.get(i);
         }
 
-        ListAdapter customAdapter = new ContactListAdapter(this.getContext(), people);
+        final ListAdapter customAdapter = new BuddyListAdapter(this.getContext(), people);
         //Grab the list view and set the adapter.
 
+        MainActivity ma = (MainActivity) getActivity();
+        ma.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
+                listView.setAdapter(customAdapter);
+            }
+        });
 
-        ListView listView = (ListView) getView().findViewById(R.id.contact_listview);
-        listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(makeContactListListener());
     }
 
-    /**
-     * Make an item lick listener for the contacts.
-     * @return
-     */
-    private AdapterView.OnItemClickListener makeContactListListener() {
-        AdapterView.OnItemClickListener l = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //This is where the code goes for a click of an item of the list.
-                ContactWb person = (ContactWb) parent.getItemAtPosition(position);
-                new NotYetImplementedToast(getContext(), person.getName() + " clicked!");
-            }
-        };
 
-        return l;
+    /**
+     * This background task loads the profile images in the background and then displays them
+     * when finished
+     */
+    private class LoadProfileImages extends AsyncTask<GoogleUser, Void, Void> {
+
+        protected Void doInBackground(GoogleUser... gus) {
+            Log.v("LOADPROFILEIMAGETASK", "In Background");
+            for(int i = 0; i < gus.length; i++) {
+                Log.v("LOADPROFILEIMAGETASK", "Loading image: " + i);
+                GoogleUser gu = gus[i];
+
+                InputStream in = null;
+
+                try {
+                    in = new java.net.URL(gu.getProfileURL()).openStream();
+                    Bitmap downloadedPic = BitmapFactory.decodeStream(in);
+                    gu.setImage(downloadedPic);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            setupContactListView();
+            super.onPostExecute(aVoid);
+        }
     }
 
 }

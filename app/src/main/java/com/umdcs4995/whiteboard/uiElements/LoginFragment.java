@@ -639,6 +639,12 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
+                //Save the shared preferences for the users photo.
+                SharedPreferences sp = PreferenceManager.
+                        getDefaultSharedPreferences(Globals.getInstance().getGlobalContext());
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("googleDisplayPictureURL", urldisplay);
+                editor.commit();
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
