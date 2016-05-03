@@ -6,7 +6,7 @@
 
 ## Setup
 
-1. Download and set up the [NodeJS whiteboard server](https://github.umn.edu/umdcs4995/nodejs)
+1. Download and set up the [NodeJS whiteboard server](https://github.com/umdcs4995/whiteboard_server)
 2. Change the values in app/src/main/res/values/strings.xml to match your server address
     - Change "hostname" to your server hostname
     - Change rtc_port to your RTC signalling port (3001 by default)
